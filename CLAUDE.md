@@ -6,46 +6,203 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ChaosFix is a macOS Electron application for running multiple Claude Code sessions in parallel. Users interact directly with Claude Code CLI in terminal panels, with each workspace isolated in its own git worktree.
 
+**Core Philosophy**: "The terminal IS the interface" - no abstraction layers over Claude Code CLI. Users see exactly what Claude sees.
+
 ## Architecture
 
-### Planned Monorepo Structure (Turborepo + pnpm)
+### Monorepo Structure (Turborepo + pnpm)
 
 ```
 chaosfix/
 ├── apps/
 │   └── desktop/              # Electron main application
 ├── packages/
-│   ├── core/                 # Shared business logic & types
-│   ├── workspace-manager/    # Git worktree orchestration
+│   ├── core/                 # Shared types, events, utilities
+│   ├── config/               # Zod schemas for configuration
 │   ├── terminal-bridge/      # xterm.js + node-pty integration
 │   ├── ui/                   # Shared React components
-│   └── config/               # Shared configuration schemas
+│   └── workspace-manager/    # Git worktree orchestration
+├── tools/
+│   └── scripts/              # Build and dev tooling
+└── docs/                     # Design documentation
 ```
 
-### UI Model
+### Application Layers
 
-- **Sidebar**: Repository tree with workspaces nested underneath
-- **Main area**: Single full-size terminal view (not a grid)
-- **Tabs**: Multiple terminal tabs within each workspace
-- Workspaces in sidebar allow switching between parallel Claude Code sessions
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Presentation Layer                        │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────────────┐│
+│  │ Repository  │ │ Terminal    │ │ Terminal Instance       ││
+│  │ Sidebar     │ │ Tab Bar     │ │ (xterm.js)              ││
+│  └─────────────┘ └─────────────┘ └─────────────────────────┘│
+├─────────────────────────────────────────────────────────────┤
+│                    Application Layer                         │
+│  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────┐ │
+│  │ Session Manager  │ │ Workspace Router │ │ Event Bus    │ │
+│  └──────────────────┘ └──────────────────┘ └──────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│                    Domain Layer                              │
+│  ┌─────────────────────────────┐ ┌─────────────────────────┐│
+│  │ Worktree Manager            │ │ Git Service             ││
+│  └─────────────────────────────┘ └─────────────────────────┘│
+├─────────────────────────────────────────────────────────────┤
+│                    Infrastructure Layer                      │
+│  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────┐ │
+│  │ Terminal Bridge  │ │ IPC Handler      │ │ File System  │ │
+│  │ (node-pty)       │ │ (Electron)       │ │ Watcher      │ │
+│  └──────────────────┘ └──────────────────┘ └──────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### Tech Stack
+---
 
-- Electron + React + TypeScript
-- xterm.js (terminal rendering) + node-pty (PTY management)
-- Turborepo for monorepo orchestration
-- Vite for bundling, Vitest for testing
+## Package Guide
 
-### Key Design Principles
+### `@chaosfix/core` - Shared Types & Utilities
+**Location**: `packages/core/`
 
-1. Terminal IS the interface - no abstraction layers over Claude Code CLI
-2. Each workspace = isolated git worktree with its own branch
-3. Event-driven architecture with central event bus
-4. Type-safe IPC between main and renderer processes
+**Purpose**: Central types, event definitions, and utility functions shared across all packages.
+
+**Key exports**:
+- `Workspace`, `Repository`, `TerminalSession` - Domain types
+- `WorkspaceStatus`, `TerminalSessionStatus` - Status enums
+- `IPCMessage`, `IPCResponse` - IPC communication types
+- `Result<T, E>` - Error handling type
+- `generateId()`, `createEventBus()` - Utilities
+
+**When to READ**: Understanding data structures, checking available types
+**When to WRITE**: Adding new shared types, events, or utilities that multiple packages need
+
+---
+
+### `@chaosfix/config` - Configuration Schemas
+**Location**: `packages/config/`
+
+**Purpose**: Zod schemas for validating configuration files and settings.
+
+**Key exports**:
+- `AppConfigSchema`, `WorkspaceConfigSchema` - Validation schemas
+- `parseConfig()`, `validateConfig()` - Validation utilities
+
+**When to READ**: Understanding config structure, adding new settings
+**When to WRITE**: Adding new configuration options, modifying validation rules
+
+---
+
+### `@chaosfix/terminal-bridge` - Terminal Integration
+**Location**: `packages/terminal-bridge/`
+
+**Purpose**: Bridges xterm.js (renderer) with node-pty (main process) for terminal functionality.
+
+**Key exports**:
+- Main process: `PTYManager`, `ptyManager` - PTY lifecycle management
+- Renderer: `createTerminal()`, `TerminalController` - xterm.js wrapper
+
+**Architecture**:
+```
+Renderer Process          Main Process
+┌─────────────┐          ┌─────────────┐
+│ xterm.js    │◄──IPC───►│ node-pty    │
+│ (display)   │          │ (PTY mgmt)  │
+└─────────────┘          └─────────────┘
+```
+
+**When to READ**: Terminal behavior issues, adding terminal features
+**When to WRITE**: Terminal rendering changes, PTY lifecycle modifications, adding terminal addons
+
+---
+
+### `@chaosfix/ui` - React Components
+**Location**: `packages/ui/`
+
+**Purpose**: Shared React components for the desktop application.
+
+**Key exports**:
+- `Sidebar`, `SidebarSection`, `SidebarItem` - Navigation components
+- `TabBar` - Tab management
+- `ActivityIndicator` - Status display
+- `Button`, `IconButton` - Base components
+- `useResizeObserver` - Utility hooks
+
+**When to READ**: Checking available components, understanding component APIs
+**When to WRITE**: Adding new shared UI components, modifying component styles
+
+---
+
+### `@chaosfix/workspace-manager` - Git Worktree Orchestration
+**Location**: `packages/workspace-manager/`
+
+**Purpose**: Manages git worktrees for isolated workspace environments.
+
+**Key exports**:
+- `WorktreeManager` - Create, list, remove worktrees
+- `GitService` - Git operations (branch, status, diff)
+
+**When to READ**: Understanding workspace isolation, git integration
+**When to WRITE**: Adding git features, modifying worktree lifecycle
+
+---
+
+### `@chaosfix/desktop` - Electron Application
+**Location**: `apps/desktop/`
+
+**Purpose**: The main Electron application that ties everything together.
+
+**Structure**:
+```
+src/
+├── main/           # Electron main process
+│   └── index.ts    # App entry, window management, IPC handlers
+├── preload/        # Electron preload scripts
+│   └── index.ts    # Exposes safe APIs to renderer
+└── renderer/       # React application
+    ├── app.tsx           # Root component
+    ├── components/       # App-specific components
+    └── stores/           # Zustand state management
+```
+
+**Build outputs**:
+- `dist/main/` - Main process (tsup → CJS)
+- `dist/preload/` - Preload scripts (tsup → CJS)
+- `dist/renderer/` - React app (Vite → ESM)
+
+**When to READ**: Application flow, IPC communication, state management
+**When to WRITE**: Adding features, modifying UI, changing IPC handlers
+
+---
+
+## Key Design Principles
+
+1. **Terminal IS the interface** - No abstraction layers over Claude Code CLI
+2. **Workspace isolation** - Each workspace = isolated git worktree with its own branch
+3. **Event-driven architecture** - Central event bus for cross-component communication
+4. **Type-safe IPC** - Typed communication between main and renderer processes
+5. **Package boundaries** - Each package has a single responsibility
+
+## Tech Stack
+
+- **Runtime**: Electron + React + TypeScript
+- **Terminal**: xterm.js (rendering) + node-pty (PTY management)
+- **Build**: Turborepo, tsup (packages), Vite (renderer)
+- **State**: Zustand
+- **Validation**: Zod
+- **Testing**: Vitest
+
+## Common Commands
+
+```bash
+pnpm install          # Install dependencies
+pnpm build            # Build all packages
+pnpm dev              # Start development mode
+pnpm typecheck        # Run TypeScript checks
+pnpm lint             # Run ESLint
+pnpm test             # Run tests
+```
 
 ## Design Documentation
 
-See `agents-files/main/plans/chaosfix-design-spec.md` for the full design specification.
+See `docs/chaosfix-design-spec.md` for the full design specification.
 
 
 ## Skill usage

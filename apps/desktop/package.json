@@ -1,0 +1,69 @@
+{
+  "name": "@chaosfix/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ChaosFix - Multi-Claude Terminal Manager",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "build": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
+    "build:main": "tsup src/main/index.ts --format cjs --outDir dist/main --external electron",
+    "build:preload": "tsup src/preload/index.ts --format cjs --outDir dist/preload --external electron",
+    "build:renderer": "vite build",
+    "dev": "concurrently -k \"pnpm run dev:main\" \"pnpm run dev:renderer\"",
+    "dev:main": "tsup src/main/index.ts --format cjs --outDir dist/main --external electron --watch --onSuccess \"electron .\"",
+    "dev:renderer": "vite",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules",
+    "rebuild": "electron-rebuild -f -w node-pty",
+    "postinstall": "electron-rebuild -f -w node-pty",
+    "package": "electron-builder",
+    "package:mac": "electron-builder --mac"
+  },
+  "dependencies": {
+    "@chaosfix/config": "workspace:*",
+    "@chaosfix/core": "workspace:*",
+    "@chaosfix/terminal-bridge": "workspace:*",
+    "@chaosfix/ui": "workspace:*",
+    "@chaosfix/workspace-manager": "workspace:*",
+    "@xterm/xterm": "^5.5.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.1",
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6",
+    "vitest": "^2.1.8"
+  },
+  "build": {
+    "appId": "com.chaosfix.app",
+    "productName": "ChaosFix",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "resources/**/*"
+    ]
+  }
+}
