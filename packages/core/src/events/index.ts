@@ -13,14 +13,6 @@ export type EventType =
   | "terminal:input"
   | "terminal:resized"
   | "terminal:titleChanged"
-  // Repository events
-  | "repository:added"
-  | "repository:removed"
-  | "repository:updated"
-  // Git events
-  | "git:branchChanged"
-  | "git:commitCreated"
-  | "git:filesChanged"
   // Application events
   | "app:ready"
   | "app:beforeQuit"
@@ -91,17 +83,6 @@ export interface TerminalTitleChangedEvent extends BaseEvent {
   title: string;
 }
 
-// Repository Events
-export interface RepositoryAddedEvent extends BaseEvent {
-  type: "repository:added";
-  repositoryId: string;
-}
-
-export interface RepositoryRemovedEvent extends BaseEvent {
-  type: "repository:removed";
-  repositoryId: string;
-}
-
 // Application Events
 export interface AppReadyEvent extends BaseEvent {
   type: "app:ready";
@@ -125,18 +106,6 @@ export type AppEvent =
   | TerminalInputEvent
   | TerminalResizedEvent
   | TerminalTitleChangedEvent
-  | RepositoryAddedEvent
-  | RepositoryRemovedEvent
   | AppReadyEvent
   | AppErrorEvent;
 
-// Event listener type
-export type EventListener<T extends AppEvent = AppEvent> = (event: T) => void;
-
-// Event bus interface
-export interface EventBus {
-  emit<T extends AppEvent>(event: T): void;
-  on<T extends AppEvent>(type: T["type"], listener: EventListener<T>): () => void;
-  off<T extends AppEvent>(type: T["type"], listener: EventListener<T>): void;
-  once<T extends AppEvent>(type: T["type"], listener: EventListener<T>): void;
-}

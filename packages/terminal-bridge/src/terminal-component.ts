@@ -146,18 +146,3 @@ export function createTerminal(
     },
   };
 }
-
-/**
- * Get default terminal options
- */
-export function getDefaultTerminalOptions(): TerminalOptions {
-  return {
-    fontFamily: "Menlo, Monaco, monospace",
-    fontSize: 14,
-    lineHeight: 1.2,
-    cursorStyle: "block",
-    cursorBlink: true,
-    scrollback: 10000,
-    theme: DEFAULT_THEME,
-  };
-}
