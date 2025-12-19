@@ -39,7 +39,7 @@ chaosfix/
 ├─────────────────────────────────────────────────────────────┤
 │                    Application Layer                         │
 │  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────┐ │
-│  │ Session Manager  │ │ Workspace Router │ │ Event Bus    │ │
+│  │ Session Manager  │ │ Workspace Router │ │ State Store  │ │
 │  └──────────────────┘ └──────────────────┘ └──────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
 │                    Domain Layer                              │
@@ -64,13 +64,6 @@ chaosfix/
 
 **Purpose**: Central types, event definitions, and utility functions shared across all packages.
 
-**Key exports**:
-- `Workspace`, `Repository`, `TerminalSession` - Domain types
-- `WorkspaceStatus`, `TerminalSessionStatus` - Status enums
-- `IPCMessage`, `IPCResponse` - IPC communication types
-- `Result<T, E>` - Error handling type
-- `generateId()`, `createEventBus()` - Utilities
-
 **When to READ**: Understanding data structures, checking available types
 **When to WRITE**: Adding new shared types, events, or utilities that multiple packages need
 
@@ -82,8 +75,10 @@ chaosfix/
 **Purpose**: Zod schemas for validating configuration files and settings.
 
 **Key exports**:
-- `AppConfigSchema`, `WorkspaceConfigSchema` - Validation schemas
-- `parseConfig()`, `validateConfig()` - Validation utilities
+- `projectConfigSchema`, `appPreferencesSchema` - Core Zod schemas
+- `workspaceStateSchema`, `appStateSchema` - Persistence schemas
+- `ProjectConfig`, `AppPreferences`, `WorkspaceState`, `AppState` - Inferred types
+- `DEFAULT_PROJECT_CONFIG`, `DEFAULT_APP_PREFERENCES` - Default values
 
 **When to READ**: Understanding config structure, adding new settings
 **When to WRITE**: Adding new configuration options, modifying validation rules
@@ -176,7 +171,7 @@ src/
 
 1. **Terminal IS the interface** - No abstraction layers over Claude Code CLI
 2. **Workspace isolation** - Each workspace = isolated git worktree with its own branch
-3. **Event-driven architecture** - Central event bus for cross-component communication
+3. **Event-driven architecture** - Typed event definitions for cross-component communication
 4. **Type-safe IPC** - Typed communication between main and renderer processes
 5. **Package boundaries** - Each package has a single responsibility
 
