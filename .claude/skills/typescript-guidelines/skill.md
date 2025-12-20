@@ -171,3 +171,6 @@ description: Coding guidelines and best practices for TypeScript projects.
 - Some hooks do too much (e.g., useCloudAccountsWithSubscriptions)
 - Split into smaller, focused, single-responsibility hooks
 - Each hook should have one clear purpose
+
+## Imports guidelines
+- When importing types re-use the existing import statement and use the keyword "type", example: import { TERMINAL_IPC_CHANNELS, type PTYCreateOptions } from "@chaosfix/terminal-bridge";

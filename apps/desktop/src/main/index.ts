@@ -1,8 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import { PTYManager } from "@chaosfix/terminal-bridge";
-import { TERMINAL_IPC_CHANNELS } from "@chaosfix/terminal-bridge";
-import type { PTYCreateOptions } from "@chaosfix/terminal-bridge";
+import { TERMINAL_IPC_CHANNELS, type PTYCreateOptions } from "@chaosfix/terminal-bridge";
 
 const isDev = process.env.NODE_ENV === "development";
 
