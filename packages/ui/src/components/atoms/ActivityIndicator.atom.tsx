@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { clsx } from "clsx";
+import { cn } from "../../lib/utils";
 
 export interface ActivityIndicatorProps {
   status: "active" | "idle" | "error";
@@ -14,13 +14,13 @@ export const ActivityIndicator: FC<ActivityIndicatorProps> = ({
 }) => {
   return (
     <span
-      className={clsx(
+      className={cn(
         "inline-block rounded-full",
         {
           // Status colors
-          "bg-green-500": status === "active",
-          "bg-gray-400": status === "idle",
-          "bg-red-500": status === "error",
+          "bg-accent-success": status === "active",
+          "bg-text-muted": status === "idle",
+          "bg-accent-error": status === "error",
           // Animation for active status
           "animate-pulse": status === "active",
           // Sizes

@@ -1,7 +1,24 @@
 import { type FC } from "react";
-import { Sidebar, SidebarSection, SidebarItem, TabBar, ActivityIndicator } from "@chaosfix/ui";
+import {
+  Sidebar,
+  SidebarItem,
+  TabBar,
+  ActivityIndicator,
+  SearchInput,
+  SidebarFooter,
+  RepositorySection,
+  WelcomeScreen,
+  ActionCard,
+  ActionCardGroup,
+  Logo,
+  DocumentTextIcon,
+  GlobeAltIcon,
+  DocumentDuplicateIcon,
+  PlusIcon,
+} from "@chaosfix/ui";
 import { useAppStore } from "./stores/app-store";
 import { TerminalView } from "./components/terminal-view";
+import logoSrc from "./assets/logo.svg";
 
 export const App: FC = () => {
   const {
@@ -9,7 +26,9 @@ export const App: FC = () => {
     workspaces,
     activeWorkspaceId,
     sidebarCollapsed,
+    searchQuery,
     setActiveWorkspace,
+    setSearchQuery,
   } = useAppStore();
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
@@ -19,45 +38,86 @@ export const App: FC = () => {
     closable: true,
   })) || [];
 
+  // Filter repositories and workspaces based on search query
+  const filteredRepositories = repositories.filter((repo) =>
+    repo.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleAddRepository = () => {
+    // TODO: Implement add repository dialog
+    console.log("Add repository clicked");
+  };
+
+  const handleDisplaySettings = () => {
+    // TODO: Implement display settings
+    console.log("Display settings clicked");
+  };
+
+  const handleSettings = () => {
+    // TODO: Implement settings dialog
+    console.log("Settings clicked");
+  };
+
+  const handleNewWorkspace = (repoId: string) => {
+    // TODO: Implement new workspace creation
+    console.log("New workspace for repo:", repoId);
+  };
+
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100">
       {/* Sidebar */}
-      <Sidebar width={250} collapsed={sidebarCollapsed}>
-        <div className="p-4 border-b border-gray-700">
-          <h1 className="text-lg font-semibold text-white">ChaosFix</h1>
-        </div>
-        <SidebarSection title="Repositories">
-          {repositories.length === 0 ? (
-            <div className="px-4 py-2 text-sm text-gray-500">
-              No repositories added
-            </div>
-          ) : (
-            repositories.map((repo) => (
-              <div key={repo.id}>
+      <Sidebar
+        width={250}
+        collapsed={sidebarCollapsed}
+        header={
+          <div className="p-3">
+            <SearchInput
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onClear={() => setSearchQuery("")}
+              placeholder="Search repositories..."
+            />
+          </div>
+        }
+        footer={
+          <SidebarFooter
+            onAddRepository={handleAddRepository}
+            onDisplaySettings={handleDisplaySettings}
+            onSettings={handleSettings}
+          />
+        }
+      >
+        {filteredRepositories.length === 0 ? (
+          <div className="px-4 py-8 text-sm text-text-muted text-center">
+            {searchQuery ? "No repositories match your search" : "No repositories added"}
+          </div>
+        ) : (
+          filteredRepositories.map((repo) => {
+            const repoWorkspaces = workspaces.filter((w) => w.repositoryId === repo.id);
+            return (
+              <RepositorySection key={repo.id} name={repo.name}>
                 <SidebarItem
-                  label={repo.name}
-                  icon={<FolderIcon />}
+                  label="New workspace"
+                  icon={<PlusIcon className="w-4 h-4" />}
+                  onClick={() => handleNewWorkspace(repo.id)}
                 />
-                {workspaces
-                  .filter((w) => w.repositoryId === repo.id)
-                  .map((workspace) => (
-                    <SidebarItem
-                      key={workspace.id}
-                      label={workspace.name}
-                      active={workspace.id === activeWorkspaceId}
-                      onClick={() => setActiveWorkspace(workspace.id)}
-                      indent={1}
-                      trailing={
-                        <ActivityIndicator
-                          status={workspace.status === "active" ? "active" : "idle"}
-                        />
-                      }
-                    />
-                  ))}
-              </div>
-            ))
-          )}
-        </SidebarSection>
+                {repoWorkspaces.map((workspace) => (
+                  <SidebarItem
+                    key={workspace.id}
+                    label={workspace.name}
+                    active={workspace.id === activeWorkspaceId}
+                    onClick={() => setActiveWorkspace(workspace.id)}
+                    trailing={
+                      <ActivityIndicator
+                        status={workspace.status === "active" ? "active" : "idle"}
+                      />
+                    }
+                  />
+                ))}
+              </RepositorySection>
+            );
+          })
+        )}
       </Sidebar>
 
       {/* Main Content */}
@@ -84,44 +144,30 @@ export const App: FC = () => {
           {activeWorkspace ? (
             <TerminalView workspaceId={activeWorkspace.id} />
           ) : (
-            <WelcomeScreen />
+            <WelcomeScreen
+              logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}
+            >
+              <ActionCardGroup>
+                <ActionCard
+                  icon={<DocumentTextIcon className="w-8 h-8" />}
+                  label="Open project"
+                  onClick={handleAddRepository}
+                />
+                <ActionCard
+                  icon={<GlobeAltIcon className="w-8 h-8" />}
+                  label="Clone from URL"
+                  onClick={() => console.log("Clone from URL")}
+                />
+                <ActionCard
+                  icon={<DocumentDuplicateIcon className="w-8 h-8" />}
+                  label="Quick start"
+                  onClick={() => console.log("Quick start")}
+                />
+              </ActionCardGroup>
+            </WelcomeScreen>
           )}
         </div>
       </div>
     </div>
   );
 };
-
-const WelcomeScreen: FC = () => {
-  return (
-    <div className="flex items-center justify-center h-full">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-300 mb-4">
-          Welcome to ChaosFix
-        </h2>
-        <p className="text-gray-500 mb-6">
-          Add a repository to get started with parallel Claude Code sessions.
-        </p>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-          Add Repository
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const FolderIcon: FC = () => (
-  <svg
-    className="w-4 h-4"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-    />
-  </svg>
-);

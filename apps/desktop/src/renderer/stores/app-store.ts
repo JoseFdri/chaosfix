@@ -16,8 +16,10 @@ interface AppState {
   // UI State
   sidebarCollapsed: boolean;
   sidebarWidth: number;
+  searchQuery: string;
 
   // Actions
+  setSearchQuery: (query: string) => void;
   addRepository: (repo: Repository) => void;
   removeRepository: (repoId: string) => void;
   addWorkspace: (workspace: WorkspaceWithTerminals) => void;
@@ -38,8 +40,10 @@ export const useAppStore = create<AppState>((set) => ({
   activeWorkspaceId: null,
   sidebarCollapsed: false,
   sidebarWidth: 250,
+  searchQuery: "",
 
   // Actions
+  setSearchQuery: (query) => set({ searchQuery: query }),
   addRepository: (repo) =>
     set((state) => ({
       repositories: [...state.repositories, repo],

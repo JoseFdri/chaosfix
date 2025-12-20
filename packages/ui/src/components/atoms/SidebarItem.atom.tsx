@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { clsx } from "clsx";
+import { cn } from "../../lib/utils";
 
 export interface SidebarItemProps {
   label: string;
@@ -24,13 +24,13 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className={clsx(
+      className={cn(
         "w-full flex items-center gap-2 px-4 py-1.5 text-sm text-left",
         "transition-colors duration-150",
-        "hover:bg-gray-200 focus:bg-gray-200 focus:outline-none",
+        "hover:bg-surface-hover focus-visible:bg-surface-hover focus-visible:outline-none",
         {
-          "bg-blue-100 text-blue-900 hover:bg-blue-200": active,
-          "text-gray-700": !active,
+          "bg-surface-active text-accent-primary": active,
+          "text-text-secondary": !active,
         },
         className
       )}

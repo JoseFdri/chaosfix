@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { clsx } from "clsx";
+import { cn } from "../../lib/utils";
 
 export interface SidebarSectionProps {
   title?: string;
@@ -13,9 +13,9 @@ export const SidebarSection: FC<SidebarSectionProps> = ({
   className,
 }) => {
   return (
-    <div className={clsx("py-2", className)}>
+    <div className={cn("py-2", className)}>
       {title && (
-        <h3 className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <h3 className="px-4 py-1 text-xs font-semibold text-text-muted uppercase tracking-wider">
           {title}
         </h3>
       )}

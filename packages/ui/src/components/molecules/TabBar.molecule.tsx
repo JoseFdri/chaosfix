@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { clsx } from "clsx";
+import { cn } from "../../lib/utils";
 import { TabItem, type Tab } from "../atoms/TabItem.atom";
 
 export interface TabBarProps {
@@ -21,8 +21,8 @@ export const TabBar: FC<TabBarProps> = ({
 }) => {
   return (
     <div
-      className={clsx(
-        "flex items-center bg-gray-100 border-b border-gray-200",
+      className={cn(
+        "flex items-center bg-surface-secondary border-b border-border-default",
         "min-h-[36px] overflow-x-auto",
         className
       )}
@@ -42,10 +42,10 @@ export const TabBar: FC<TabBarProps> = ({
         <button
           type="button"
           onClick={onNewTab}
-          className={clsx(
+          className={cn(
             "flex items-center justify-center w-8 h-8 ml-1",
-            "text-gray-500 hover:text-gray-700 hover:bg-gray-200",
-            "rounded transition-colors"
+            "text-text-muted hover:text-text-primary hover:bg-surface-hover",
+            "rounded transition-colors duration-150"
           )}
           aria-label="New tab"
         >

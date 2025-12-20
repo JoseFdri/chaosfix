@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { clsx } from "clsx";
+import { cn } from "../../lib/utils";
 
 export interface Tab {
   id: string;
@@ -18,13 +18,13 @@ export interface TabItemProps {
 export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose }) => {
   return (
     <div
-      className={clsx(
+      className={cn(
         "group flex items-center gap-1.5 px-3 py-1.5",
-        "border-r border-gray-200 cursor-pointer",
+        "border-r border-border-default cursor-pointer",
         "transition-colors duration-150",
         {
-          "bg-white border-b-2 border-b-blue-500": isActive,
-          "bg-gray-100 hover:bg-gray-200": !isActive,
+          "bg-surface-primary border-b-2 border-b-accent-primary": isActive,
+          "bg-surface-secondary hover:bg-surface-hover": !isActive,
         }
       )}
       onClick={onSelect}
@@ -33,9 +33,9 @@ export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose }) 
     >
       {tab.icon && <span className="w-4 h-4 flex-shrink-0">{tab.icon}</span>}
       <span
-        className={clsx("text-sm truncate max-w-[120px]", {
-          "text-gray-900 font-medium": isActive,
-          "text-gray-600": !isActive,
+        className={cn("text-sm truncate max-w-[120px]", {
+          "text-text-primary font-medium": isActive,
+          "text-text-secondary": !isActive,
         })}
       >
         {tab.label}
@@ -47,9 +47,9 @@ export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose }) 
             e.stopPropagation();
             onClose();
           }}
-          className={clsx(
+          className={cn(
             "w-4 h-4 flex items-center justify-center rounded",
-            "text-gray-400 hover:text-gray-700 hover:bg-gray-300",
+            "text-text-muted hover:text-text-primary hover:bg-surface-hover",
             "opacity-0 group-hover:opacity-100 transition-opacity"
           )}
           aria-label={`Close ${tab.label}`}

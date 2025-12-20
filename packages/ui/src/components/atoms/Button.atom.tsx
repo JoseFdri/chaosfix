@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { clsx } from "clsx";
+import { cn } from "../../lib/utils";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "danger";
@@ -12,20 +12,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={clsx(
-          "inline-flex items-center justify-center font-medium transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-offset-2",
+        className={cn(
+          "inline-flex items-center justify-center font-medium transition-colors duration-150",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-focus focus-visible:ring-offset-2",
           "disabled:opacity-50 disabled:pointer-events-none",
           {
             // Variants
-            "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500":
-              variant === "primary",
-            "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500":
-              variant === "secondary",
-            "bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500":
-              variant === "ghost",
-            "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500":
-              variant === "danger",
+            "bg-accent-primary text-text-inverse hover:bg-blue-600": variant === "primary",
+            "bg-surface-secondary text-text-primary hover:bg-surface-hover": variant === "secondary",
+            "bg-transparent text-text-secondary hover:bg-surface-secondary": variant === "ghost",
+            "bg-accent-error text-text-inverse hover:bg-red-600": variant === "danger",
             // Sizes
             "text-sm px-3 py-1.5 rounded": size === "sm",
             "text-sm px-4 py-2 rounded-md": size === "md",

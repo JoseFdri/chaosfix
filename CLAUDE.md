@@ -265,3 +265,4 @@ For coding or code review use the react-guidelines and typescript-guidelines ski
 ```
 
 7. **Load Context:** When starting any task, read `agents-files/main/learning.md` to load additional context and lessons learned.
+8. Plans do not include code snippets unless explicitly requested.
