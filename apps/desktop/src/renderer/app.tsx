@@ -29,6 +29,7 @@ export const App: FC = () => {
     searchQuery,
     setActiveWorkspace,
     setSearchQuery,
+    addRepository,
   } = useAppStore();
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
@@ -43,9 +44,30 @@ export const App: FC = () => {
     repo.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddRepository = () => {
-    // TODO: Implement add repository dialog
-    console.log("Add repository clicked");
+  const handleAddRepository = async () => {
+    try {
+      const result = await window.dialog.selectDirectory();
+      if (!result) {
+        return;
+      }
+
+      // Check if repository already exists
+      const existingRepo = repositories.find((r) => r.path === result.path);
+      if (existingRepo) {
+        return;
+      }
+
+      addRepository({
+        id: crypto.randomUUID(),
+        name: result.name,
+        path: result.path,
+        defaultBranch: "main",
+        workspaces: [],
+        createdAt: new Date(),
+      });
+    } catch (error) {
+      console.error("Failed to add repository:", error);
+    }
   };
 
   const handleDisplaySettings = () => {
@@ -70,7 +92,7 @@ export const App: FC = () => {
         width={250}
         collapsed={sidebarCollapsed}
         header={
-          <div className="p-3">
+          <div className="p-3 pt-10">
             <SearchInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

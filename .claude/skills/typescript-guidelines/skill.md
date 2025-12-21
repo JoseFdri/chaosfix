@@ -148,11 +148,13 @@ description: Coding guidelines and best practices for TypeScript projects.
 - Define proper interfaces for all data structures
 - Widget data should have explicit types, not unknown then cast
 
-### Duplicate Type Definitions
+### Duplicate Definitions (Types and Constants)
 
-- Types duplicated across features create maintenance burden
-- Consolidate to shared types or @spottoai/types-package
-- Comment in /types/recommendations.ts notes duplicate types issue
+- Types and constants duplicated across files or packages create maintenance burden
+- Before adding a new constant or type, check if it already exists or should be shared
+- Consolidate shared definitions to a shared package (e.g., `@chaosfix/core`)
+- Import from the shared package rather than redefining locally
+- If a value is used in more than one file, it belongs in a shared location
 
 ### Missing Loading States
 
@@ -174,3 +176,14 @@ description: Coding guidelines and best practices for TypeScript projects.
 
 ## Imports guidelines
 - When importing types re-use the existing import statement and use the keyword "type", example: import { TERMINAL_IPC_CHANNELS, type PTYCreateOptions } from "@chaosfix/terminal-bridge";
+
+## Code Order
+
+- Order code logically within each file:
+  1. Imports (external packages first, then internal)
+  2. Constants (UPPER_SNAKE_CASE)
+  3. Types and interfaces
+  4. Utility/helper functions
+  5. Main component, class, or exported function
+- Never define constants or types in the middle of a file between functions
+- Group related definitions together

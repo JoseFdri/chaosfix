@@ -1,7 +1,8 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import * as path from "path";
 import { PTYManager } from "@chaosfix/terminal-bridge";
 import { TERMINAL_IPC_CHANNELS, type PTYCreateOptions } from "@chaosfix/terminal-bridge";
+import { DIALOG_IPC_CHANNELS } from "@chaosfix/core";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -74,9 +75,33 @@ function setupTerminalIPC(): void {
   });
 }
 
+// Dialog IPC handlers
+function setupDialogIPC(): void {
+  ipcMain.handle(DIALOG_IPC_CHANNELS.SELECT_DIRECTORY, async () => {
+    if (!mainWindow) {
+      return null;
+    }
+
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ["openDirectory"],
+      title: "Select Repository Directory",
+    });
+
+    const selectedPath = result.filePaths[0];
+    if (result.canceled || !selectedPath) {
+      return null;
+    }
+
+    const name = path.basename(selectedPath);
+
+    return { path: selectedPath, name };
+  });
+}
+
 app.whenReady().then(() => {
-  setupTerminalIPC();
   createWindow();
+  setupTerminalIPC();
+  setupDialogIPC();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
