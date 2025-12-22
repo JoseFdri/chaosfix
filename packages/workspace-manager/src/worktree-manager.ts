@@ -2,8 +2,14 @@ import simpleGit, { SimpleGit } from "simple-git";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { ok, err, createWorkspaceBranchName } from "@chaosfix/core";
-import type { GitResult, WorktreeInfo, WorktreeCreateOptions, WorktreeRemoveOptions } from "./types";
+import type {
+  GitResult,
+  WorktreeInfo,
+  WorktreeCreateOptions,
+  WorktreeRemoveOptions,
+} from "./types";
 import { GitError } from "./types";
+import { parseWorktreeOutput } from "./worktree-parser";
 
 const WORKTREES_DIR = ".chaosfix-worktrees";
 
@@ -102,37 +108,7 @@ export class WorktreeManager {
   async list(): Promise<GitResult<WorktreeInfo[]>> {
     try {
       const result = await this.git.raw(["worktree", "list", "--porcelain"]);
-      const worktrees: WorktreeInfo[] = [];
-
-      const blocks = result.split("\n\n").filter(Boolean);
-      for (const block of blocks) {
-        const lines = block.split("\n");
-        const worktree: WorktreeInfo = {
-          path: "",
-          branch: "",
-          commit: "",
-          isMain: false,
-          isBare: false,
-        };
-
-        for (const line of lines) {
-          if (line.startsWith("worktree ")) {
-            worktree.path = line.substring(9);
-            worktree.isMain = worktree.path === this.repoPath;
-          } else if (line.startsWith("HEAD ")) {
-            worktree.commit = line.substring(5);
-          } else if (line.startsWith("branch ")) {
-            worktree.branch = line.substring(7).replace("refs/heads/", "");
-          } else if (line === "bare") {
-            worktree.isBare = true;
-          }
-        }
-
-        if (worktree.path) {
-          worktrees.push(worktree);
-        }
-      }
-
+      const worktrees = parseWorktreeOutput(result, this.repoPath);
       return ok(worktrees);
     } catch (error) {
       return err(new GitError(`Failed to list worktrees: ${error}`));

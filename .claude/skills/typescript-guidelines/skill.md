@@ -67,6 +67,20 @@ description: Coding guidelines and best practices for TypeScript projects.
 - Use named exports for clarity, avoid use of default exports
 - Group related functionality together
 - Use barrel exports (`index.ts`) appropriately
+- **Separate types from implementation**: Files named `types.ts` or containing primarily type definitions should ONLY contain:
+  - Interfaces
+  - Type aliases
+  - Enums
+  - Classes that are purely for typing (e.g., custom Error classes)
+  - Never put functions, constants, or runtime logic in type files
+  - Create separate utility files (e.g., `utils.ts`, `helpers.ts`, `*-parser.ts`) for functions
+- **Type file cohesion**: Before adding new types to an existing type file:
+  - Analyze if the new types are semantically related to the existing types in that file
+  - Related types share a common domain, feature, or purpose (e.g., all Git-related types, all Terminal types)
+  - If the new types represent a different domain or concern, create a new type file with a descriptive name
+  - Example: Adding `WorktreeInfo` to a file containing `GitBranch` and `GitStatus` is appropriate (all Git-related)
+  - Example: Adding `TerminalOptions` to that same file is NOT appropriate - create `terminal-types.ts` instead
+  - Use descriptive file names that indicate the type domain: `git-types.ts`, `terminal-types.ts`, `session-types.ts`
 
 ### Naming Conventions
 
@@ -174,7 +188,15 @@ description: Coding guidelines and best practices for TypeScript projects.
 - Split into smaller, focused, single-responsibility hooks
 - Each hook should have one clear purpose
 
+### Functions in Type Files
+
+- Type files (`types.ts`) must NOT contain functions or runtime constants
+- Keep type definitions pure - only interfaces, type aliases, enums, and error classes
+- Move utility functions to dedicated files (`utils.ts`, `helpers.ts`, `*-parser.ts`)
+- This ensures clean separation between compile-time types and runtime code
+
 ## Imports guidelines
+
 - When importing types re-use the existing import statement and use the keyword "type", example: import { TERMINAL_IPC_CHANNELS, type PTYCreateOptions } from "@chaosfix/terminal-bridge";
 
 ## Code Order
