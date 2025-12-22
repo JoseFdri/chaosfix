@@ -1,3 +1,3 @@
-export * from "./pty.type";
-export * from "./terminal.type";
-export * from "./ipc.type";
+export * from "./pty.types";
+export * from "./terminal.types";
+export * from "./ipc.types";

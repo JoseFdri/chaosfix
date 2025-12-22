@@ -32,7 +32,7 @@ src/
 
 | Category | Suffix         | Example                   |
 | -------- | -------------- | ------------------------- |
-| Types    | `*.type.ts`    | `pty.type.ts`             |
+| Types    | `*.types.ts`   | `pty.types.ts`            |
 | Services | `*.service.ts` | `pty-manager.service.ts`  |
 | Libs     | `*.lib.ts`     | `terminal-factory.lib.ts` |
 
@@ -40,8 +40,8 @@ src/
 
 ### Adding New Types
 
-1. Create or update a file in `src/types/` with the `.type.ts` suffix
-2. Group related types together (e.g., all PTY types in `pty.type.ts`)
+1. Create or update a file in `src/types/` with the `.types.ts` suffix
+2. Group related types together (e.g., all PTY types in `pty.types.ts`)
 3. Export from `src/types/index.ts`
 
 ### Adding New Services (Main Process)
