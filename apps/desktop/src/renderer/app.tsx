@@ -33,11 +33,12 @@ export const App: FC = () => {
   } = useAppStore();
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
-  const tabs = activeWorkspace?.terminals.map((t) => ({
-    id: t.id,
-    label: t.title || "Terminal",
-    closable: true,
-  })) || [];
+  const tabs =
+    activeWorkspace?.terminals.map((t) => ({
+      id: t.id,
+      label: t.title || "Terminal",
+      closable: true,
+    })) || [];
 
   // Filter repositories and workspaces based on search query
   const filteredRepositories = repositories.filter((repo) =>
@@ -72,17 +73,14 @@ export const App: FC = () => {
 
   const handleDisplaySettings = () => {
     // TODO: Implement display settings
-    console.log("Display settings clicked");
   };
 
   const handleSettings = () => {
     // TODO: Implement settings dialog
-    console.log("Settings clicked");
   };
 
-  const handleNewWorkspace = (repoId: string) => {
+  const handleNewWorkspace = (_repoId: string) => {
     // TODO: Implement new workspace creation
-    console.log("New workspace for repo:", repoId);
   };
 
   return (
@@ -166,9 +164,7 @@ export const App: FC = () => {
           {activeWorkspace ? (
             <TerminalView workspaceId={activeWorkspace.id} />
           ) : (
-            <WelcomeScreen
-              logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}
-            >
+            <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
               <ActionCardGroup>
                 <ActionCard
                   icon={<DocumentTextIcon className="w-8 h-8" />}
@@ -178,12 +174,16 @@ export const App: FC = () => {
                 <ActionCard
                   icon={<GlobeAltIcon className="w-8 h-8" />}
                   label="Clone from URL"
-                  onClick={() => console.log("Clone from URL")}
+                  onClick={() => {
+                    // TODO: Implement clone from URL
+                  }}
                 />
                 <ActionCard
                   icon={<DocumentDuplicateIcon className="w-8 h-8" />}
                   label="Quick start"
-                  onClick={() => console.log("Quick start")}
+                  onClick={() => {
+                    // TODO: Implement quick start
+                  }}
                 />
               </ActionCardGroup>
             </WelcomeScreen>
