@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Run lint-staged for formatting
+pnpm exec lint-staged
+
+# Run lint on affected packages using Turborepo's native --affected flag
+# This compares changes between main branch and HEAD
+pnpm exec turbo run lint --affected

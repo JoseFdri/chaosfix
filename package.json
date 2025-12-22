@@ -20,15 +20,28 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "clean": "turbo run clean && rm -rf node_modules",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/node": "^20.17.10",
     "eslint": "^9.17.0",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1"
+  },
+  "dependencies": {
+    "husky": "^9.1.7"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ]
   }
 }
