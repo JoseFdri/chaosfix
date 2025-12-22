@@ -1,8 +1,10 @@
 import simpleGit, { SimpleGit } from "simple-git";
 import { ok, err } from "@chaosfix/core";
-import type { GitResult, BranchInfo, RepositoryInfo, WorktreeInfo } from "./types";
-import { GitError } from "./types";
-import { parseWorktreeOutput } from "./worktree-parser";
+
+import type { GitResult, BranchInfo, RepositoryInfo } from "../types/git.types";
+import type { WorktreeInfo } from "../types/worktree.types";
+import { GitError } from "../types/git.types";
+import { parseWorktreeOutput } from "../libs/worktree-parser.lib";
 
 /**
  * GitService provides high-level git operations

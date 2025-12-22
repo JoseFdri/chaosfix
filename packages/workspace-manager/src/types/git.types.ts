@@ -1,12 +1,6 @@
 import type { Result } from "@chaosfix/core";
 
-export interface WorktreeInfo {
-  path: string;
-  branch: string;
-  commit: string;
-  isMain: boolean;
-  isBare: boolean;
-}
+import type { WorktreeInfo } from "./worktree.types";
 
 export interface BranchInfo {
   name: string;
@@ -24,22 +18,6 @@ export interface RepositoryInfo {
   worktrees: WorktreeInfo[];
 }
 
-export interface WorktreeCreateOptions {
-  repositoryPath: string;
-  worktreePath: string;
-  branchName: string;
-  baseBranch?: string;
-  createBranch?: boolean;
-}
-
-export interface WorktreeRemoveOptions {
-  repositoryPath: string;
-  worktreePath: string;
-  force?: boolean;
-}
-
-export type GitResult<T> = Result<T, GitError>;
-
 export class GitError extends Error {
   constructor(
     message: string,
@@ -50,3 +28,5 @@ export class GitError extends Error {
     this.name = "GitError";
   }
 }
+
+export type GitResult<T> = Result<T, GitError>;

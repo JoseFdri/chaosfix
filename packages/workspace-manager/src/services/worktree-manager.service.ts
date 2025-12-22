@@ -2,14 +2,15 @@ import simpleGit, { SimpleGit } from "simple-git";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { ok, err, createWorkspaceBranchName } from "@chaosfix/core";
+
+import type { GitResult } from "../types/git.types";
 import type {
-  GitResult,
   WorktreeInfo,
   WorktreeCreateOptions,
   WorktreeRemoveOptions,
-} from "./types";
-import { GitError } from "./types";
-import { parseWorktreeOutput } from "./worktree-parser";
+} from "../types/worktree.types";
+import { GitError } from "../types/git.types";
+import { parseWorktreeOutput } from "../libs/worktree-parser.lib";
 
 const WORKTREES_DIR = ".chaosfix-worktrees";
 

@@ -1,4 +1,4 @@
-import type { WorktreeInfo } from "./types";
+import type { WorktreeInfo } from "../types/worktree.types";
 
 // Worktree porcelain output prefixes
 const WORKTREE_PREFIX = "worktree ";
