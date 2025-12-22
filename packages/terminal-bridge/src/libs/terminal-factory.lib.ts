@@ -2,7 +2,7 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { SearchAddon } from "@xterm/addon-search";
 import { WebLinksAddon } from "@xterm/addon-web-links";
-import type { TerminalOptions, TerminalTheme } from "./types";
+import type { TerminalOptions, TerminalTheme, TerminalController } from "../types";
 
 const DEFAULT_THEME: TerminalTheme = {
   foreground: "#d4d4d4",
@@ -27,25 +27,6 @@ const DEFAULT_THEME: TerminalTheme = {
   brightCyan: "#29b8db",
   brightWhite: "#ffffff",
 };
-
-export interface TerminalController {
-  terminal: Terminal;
-  fitAddon: FitAddon;
-  searchAddon: SearchAddon;
-  write: (data: string) => void;
-  fit: () => void;
-  focus: () => void;
-  blur: () => void;
-  clear: () => void;
-  dispose: () => void;
-  onData: (callback: (data: string) => void) => void;
-  onResize: (callback: (cols: number, rows: number) => void) => void;
-  onTitleChange: (callback: (title: string) => void) => void;
-  search: (term: string) => boolean;
-  searchNext: () => boolean;
-  searchPrevious: () => boolean;
-  clearSearch: () => void;
-}
 
 /**
  * Create a terminal instance with all necessary addons

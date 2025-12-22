@@ -1,5 +1,5 @@
 import * as pty from "node-pty";
-import type { PTYCreateOptions, PTYInstance } from "./types";
+import type { PTYCreateOptions, PTYInstance } from "../types";
 
 interface ManagedPTY {
   instance: pty.IPty;
