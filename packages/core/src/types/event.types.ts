@@ -1,5 +1,3 @@
-// Event types for the central event bus
-
 export type EventType =
   // Workspace events
   | "workspace:created"
