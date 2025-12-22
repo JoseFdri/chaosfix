@@ -1,5 +1,5 @@
 import { forwardRef, type InputHTMLAttributes } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 import { MagnifyingGlassIcon, XMarkIcon } from "../../icons";
 
 export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {

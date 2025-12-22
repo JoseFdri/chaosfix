@@ -1,6 +1,6 @@
 import { forwardRef, type ReactNode } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 import { EllipsisHorizontalIcon } from "../../icons";
 import { IconButton } from "./IconButton.atom";
 
@@ -19,13 +19,7 @@ const MenuButtonRoot = forwardRef<HTMLButtonElement, MenuButtonProps>(
     return (
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <IconButton
-            ref={ref}
-            variant="ghost"
-            size="sm"
-            label={label}
-            className={className}
-          >
+          <IconButton ref={ref} variant="ghost" size="sm" label={label} className={className}>
             <EllipsisHorizontalIcon className="h-4 w-4" />
           </IconButton>
         </DropdownMenu.Trigger>

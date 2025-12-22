@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 import { TabItem, type Tab } from "../atoms/TabItem.atom";
 
 export interface TabBarProps {

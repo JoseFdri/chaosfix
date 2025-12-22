@@ -1,6 +1,6 @@
 import { forwardRef, type ReactNode, type ComponentPropsWithoutRef, type ElementRef } from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface StatItemProps extends ComponentPropsWithoutRef<"div"> {
   icon: ReactNode;

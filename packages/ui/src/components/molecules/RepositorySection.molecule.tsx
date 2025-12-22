@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface RepositorySectionProps {
   name: string;
@@ -14,21 +14,13 @@ export interface RepositorySectionProps {
  * @param children - Workspace items (typically SidebarItem components)
  * @param className - Additional CSS classes
  */
-export const RepositorySection: FC<RepositorySectionProps> = ({
-  name,
-  children,
-  className,
-}) => {
+export const RepositorySection: FC<RepositorySectionProps> = ({ name, children, className }) => {
   return (
     <div className={cn("flex flex-col", className)}>
       <h3 className="px-4 py-2 text-xs font-medium text-text-muted uppercase tracking-wide">
         {name}
       </h3>
-      {children && (
-        <div className="flex flex-col">
-          {children}
-        </div>
-      )}
+      {children && <div className="flex flex-col">{children}</div>}
     </div>
   );
 };

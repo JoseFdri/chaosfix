@@ -1,6 +1,6 @@
 import { forwardRef, type ReactNode, type ComponentPropsWithoutRef, type ElementRef } from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface ActionCardProps extends ComponentPropsWithoutRef<"button"> {
   icon: ReactNode;
@@ -31,9 +31,7 @@ export const ActionCard = forwardRef<ElementRef<"button">, ActionCardProps>(
         <div className="text-text-secondary" aria-hidden="true">
           {icon}
         </div>
-        <span className="text-text-primary font-medium text-base">
-          {label}
-        </span>
+        <span className="text-text-primary font-medium text-base">{label}</span>
       </Comp>
     );
   }

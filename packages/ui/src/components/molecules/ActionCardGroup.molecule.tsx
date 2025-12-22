@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface ActionCardGroupProps {
   children: ReactNode;
@@ -13,10 +13,7 @@ export interface ActionCardGroupProps {
  * @param children - ActionCard components to display
  * @param className - Additional CSS classes
  */
-export const ActionCardGroup: FC<ActionCardGroupProps> = ({
-  children,
-  className,
-}) => {
+export const ActionCardGroup: FC<ActionCardGroupProps> = ({ children, className }) => {
   return (
     <div
       className={cn(

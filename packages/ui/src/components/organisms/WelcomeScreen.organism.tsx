@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface WelcomeScreenProps {
   logo: ReactNode;
@@ -8,12 +8,7 @@ export interface WelcomeScreenProps {
   className?: string;
 }
 
-export const WelcomeScreen: FC<WelcomeScreenProps> = ({
-  logo,
-  children,
-  stats,
-  className,
-}) => {
+export const WelcomeScreen: FC<WelcomeScreenProps> = ({ logo, children, stats, className }) => {
   return (
     <div
       className={cn(

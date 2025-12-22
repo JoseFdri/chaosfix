@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface SidebarSectionProps {
   title?: string;
@@ -7,11 +7,7 @@ export interface SidebarSectionProps {
   className?: string;
 }
 
-export const SidebarSection: FC<SidebarSectionProps> = ({
-  title,
-  children,
-  className,
-}) => {
+export const SidebarSection: FC<SidebarSectionProps> = ({ title, children, className }) => {
   return (
     <div className={cn("py-2", className)}>
       {title && (

@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "ghost" | "danger";
@@ -23,10 +23,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             // Variants
             "bg-surface-secondary text-text-secondary hover:bg-surface-hover":
               variant === "default",
-            "bg-transparent text-text-secondary hover:bg-surface-secondary":
-              variant === "ghost",
-            "bg-transparent text-accent-error hover:bg-red-50":
-              variant === "danger",
+            "bg-transparent text-text-secondary hover:bg-surface-secondary": variant === "ghost",
+            "bg-transparent text-accent-error hover:bg-red-50": variant === "danger",
             // Sizes
             "w-7 h-7 rounded": size === "sm",
             "w-9 h-9 rounded-md": size === "md",

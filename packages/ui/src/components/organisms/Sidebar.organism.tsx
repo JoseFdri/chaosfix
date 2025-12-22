@@ -1,6 +1,6 @@
 import { type FC, type ReactNode } from "react";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface SidebarProps {
   width?: number;
@@ -32,9 +32,7 @@ export const Sidebar: FC<SidebarProps> = ({
       {header && <div className="flex-shrink-0">{header}</div>}
 
       <ScrollArea.Root className="flex-1 overflow-hidden">
-        <ScrollArea.Viewport className="h-full w-full">
-          {children}
-        </ScrollArea.Viewport>
+        <ScrollArea.Viewport className="h-full w-full">{children}</ScrollArea.Viewport>
         <ScrollArea.Scrollbar
           className="flex select-none touch-none p-0.5 bg-transparent transition-colors duration-150 ease-out hover:bg-surface-hover data-[orientation=vertical]:w-2.5 data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:flex-col"
           orientation="vertical"

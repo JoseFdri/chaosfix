@@ -1,5 +1,5 @@
 // Custom hooks
-export { useEventListener } from "./use-event-listener";
-export { useResizeObserver } from "./use-resize-observer";
-export { useKeyboardShortcut } from "./use-keyboard-shortcut";
-export { useToast, type ToastOptions, type ToastItem } from "./useToast";
+export { useEventListener } from "./useEventListener.hook";
+export { useResizeObserver } from "./useResizeObserver.hook";
+export { useKeyboardShortcut } from "./useKeyboardShortcut.hook";
+export { useToast, type ToastOptions, type ToastItem } from "./useToast.hook";

@@ -1,5 +1,5 @@
 import { forwardRef, type ImgHTMLAttributes } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface LogoProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string;

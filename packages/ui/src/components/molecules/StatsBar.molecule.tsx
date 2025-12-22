@@ -1,6 +1,6 @@
 import { type FC, type ReactNode, Children } from "react";
 import * as Separator from "@radix-ui/react-separator";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 
 export interface StatsBarProps {
   children: ReactNode;
@@ -13,20 +13,11 @@ export interface StatsBarProps {
  * @param children - StatItem components to display
  * @param className - Additional CSS classes
  */
-export const StatsBar: FC<StatsBarProps> = ({
-  children,
-  className,
-}) => {
+export const StatsBar: FC<StatsBarProps> = ({ children, className }) => {
   const childArray = Children.toArray(children);
 
   return (
-    <div
-      className={cn(
-        "flex items-center justify-center gap-3",
-        "text-text-muted",
-        className
-      )}
-    >
+    <div className={cn("flex items-center justify-center gap-3", "text-text-muted", className)}>
       {childArray.map((child, index) => (
         <div key={index} className="flex items-center gap-3">
           {child}

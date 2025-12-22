@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import * as Separator from "@radix-ui/react-separator";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { cn } from "../../lib/utils";
+import { cn } from "../../libs/cn.lib";
 import { Button } from "../atoms/Button.atom";
 import { IconButton } from "../atoms/IconButton.atom";
 import { FolderPlusIcon, ComputerDesktopIcon, Cog6ToothIcon } from "../../icons";
@@ -30,17 +30,9 @@ export const SidebarFooter: FC<SidebarFooterProps> = ({
   return (
     <Tooltip.Provider delayDuration={300}>
       <div className={cn("flex flex-col", className)}>
-        <Separator.Root
-          className="h-px bg-border-default"
-          decorative
-        />
+        <Separator.Root className="h-px bg-border-default" decorative />
         <div className="flex items-center justify-between gap-2 p-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onAddRepository}
-            className="gap-2"
-          >
+          <Button variant="ghost" size="sm" onClick={onAddRepository} className="gap-2">
             <FolderPlusIcon className="w-4 h-4" />
             <span>Add repository</span>
           </Button>
@@ -70,12 +62,7 @@ export const SidebarFooter: FC<SidebarFooterProps> = ({
 
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
-                <IconButton
-                  variant="ghost"
-                  size="sm"
-                  label="Settings"
-                  onClick={onSettings}
-                >
+                <IconButton variant="ghost" size="sm" label="Settings" onClick={onSettings}>
                   <Cog6ToothIcon className="w-4 h-4" />
                 </IconButton>
               </Tooltip.Trigger>
