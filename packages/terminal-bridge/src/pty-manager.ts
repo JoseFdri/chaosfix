@@ -60,20 +60,20 @@ export class PTYManager {
     return {
       id,
       pid: ptyInstance.pid,
-      write: (data: string) => {
+      write: (data: string): void => {
         ptyInstance.write(data);
       },
-      resize: (cols: number, rows: number) => {
+      resize: (cols: number, rows: number): void => {
         ptyInstance.resize(cols, rows);
       },
-      kill: () => {
+      kill: (): void => {
         ptyInstance.kill();
         this.ptys.delete(id);
       },
-      onData: (callback: (data: string) => void) => {
+      onData: (callback: (data: string) => void): void => {
         managedPty.dataListeners.push(callback);
       },
-      onExit: (callback: (exitCode: number, signal?: number) => void) => {
+      onExit: (callback: (exitCode: number, signal?: number) => void): void => {
         managedPty.exitListeners.push(callback);
       },
     };

@@ -45,7 +45,7 @@ export const App: FC = () => {
     repo.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddRepository = async () => {
+  const handleAddRepository = async (): Promise<void> => {
     try {
       const result = await window.dialog.selectDirectory();
       if (!result) {
@@ -71,15 +71,15 @@ export const App: FC = () => {
     }
   };
 
-  const handleDisplaySettings = () => {
+  const handleDisplaySettings = (): void => {
     // TODO: Implement display settings
   };
 
-  const handleSettings = () => {
+  const handleSettings = (): void => {
     // TODO: Implement settings dialog
   };
 
-  const handleNewWorkspace = (_repoId: string) => {
+  const handleNewWorkspace = (_repoId: string): void => {
     // TODO: Implement new workspace creation
   };
 

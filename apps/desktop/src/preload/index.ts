@@ -28,22 +28,30 @@ const terminalAPI = {
     return ipcRenderer.invoke(TERMINAL_IPC_CHANNELS.DESTROY, { id });
   },
 
-  onData: (callback: (data: { id: string; data: string }) => void): () => void => {
-    const handler = (_event: Electron.IpcRendererEvent, data: { id: string; data: string }) => {
+  onData: (callback: (data: { id: string; data: string }) => void): (() => void) => {
+    const handler = (
+      _event: Electron.IpcRendererEvent,
+      data: { id: string; data: string }
+    ): void => {
       callback(data);
     };
     ipcRenderer.on(TERMINAL_IPC_CHANNELS.DATA, handler);
-    return () => {
+    return (): void => {
       ipcRenderer.removeListener(TERMINAL_IPC_CHANNELS.DATA, handler);
     };
   },
 
-  onExit: (callback: (data: { id: string; exitCode: number; signal?: number }) => void): () => void => {
-    const handler = (_event: Electron.IpcRendererEvent, data: { id: string; exitCode: number; signal?: number }) => {
+  onExit: (
+    callback: (data: { id: string; exitCode: number; signal?: number }) => void
+  ): (() => void) => {
+    const handler = (
+      _event: Electron.IpcRendererEvent,
+      data: { id: string; exitCode: number; signal?: number }
+    ): void => {
       callback(data);
     };
     ipcRenderer.on(TERMINAL_IPC_CHANNELS.EXIT, handler);
-    return () => {
+    return (): void => {
       ipcRenderer.removeListener(TERMINAL_IPC_CHANNELS.EXIT, handler);
     };
   },

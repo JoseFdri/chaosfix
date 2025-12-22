@@ -60,7 +60,7 @@ export const TerminalView: FC<TerminalViewProps> = ({ workspaceId }) => {
     terminal.focus();
 
     // Return cleanup function
-    return () => {
+    return (): void => {
       unsubscribeData();
       unsubscribeExit();
       if (ptyIdRef.current) {
@@ -78,7 +78,7 @@ export const TerminalView: FC<TerminalViewProps> = ({ workspaceId }) => {
       cleanup = cleanupFn;
     });
 
-    return () => {
+    return (): void => {
       cleanup?.();
       terminalRef.current = null;
       ptyIdRef.current = null;
@@ -101,10 +101,5 @@ export const TerminalView: FC<TerminalViewProps> = ({ workspaceId }) => {
     [resizeRef]
   );
 
-  return (
-    <div
-      ref={setRefs}
-      className="terminal-container w-full h-full"
-    />
-  );
+  return <div ref={setRefs} className="terminal-container w-full h-full" />;
 };

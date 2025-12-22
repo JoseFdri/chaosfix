@@ -43,47 +43,44 @@ export const useAppStore = create<AppState>((set) => ({
   searchQuery: "",
 
   // Actions
-  setSearchQuery: (query) => set({ searchQuery: query }),
-  addRepository: (repo) =>
+  setSearchQuery: (query): void => set({ searchQuery: query }),
+  addRepository: (repo): void =>
     set((state) => ({
       repositories: [...state.repositories, repo],
     })),
 
-  removeRepository: (repoId) =>
+  removeRepository: (repoId): void =>
     set((state) => ({
       repositories: state.repositories.filter((r) => r.id !== repoId),
       workspaces: state.workspaces.filter((w) => w.repositoryId !== repoId),
     })),
 
-  addWorkspace: (workspace) =>
+  addWorkspace: (workspace): void =>
     set((state) => ({
       workspaces: [...state.workspaces, workspace],
       activeWorkspaceId: workspace.id,
     })),
 
-  removeWorkspace: (workspaceId) =>
+  removeWorkspace: (workspaceId): void =>
     set((state) => {
       const newWorkspaces = state.workspaces.filter((w) => w.id !== workspaceId);
       return {
         workspaces: newWorkspaces,
         activeWorkspaceId:
           state.activeWorkspaceId === workspaceId
-            ? newWorkspaces[0]?.id ?? null
+            ? (newWorkspaces[0]?.id ?? null)
             : state.activeWorkspaceId,
       };
     }),
 
-  setActiveWorkspace: (workspaceId) =>
-    set({ activeWorkspaceId: workspaceId }),
+  setActiveWorkspace: (workspaceId): void => set({ activeWorkspaceId: workspaceId }),
 
-  updateWorkspaceStatus: (workspaceId, status) =>
+  updateWorkspaceStatus: (workspaceId, status): void =>
     set((state) => ({
-      workspaces: state.workspaces.map((w) =>
-        w.id === workspaceId ? { ...w, status } : w
-      ),
+      workspaces: state.workspaces.map((w) => (w.id === workspaceId ? { ...w, status } : w)),
     })),
 
-  addTerminal: (workspaceId, terminal) =>
+  addTerminal: (workspaceId, terminal): void =>
     set((state) => ({
       workspaces: state.workspaces.map((w) =>
         w.id === workspaceId
@@ -96,7 +93,7 @@ export const useAppStore = create<AppState>((set) => ({
       ),
     })),
 
-  removeTerminal: (workspaceId, terminalId) =>
+  removeTerminal: (workspaceId, terminalId): void =>
     set((state) => ({
       workspaces: state.workspaces.map((w) => {
         if (w.id !== workspaceId) {
@@ -107,23 +104,19 @@ export const useAppStore = create<AppState>((set) => ({
           ...w,
           terminals: newTerminals,
           activeTerminalId:
-            w.activeTerminalId === terminalId
-              ? newTerminals[0]?.id ?? null
-              : w.activeTerminalId,
+            w.activeTerminalId === terminalId ? (newTerminals[0]?.id ?? null) : w.activeTerminalId,
         };
       }),
     })),
 
-  setActiveTerminal: (workspaceId, terminalId) =>
+  setActiveTerminal: (workspaceId, terminalId): void =>
     set((state) => ({
       workspaces: state.workspaces.map((w) =>
         w.id === workspaceId ? { ...w, activeTerminalId: terminalId } : w
       ),
     })),
 
-  toggleSidebar: () =>
-    set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+  toggleSidebar: (): void => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
 
-  setSidebarWidth: (width) =>
-    set({ sidebarWidth: width }),
+  setSidebarWidth: (width): void => set({ sidebarWidth: width }),
 }));

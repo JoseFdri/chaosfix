@@ -88,6 +88,10 @@ export interface AppReadyEvent extends BaseEvent {
   type: "app:ready";
 }
 
+export interface AppBeforeQuitEvent extends BaseEvent {
+  type: "app:beforeQuit";
+}
+
 export interface AppErrorEvent extends BaseEvent {
   type: "app:error";
   error: string;
@@ -107,5 +111,5 @@ export type AppEvent =
   | TerminalResizedEvent
   | TerminalTitleChangedEvent
   | AppReadyEvent
+  | AppBeforeQuitEvent
   | AppErrorEvent;
-

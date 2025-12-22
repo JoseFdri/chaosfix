@@ -7,7 +7,7 @@ interface Size {
 
 export function useResizeObserver<T extends HTMLElement = HTMLElement>(): [
   (node: T | null) => void,
-  Size | null
+  Size | null,
 ] {
   const [size, setSize] = useState<Size | null>(null);
   const observerRef = useRef<ResizeObserver | null>(null);
@@ -40,7 +40,7 @@ export function useResizeObserver<T extends HTMLElement = HTMLElement>(): [
   }, []);
 
   useEffect(() => {
-    return () => {
+    return (): void => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }

@@ -21,13 +21,13 @@ export function useEventListener<K extends keyof EventMap>(
       return;
     }
 
-    const eventListener = (event: Event) => {
+    const eventListener = (event: Event): void => {
       savedHandler.current(event as EventMap[K]);
     };
 
     targetElement.addEventListener(eventName, eventListener, options);
 
-    return () => {
+    return (): void => {
       targetElement.removeEventListener(eventName, eventListener, options);
     };
   }, [eventName, element, options]);

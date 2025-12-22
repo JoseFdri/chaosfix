@@ -105,43 +105,43 @@ export function createTerminal(
     terminal,
     fitAddon,
     searchAddon,
-    write: (data: string) => {
+    write: (data: string): void => {
       terminal.write(data);
     },
-    fit: () => {
+    fit: (): void => {
       fitAddon.fit();
     },
-    focus: () => {
+    focus: (): void => {
       terminal.focus();
     },
-    blur: () => {
+    blur: (): void => {
       terminal.blur();
     },
-    clear: () => {
+    clear: (): void => {
       terminal.clear();
     },
-    dispose: () => {
+    dispose: (): void => {
       terminal.dispose();
     },
-    onData: (callback: (data: string) => void) => {
+    onData: (callback: (data: string) => void): void => {
       dataListeners.push(callback);
     },
-    onResize: (callback: (cols: number, rows: number) => void) => {
+    onResize: (callback: (cols: number, rows: number) => void): void => {
       resizeListeners.push(callback);
     },
-    onTitleChange: (callback: (title: string) => void) => {
+    onTitleChange: (callback: (title: string) => void): void => {
       titleListeners.push(callback);
     },
-    search: (term: string) => {
+    search: (term: string): boolean => {
       return searchAddon.findNext(term);
     },
-    searchNext: () => {
+    searchNext: (): boolean => {
       return searchAddon.findNext("");
     },
-    searchPrevious: () => {
+    searchPrevious: (): boolean => {
       return searchAddon.findPrevious("");
     },
-    clearSearch: () => {
+    clearSearch: (): void => {
       searchAddon.clearDecorations();
     },
   };

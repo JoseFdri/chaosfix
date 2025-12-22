@@ -85,7 +85,7 @@ export function useKeyboardShortcut(
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
+    return (): void => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);

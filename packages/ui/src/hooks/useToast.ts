@@ -16,7 +16,14 @@ export interface ToastItem extends ToastOptions {
   open: boolean;
 }
 
-export function useToast() {
+interface UseToastReturn {
+  toasts: ToastItem[];
+  toast: (options: ToastOptions) => string;
+  dismiss: (id: string) => void;
+  remove: (id: string) => void;
+}
+
+export function useToast(): UseToastReturn {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const toast = useCallback((options: ToastOptions) => {
@@ -31,9 +38,7 @@ export function useToast() {
 
     if (options.duration !== Infinity) {
       setTimeout(() => {
-        setToasts((prev) =>
-          prev.map((t) => (t.id === id ? { ...t, open: false } : t))
-        );
+        setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, open: false } : t)));
       }, options.duration || 5000);
     }
 
@@ -41,9 +46,7 @@ export function useToast() {
   }, []);
 
   const dismiss = useCallback((id: string) => {
-    setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, open: false } : t))
-    );
+    setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, open: false } : t)));
   }, []);
 
   const remove = useCallback((id: string) => {

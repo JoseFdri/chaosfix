@@ -34,7 +34,7 @@ export const TabBar: FC<TabBarProps> = ({
             tab={tab}
             isActive={tab.id === activeTabId}
             onSelect={() => onTabSelect(tab.id)}
-            onClose={onTabClose ? () => onTabClose(tab.id) : undefined}
+            onClose={onTabClose ? (): void => onTabClose(tab.id) : undefined}
           />
         ))}
       </div>
@@ -49,18 +49,8 @@ export const TabBar: FC<TabBarProps> = ({
           )}
           aria-label="New tab"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
         </button>
       )}
