@@ -1,4 +1,5 @@
-import type { AppPreferences, ProjectConfig } from "./schemas";
+import type { AppPreferences } from "../types/preferences.types";
+import type { ProjectConfig } from "../types/project.types";
 
 export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
   version: "1.0",
@@ -34,8 +35,3 @@ export const DEFAULT_APP_PREFERENCES: AppPreferences = {
     workspaceReady: true,
   },
 };
-
-export const CONFIG_FILE_NAME = "chaosfix.json";
-export const APP_DATA_DIR = "ChaosFix";
-export const STATE_FILE_NAME = "state.json";
-export const PREFERENCES_FILE_NAME = "preferences.json";
