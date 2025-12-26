@@ -16,7 +16,7 @@ import {
   DocumentDuplicateIcon,
   PlusIcon,
 } from "@chaosfix/ui";
-import { useAppStore } from "./stores/app-store";
+import { useApp } from "./contexts/app-context";
 import { TerminalView } from "./components/terminal-view";
 import logoSrc from "./assets/logo.svg";
 
@@ -30,7 +30,7 @@ export const App: FC = () => {
     setActiveWorkspace,
     setSearchQuery,
     addRepository,
-  } = useAppStore();
+  } = useApp();
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
   const tabs =
