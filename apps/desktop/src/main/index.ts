@@ -1,122 +1,29 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
-import * as path from "path";
+import { app, type BrowserWindow } from "electron";
 import { PTYManager } from "@chaosfix/terminal-bridge";
-import { TERMINAL_IPC_CHANNELS, type PTYCreateOptions } from "@chaosfix/terminal-bridge";
-import { DIALOG_IPC_CHANNELS } from "@chaosfix/core";
-
-const isDev = process.env.NODE_ENV === "development";
+import { createMainWindow } from "./window";
+import { setupAllIPC } from "./ipc";
+import { setupAppLifecycle } from "./app-lifecycle";
 
 let mainWindow: BrowserWindow | null = null;
 const ptyManager = new PTYManager();
 
 function createWindow(): void {
-  mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 800,
-    minHeight: 600,
-    titleBarStyle: "hiddenInset",
-    trafficLightPosition: { x: 15, y: 15 },
-    webPreferences: {
-      preload: path.join(__dirname, "../preload/index.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: false,
-    },
-  });
-
-  if (isDev) {
-    mainWindow.loadURL("http://localhost:5173");
-    mainWindow.webContents.openDevTools();
-  } else {
-    mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
-  }
-
+  mainWindow = createMainWindow();
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
 
-// Terminal IPC handlers
-function setupTerminalIPC(): void {
-  ipcMain.handle(TERMINAL_IPC_CHANNELS.CREATE, (_event, options: PTYCreateOptions) => {
-    const pty = ptyManager.create(options);
-
-    // Forward terminal data to renderer
-    pty.onData((data) => {
-      mainWindow?.webContents.send(TERMINAL_IPC_CHANNELS.DATA, {
-        id: pty.id,
-        data,
-      });
-    });
-
-    // Forward exit events to renderer
-    pty.onExit((exitCode, signal) => {
-      mainWindow?.webContents.send(TERMINAL_IPC_CHANNELS.EXIT, {
-        id: pty.id,
-        exitCode,
-        signal,
-      });
-    });
-
-    return { id: pty.id, pid: pty.pid };
-  });
-
-  ipcMain.handle(TERMINAL_IPC_CHANNELS.WRITE, (_event, { id, data }: { id: string; data: string }) => {
-    return ptyManager.write(id, data);
-  });
-
-  ipcMain.handle(TERMINAL_IPC_CHANNELS.RESIZE, (_event, { id, cols, rows }: { id: string; cols: number; rows: number }) => {
-    return ptyManager.resize(id, cols, rows);
-  });
-
-  ipcMain.handle(TERMINAL_IPC_CHANNELS.DESTROY, (_event, { id }: { id: string }) => {
-    return ptyManager.destroy(id);
-  });
-}
-
-// Dialog IPC handlers
-function setupDialogIPC(): void {
-  ipcMain.handle(DIALOG_IPC_CHANNELS.SELECT_DIRECTORY, async () => {
-    if (!mainWindow) {
-      return null;
-    }
-
-    const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ["openDirectory"],
-      title: "Select Repository Directory",
-    });
-
-    const selectedPath = result.filePaths[0];
-    if (result.canceled || !selectedPath) {
-      return null;
-    }
-
-    const name = path.basename(selectedPath);
-
-    return { path: selectedPath, name };
-  });
-}
-
 app.whenReady().then(() => {
   createWindow();
-  setupTerminalIPC();
-  setupDialogIPC();
 
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+  setupAllIPC({
+    getMainWindow: () => mainWindow,
+    ptyManager,
   });
-});
 
-app.on("window-all-closed", () => {
-  ptyManager.destroyAll();
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
-
-app.on("before-quit", () => {
-  ptyManager.destroyAll();
+  setupAppLifecycle({
+    ptyManager,
+    createWindow,
+  });
 });
