@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastProvider } from "@chaosfix/ui";
 import { AppProvider } from "./contexts/app-context";
+import { ErrorBoundary } from "./components/error-boundary";
 import { App } from "./app";
 import "./styles/index.css";
 
@@ -12,10 +13,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <AppProvider>
-      <ToastProvider>
-        <App />
-      </ToastProvider>
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </AppProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

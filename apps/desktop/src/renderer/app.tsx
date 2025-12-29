@@ -17,7 +17,9 @@ import {
   PlusIcon,
 } from "@chaosfix/ui";
 import { useApp } from "./contexts/app-context";
+import { useFilteredRepositories, useRepositoryActions } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
+import { SIDEBAR_WIDTH, DEFAULT_TERMINAL_LABEL } from "../constants";
 import logoSrc from "./assets/logo.svg";
 
 export const App: FC = () => {
@@ -32,44 +34,16 @@ export const App: FC = () => {
     addRepository,
   } = useApp();
 
+  const filteredRepositories = useFilteredRepositories({ repositories, searchQuery });
+  const { handleAddRepository } = useRepositoryActions({ repositories, addRepository });
+
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
   const tabs =
     activeWorkspace?.terminals.map((t) => ({
       id: t.id,
-      label: t.title || "Terminal",
+      label: t.title || DEFAULT_TERMINAL_LABEL,
       closable: true,
     })) || [];
-
-  // Filter repositories and workspaces based on search query
-  const filteredRepositories = repositories.filter((repo) =>
-    repo.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleAddRepository = async (): Promise<void> => {
-    try {
-      const result = await window.dialog.selectDirectory();
-      if (!result) {
-        return;
-      }
-
-      // Check if repository already exists
-      const existingRepo = repositories.find((r) => r.path === result.path);
-      if (existingRepo) {
-        return;
-      }
-
-      addRepository({
-        id: crypto.randomUUID(),
-        name: result.name,
-        path: result.path,
-        defaultBranch: "main",
-        workspaces: [],
-        createdAt: new Date(),
-      });
-    } catch (error) {
-      console.error("Failed to add repository:", error);
-    }
-  };
 
   const handleDisplaySettings = (): void => {
     // TODO: Implement display settings
@@ -87,7 +61,7 @@ export const App: FC = () => {
     <div className="flex h-screen bg-gray-900 text-gray-100">
       {/* Sidebar */}
       <Sidebar
-        width={250}
+        width={SIDEBAR_WIDTH}
         collapsed={sidebarCollapsed}
         header={
           <div className="p-3 pt-10">

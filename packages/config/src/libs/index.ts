@@ -4,4 +4,5 @@ export {
   APP_DATA_DIR,
   STATE_FILE_NAME,
   PREFERENCES_FILE_NAME,
+  DEFAULT_BRANCH,
 } from "./constants.lib";

@@ -60,6 +60,7 @@ chaosfix/
 ## Package Guide
 
 ### `@chaosfix/core` - Shared Types & Utilities
+
 **Location**: `packages/core/`
 
 **Purpose**: Central types, event definitions, and utility functions shared across all packages.
@@ -70,11 +71,13 @@ chaosfix/
 ---
 
 ### `@chaosfix/config` - Configuration Schemas
+
 **Location**: `packages/config/`
 
 **Purpose**: Zod schemas for validating configuration files and settings.
 
 **Key exports**:
+
 - `projectConfigSchema`, `appPreferencesSchema` - Core Zod schemas
 - `workspaceStateSchema`, `appStateSchema` - Persistence schemas
 - `ProjectConfig`, `AppPreferences`, `WorkspaceState`, `AppState` - Inferred types
@@ -86,15 +89,18 @@ chaosfix/
 ---
 
 ### `@chaosfix/terminal-bridge` - Terminal Integration
+
 **Location**: `packages/terminal-bridge/`
 
 **Purpose**: Bridges xterm.js (renderer) with node-pty (main process) for terminal functionality.
 
 **Key exports**:
+
 - Main process: `PTYManager`, `ptyManager` - PTY lifecycle management
 - Renderer: `createTerminal()`, `TerminalController` - xterm.js wrapper
 
 **Architecture**:
+
 ```
 Renderer Process          Main Process
 ┌─────────────┐          ┌─────────────┐
@@ -109,11 +115,13 @@ Renderer Process          Main Process
 ---
 
 ### `@chaosfix/ui` - React Components
+
 **Location**: `packages/ui/`
 
 **Purpose**: Shared React components for the desktop application.
 
 **Key exports**:
+
 - `Sidebar`, `SidebarSection`, `SidebarItem` - Navigation components
 - `TabBar` - Tab management
 - `ActivityIndicator` - Status display
@@ -126,11 +134,13 @@ Renderer Process          Main Process
 ---
 
 ### `@chaosfix/workspace-manager` - Git Worktree Orchestration
+
 **Location**: `packages/workspace-manager/`
 
 **Purpose**: Manages git worktrees for isolated workspace environments.
 
 **Key exports**:
+
 - `WorktreeManager` - Create, list, remove worktrees
 - `GitService` - Git operations (branch, status, diff)
 
@@ -140,11 +150,13 @@ Renderer Process          Main Process
 ---
 
 ### `@chaosfix/desktop` - Electron Application
+
 **Location**: `apps/desktop/`
 
 **Purpose**: The main Electron application that ties everything together.
 
 **Structure**:
+
 ```
 src/
 ├── main/           # Electron main process
@@ -158,6 +170,7 @@ src/
 ```
 
 **Build outputs**:
+
 - `dist/main/` - Main process (tsup → CJS)
 - `dist/preload/` - Preload scripts (tsup → CJS)
 - `dist/renderer/` - React app (Vite → ESM)
@@ -174,6 +187,7 @@ src/
 3. **Event-driven architecture** - Typed event definitions for cross-component communication
 4. **Type-safe IPC** - Typed communication between main and renderer processes
 5. **Package boundaries** - Each package has a single responsibility
+6. **No long constant files** - Keep files focused and manageable, max ~300 lines, split as needed with suffixes for categorization (e.g., `.events.ts`, `.types.ts`)
 
 ## Tech Stack
 
@@ -199,8 +213,8 @@ pnpm test             # Run tests
 
 See `docs/chaosfix-design-spec.md` for the full design specification.
 
-
 ## Skill usage
+
 For coding or code review use the react-guidelines and typescript-guidelines skills accordingly.
 
 ## Memory management
@@ -215,24 +229,30 @@ For coding or code review use the react-guidelines and typescript-guidelines ski
 ## Status: IN_PROGRESS | BLOCKED | DONE
 
 ## Goal
+
 [Clear description of what needs to be accomplished]
 
 ## Progress
+
 - [x] Completed step 1
 - [x] Completed step 2
 - [ ] Current step (mark what you're working on)
 - [ ] Pending step
 
 ## Current State
+
 [Describe where you left off, what file you were editing, what decision you were about to make]
 
 ## Files Modified
+
 - `path/to/file.ts` - [brief description of changes]
 
 ## Blockers / Questions
+
 - [Any issues preventing progress or questions needing answers]
 
 ## Next Steps
+
 1. [Immediate next action to take]
 2. [Following action]
 ```
