@@ -17,9 +17,14 @@ import {
   PlusIcon,
 } from "@chaosfix/ui";
 import { useApp } from "./contexts/app-context";
-import { useFilteredRepositories, useRepositoryActions } from "./hooks";
+import {
+  useFilteredRepositories,
+  useRepositoryActions,
+  useWorkspaceTabs,
+  useAppHandlers,
+} from "./hooks";
 import { TerminalView } from "./components/terminal-view";
-import { SIDEBAR_WIDTH, DEFAULT_TERMINAL_LABEL } from "../constants";
+import { SIDEBAR_WIDTH } from "../constants";
 import logoSrc from "./assets/logo.svg";
 
 export const App: FC = () => {
@@ -38,24 +43,18 @@ export const App: FC = () => {
   const { handleAddRepository } = useRepositoryActions({ repositories, addRepository });
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
-  const tabs =
-    activeWorkspace?.terminals.map((t) => ({
-      id: t.id,
-      label: t.title || DEFAULT_TERMINAL_LABEL,
-      closable: true,
-    })) || [];
 
-  const handleDisplaySettings = (): void => {
-    // TODO: Implement display settings
-  };
+  const { tabs, handleTabSelect, handleTabClose, handleNewTab } = useWorkspaceTabs({
+    activeWorkspace,
+  });
 
-  const handleSettings = (): void => {
-    // TODO: Implement settings dialog
-  };
-
-  const handleNewWorkspace = (_repoId: string): void => {
-    // TODO: Implement new workspace creation
-  };
+  const {
+    handleDisplaySettings,
+    handleSettings,
+    handleNewWorkspace,
+    handleCloneFromUrl,
+    handleQuickStart,
+  } = useAppHandlers();
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100">
@@ -121,15 +120,9 @@ export const App: FC = () => {
           <TabBar
             tabs={tabs}
             activeTabId={activeWorkspace.activeTerminalId}
-            onTabSelect={(_tabId) => {
-              // TODO: Implement tab selection
-            }}
-            onTabClose={(_tabId) => {
-              // TODO: Implement tab close
-            }}
-            onNewTab={() => {
-              // TODO: Implement new tab
-            }}
+            onTabSelect={handleTabSelect}
+            onTabClose={handleTabClose}
+            onNewTab={handleNewTab}
           />
         )}
 
@@ -148,16 +141,12 @@ export const App: FC = () => {
                 <ActionCard
                   icon={<GlobeAltIcon className="w-8 h-8" />}
                   label="Clone from URL"
-                  onClick={() => {
-                    // TODO: Implement clone from URL
-                  }}
+                  onClick={handleCloneFromUrl}
                 />
                 <ActionCard
                   icon={<DocumentDuplicateIcon className="w-8 h-8" />}
                   label="Quick start"
-                  onClick={() => {
-                    // TODO: Implement quick start
-                  }}
+                  onClick={handleQuickStart}
                 />
               </ActionCardGroup>
             </WelcomeScreen>

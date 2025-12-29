@@ -9,3 +9,9 @@ export type {
   UseRepositoryActionsOptions,
   UseRepositoryActionsReturn,
 } from "./use-repository-actions";
+
+export { useWorkspaceTabs } from "./use-workspace-tabs";
+export type { UseWorkspaceTabsOptions, UseWorkspaceTabsReturn } from "./use-workspace-tabs";
+
+export { useAppHandlers } from "./use-app-handlers";
+export type { UseAppHandlersReturn } from "./use-app-handlers";
