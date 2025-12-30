@@ -15,3 +15,18 @@ export const DIALOG_IPC_CHANNELS = {
 } as const;
 
 export type DialogIPCChannel = (typeof DIALOG_IPC_CHANNELS)[keyof typeof DIALOG_IPC_CHANNELS];
+
+export const STATE_IPC_CHANNELS = {
+  LOAD: "state:load",
+  SAVE: "state:save",
+} as const;
+
+export type StateIPCChannel = (typeof STATE_IPC_CHANNELS)[keyof typeof STATE_IPC_CHANNELS];
+
+export const WORKSPACE_IPC_CHANNELS = {
+  CREATE: "workspace:create",
+  VALIDATE_REPO: "workspace:validate-repo",
+} as const;
+
+export type WorkspaceIPCChannel =
+  (typeof WORKSPACE_IPC_CHANNELS)[keyof typeof WORKSPACE_IPC_CHANNELS];

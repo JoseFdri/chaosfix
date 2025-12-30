@@ -15,3 +15,6 @@ export type { UseWorkspaceTabsOptions, UseWorkspaceTabsReturn } from "./use-work
 
 export { useAppHandlers } from "./use-app-handlers";
 export type { UseAppHandlersReturn } from "./use-app-handlers";
+
+export { usePersistence } from "./use-persistence";
+export type { UsePersistenceOptions } from "./use-persistence";

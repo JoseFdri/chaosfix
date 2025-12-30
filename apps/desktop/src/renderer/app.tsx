@@ -22,6 +22,7 @@ import {
   useRepositoryActions,
   useWorkspaceTabs,
   useAppHandlers,
+  usePersistence,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
 import { SIDEBAR_WIDTH } from "../constants";
@@ -37,10 +38,31 @@ export const App: FC = () => {
     setActiveWorkspace,
     setSearchQuery,
     addRepository,
+    addWorkspace,
+    hydrateState,
+    getSerializableState,
+    setPersistenceLoading,
+    setPersistenceSaved,
+    setPersistenceError,
   } = useApp();
 
+  // Initialize persistence (load on mount, auto-save on changes)
+  usePersistence({
+    repositories,
+    workspaces,
+    hydrateState,
+    getSerializableState,
+    setPersistenceLoading,
+    setPersistenceSaved,
+    setPersistenceError,
+  });
+
   const filteredRepositories = useFilteredRepositories({ repositories, searchQuery });
-  const { handleAddRepository } = useRepositoryActions({ repositories, addRepository });
+  const { handleAddRepository } = useRepositoryActions({
+    repositories,
+    addRepository,
+    addWorkspace,
+  });
 
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
 

@@ -25,3 +25,20 @@ export {
 } from "./workspaces.slice";
 
 export { uiSlice, uiActions, type UIState, type UIAction } from "./ui.slice";
+
+export {
+  persistenceSlice,
+  persistenceActions,
+  type PersistenceState,
+  type PersistenceAction,
+} from "./persistence.slice";
+
+// Hydration utilities
+export {
+  hydrationActions,
+  extractSerializableState,
+  hydrateRepositoriesState,
+  hydrateWorkspacesState,
+  type HydrationAction,
+  type SerializableState,
+} from "./hydration";

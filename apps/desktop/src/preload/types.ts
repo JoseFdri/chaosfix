@@ -1,5 +1,7 @@
 import type { IpcRendererEvent } from "electron";
 
+import type { AppState } from "@chaosfix/config";
+
 /**
  * Options for creating a new PTY instance
  */
@@ -65,6 +67,47 @@ export interface DialogAPI {
 }
 
 /**
+ * State API exposed to renderer process
+ */
+export interface StateAPI {
+  load: () => Promise<AppState | null>;
+  save: (state: AppState) => Promise<boolean>;
+}
+
+/**
+ * Result from validating a repository
+ */
+export interface ValidateRepoResult {
+  isValid: boolean;
+  defaultBranch?: string;
+  error?: string;
+}
+
+/**
+ * Options for creating a new workspace
+ */
+export interface CreateWorkspaceOptions {
+  repoPath: string;
+  branch: string;
+}
+
+/**
+ * Result from creating a workspace
+ */
+export interface CreateWorkspaceResult {
+  worktreePath: string;
+  branch: string;
+}
+
+/**
+ * Workspace API exposed to renderer process
+ */
+export interface WorkspaceAPI {
+  validateRepository: (path: string) => Promise<ValidateRepoResult>;
+  create: (options: CreateWorkspaceOptions) => Promise<CreateWorkspaceResult>;
+}
+
+/**
  * Handler type for IPC renderer events
  */
 export type IpcEventHandler<T> = (event: IpcRendererEvent, data: T) => void;
@@ -76,5 +119,7 @@ declare global {
   interface Window {
     terminal: TerminalAPI;
     dialog: DialogAPI;
+    state: StateAPI;
+    workspace: WorkspaceAPI;
   }
 }
