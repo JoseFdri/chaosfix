@@ -7,6 +7,8 @@ export { DEFAULT_SIDEBAR_WIDTH } from "./constants";
 // Utilities
 export { combineSlices } from "./combine-slices";
 export { createBoundActions } from "./bind-actions";
+export { createAppContext } from "./create-app-context";
+export { sliceRegistry, createRegisteredSlice, type SliceRegistry } from "./registry";
 
 // Slices
 export {

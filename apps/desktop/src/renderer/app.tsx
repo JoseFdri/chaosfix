@@ -30,41 +30,44 @@ import logoSrc from "./assets/logo.svg";
 
 export const App: FC = () => {
   const {
-    repositories,
-    workspaces,
-    activeWorkspaceId,
-    sidebarCollapsed,
-    searchQuery,
-    setActiveWorkspace,
-    setSearchQuery,
-    addRepository,
-    addWorkspace,
+    state,
+    repositories: repositoriesActions,
+    workspaces: workspacesActions,
+    ui,
+    persistence,
     hydrateState,
     getSerializableState,
-    setPersistenceLoading,
-    setPersistenceSaved,
-    setPersistenceError,
   } = useApp();
+
+  // Destructure state for easier access
+  const allRepositories = state.repositories.repositories;
+  const allWorkspaces = state.workspaces.workspaces;
+  const activeWorkspaceId = state.workspaces.activeWorkspaceId;
+  const sidebarCollapsed = state.ui.sidebarCollapsed;
+  const searchQuery = state.ui.searchQuery;
 
   // Initialize persistence (load on mount, auto-save on changes)
   usePersistence({
-    repositories,
-    workspaces,
+    repositories: allRepositories,
+    workspaces: allWorkspaces,
     hydrateState,
     getSerializableState,
-    setPersistenceLoading,
-    setPersistenceSaved,
-    setPersistenceError,
+    setPersistenceLoading: persistence.setLoading,
+    setPersistenceSaved: persistence.setSaved,
+    setPersistenceError: persistence.setError,
   });
 
-  const filteredRepositories = useFilteredRepositories({ repositories, searchQuery });
+  const filteredRepositories = useFilteredRepositories({
+    repositories: allRepositories,
+    searchQuery,
+  });
   const { handleAddRepository } = useRepositoryActions({
-    repositories,
-    addRepository,
-    addWorkspace,
+    repositories: allRepositories,
+    addRepository: repositoriesActions.add,
+    addWorkspace: workspacesActions.add,
   });
 
-  const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
+  const activeWorkspace = allWorkspaces.find((w) => w.id === activeWorkspaceId);
 
   const { tabs, handleTabSelect, handleTabClose, handleNewTab } = useWorkspaceTabs({
     activeWorkspace,
@@ -88,8 +91,8 @@ export const App: FC = () => {
           <div className="p-3 pt-10">
             <SearchInput
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onClear={() => setSearchQuery("")}
+              onChange={(e) => ui.setSearchQuery(e.target.value)}
+              onClear={() => ui.setSearchQuery("")}
               placeholder="Search repositories..."
             />
           </div>
@@ -108,7 +111,7 @@ export const App: FC = () => {
           </div>
         ) : (
           filteredRepositories.map((repo) => {
-            const repoWorkspaces = workspaces.filter((w) => w.repositoryId === repo.id);
+            const repoWorkspaces = allWorkspaces.filter((w) => w.repositoryId === repo.id);
             return (
               <RepositorySection key={repo.id} name={repo.name}>
                 <SidebarItem
@@ -121,7 +124,7 @@ export const App: FC = () => {
                     key={workspace.id}
                     label={workspace.name}
                     active={workspace.id === activeWorkspaceId}
-                    onClick={() => setActiveWorkspace(workspace.id)}
+                    onClick={() => workspacesActions.setActive(workspace.id)}
                     trailing={
                       <ActivityIndicator
                         status={workspace.status === "active" ? "active" : "idle"}

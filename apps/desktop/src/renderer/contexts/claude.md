@@ -11,6 +11,10 @@ The app uses a **slice-based reducer pattern** similar to Redux Toolkit but buil
 - Reducer logic
 - Action creators
 
+### Auto-Registration via Slice Registry
+
+Slices are automatically discovered and bound to dispatch through the **slice registry** (`slices/registry.ts`). This eliminates manual wiring in `app-context.tsx`.
+
 ## Creating a New Slice
 
 When adding new state management, create a new slice file in `slices/`:
@@ -80,16 +84,44 @@ export {
 } from "./{domain}.slice";
 ```
 
-### 3. Integrate with App Context
+### 3. Register in Slice Registry
 
-Update `app-context.tsx`:
+Add the slice to `slices/registry.ts`:
 
-1. Import the new slice, action creators, and action type from `./slices`
-2. Add to `combineSlices()` call
-3. Add the action type to `AppAction` union (e.g., `| {Domain}Action`)
-4. Add bound actions using `createBoundActions` in a `useMemo`
-5. Add action methods to `AppContextValue` interface
-6. Map bound actions to context value
+```typescript
+import { {domain}Slice, {domain}Actions } from "./{domain}.slice";
+
+export const sliceRegistry = {
+  // ...existing slices
+  {domain}: createRegisteredSlice({domain}Slice, {domain}Actions),
+} as const;
+```
+
+That's it! The slice is now automatically:
+
+- Combined into the app state
+- Action creators bound to dispatch
+- Available via `useApp()` hook as `{domain}.actionOne()`, etc.
+
+### 4. Update useApp Hook Types (Optional)
+
+If you want explicit typing in `app-context.tsx`, add the action interface:
+
+```typescript
+interface {Domain}Actions {
+  actionOne: (payload: PayloadType) => void;
+  // ...other actions
+}
+```
+
+And add to `UseAppReturn`:
+
+```typescript
+interface UseAppReturn {
+  // ...existing
+  {domain}: {Domain}Actions;
+}
+```
 
 ## Naming Conventions
 
@@ -101,21 +133,25 @@ Update `app-context.tsx`:
 
 ## Cross-Slice Logic
 
-When actions need to affect multiple slices (e.g., removing a repository also removes its workspaces), handle this in the wrapper reducer in `app-context.tsx`:
+When actions need to affect multiple slices (e.g., removing a repository also removes its workspaces), handle this in the `createWrapReducer` function in `app-context.tsx`:
 
 ```typescript
-function appReducer(state: CombinedState, action: AppAction): CombinedState {
-  // Handle cross-slice actions
-  if (action.type === "repositories/remove") {
-    const repositoryId = action.payload;
-    const stateWithoutWorkspaces = combinedReducer(
-      state,
-      workspacesActions.removeByRepository(repositoryId)
-    );
-    return combinedReducer(stateWithoutWorkspaces, action);
-  }
+function createWrapReducer<TState extends AppCombinedState, TAction extends BaseAction>(
+  baseReducer: (state: TState, action: TAction) => TState
+) {
+  return (state: TState, action: BaseAction): TState => {
+    // Handle cross-slice actions
+    if (action.type === "repositories/remove") {
+      const repositoryId = (action as { type: string; payload: string }).payload;
+      const stateWithoutWorkspaces = baseReducer(
+        state,
+        workspacesActions.removeByRepository(repositoryId) as unknown as TAction
+      );
+      return baseReducer(stateWithoutWorkspaces, action as unknown as TAction);
+    }
 
-  return combinedReducer(state, action);
+    return baseReducer(state, action as unknown as TAction);
+  };
 }
 ```
 
@@ -125,9 +161,17 @@ function appReducer(state: CombinedState, action: AppAction): CombinedState {
 2. **Immutable Updates**: Always return new state objects
 3. **Action Creators**: Always use action creators instead of inline action objects
 4. **Type Safety**: Export and use proper TypeScript types
-5. **Bound Actions**: Use `createBoundActions` helper from `slices/bind-actions.ts` to bind slice actions to dispatch
+5. **Registry Pattern**: Register slices in `registry.ts` for automatic binding
 6. **Default Case**: Always include a default case that returns unchanged state
 7. **Constants**: Define magic numbers and default values in `slices/constants.ts` using UPPER_SNAKE_CASE
+
+## Key Files
+
+- `slices/registry.ts` - Central slice registry for auto-binding
+- `slices/create-app-context.tsx` - Factory function that creates context from registry
+- `app-context.tsx` - App-specific context with cross-slice logic and typed `useApp` hook
+- `slices/bind-actions.ts` - Utility to bind action creators to dispatch
+- `types/slice-registry.types.ts` - Type definitions for the registry pattern
 
 ## When to Create a New Slice
 
