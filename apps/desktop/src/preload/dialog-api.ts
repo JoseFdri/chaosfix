@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import { DIALOG_IPC_CHANNELS } from "@chaosfix/core";
 
-import type { DialogAPI, DirectorySelectResult } from "./types";
+import type { DialogAPI, DirectorySelectResult } from "../types";
 
 /**
  * Creates the dialog API object for renderer process communication

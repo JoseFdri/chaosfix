@@ -7,10 +7,20 @@ This directory contains the Electron preload scripts that expose safe APIs to th
 ```
 preload/
 ├── index.ts          # Main entry - imports and exposes all APIs
-├── types.ts          # Shared types, interfaces, and global declarations
 ├── terminal-api.ts   # Terminal/PTY API implementation
 ├── dialog-api.ts     # Dialog API implementation
+├── state-api.ts      # State persistence API implementation
+├── workspace-api.ts  # Workspace/git API implementation
 └── claude.md         # This file - guidelines for development
+
+../types/             # Shared types directory (outside preload)
+├── index.ts          # Re-exports all types
+├── terminal.types.ts # Terminal/PTY types
+├── dialog.types.ts   # Dialog types
+├── state.types.ts    # State API types
+├── workspace.types.ts# Workspace API types
+├── ipc.types.ts      # IPC handler types
+└── window.types.ts   # Global Window declarations
 ```
 
 ## Architecture Rules
@@ -25,15 +35,17 @@ preload/
 
 When adding a new API to expose to the renderer:
 
-1. **Create types in `types.ts`**:
+1. **Create types in `../types/`**:
+   - Create a new `new-feature.types.ts` file for the API types
    - Define the API interface (e.g., `NewFeatureAPI`)
    - Define any payload/result types
-   - Add to the global `Window` interface declaration
+   - Add to `window.types.ts` global `Window` interface declaration
+   - Export from `../types/index.ts`
 
 2. **Create the API file** (e.g., `new-feature-api.ts`):
    - Import `ipcRenderer` from electron
    - Import IPC channels from `@chaosfix/core`
-   - Import types from `./types`
+   - Import types from `../types`
    - Export a factory function `createNewFeatureAPI(): NewFeatureAPI`
 
 3. **Register in `index.ts`**:
@@ -49,7 +61,7 @@ When adding a new API to expose to the renderer:
 import { ipcRenderer } from "electron";
 import { NEW_FEATURE_IPC_CHANNELS } from "@chaosfix/core";
 
-import type { NewFeatureAPI } from "./types";
+import type { NewFeatureAPI } from "../types";
 
 export function createNewFeatureAPI(): NewFeatureAPI {
   return {
@@ -60,19 +72,40 @@ export function createNewFeatureAPI(): NewFeatureAPI {
 }
 ```
 
-#### Type Additions Template (add to `types.ts`)
+#### Type File Template (`../types/new-feature.types.ts`)
 
 ```typescript
-export interface NewFeatureAPI {
-  methodName: (param: ParamType) => Promise<ResultType>;
+/**
+ * Result from new feature operation
+ */
+export interface NewFeatureResult {
+  // result fields
 }
 
-// Add to global Window interface
+/**
+ * NewFeature API exposed to renderer process
+ */
+export interface NewFeatureAPI {
+  methodName: (param: ParamType) => Promise<NewFeatureResult>;
+}
+```
+
+Then add to `../types/window.types.ts`:
+
+```typescript
+import type { NewFeatureAPI } from "./new-feature.types";
+
 declare global {
   interface Window {
     newFeature: NewFeatureAPI;
   }
 }
+```
+
+And export from `../types/index.ts`:
+
+```typescript
+export type * from "./new-feature.types";
 ```
 
 ### 4. Naming Conventions
@@ -97,6 +130,6 @@ declare global {
 ### 7. Prohibited Practices
 
 - No direct `require()` calls - use ES imports only
-- No inline type definitions - all types go in `types.ts`
+- No inline type definitions - all types go in `../types/` directory
 - No business logic - preload only bridges main and renderer
 - No console.log statements - remove before committing

@@ -187,7 +187,7 @@ src/
 3. **Event-driven architecture** - Typed event definitions for cross-component communication
 4. **Type-safe IPC** - Typed communication between main and renderer processes
 5. **Package boundaries** - Each package has a single responsibility
-6. **No long constant files** - Keep files focused and manageable, max ~300 lines, split as needed with suffixes for categorization (e.g., `.events.ts`, `.types.ts`)
+6. **No long constant files** - When creating new constants, types or any logic that can grow over time, create a folder for it with index.ts and split logic into multiple files as needed, using a suffix for the file category (e.g. `type.payments.ts`)
 
 ## Tech Stack
 

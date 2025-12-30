@@ -6,7 +6,7 @@ import { createTerminalAPI } from "./terminal-api";
 import { createWorkspaceAPI } from "./workspace-api";
 
 // Re-export types for external consumption
-export type * from "./types";
+export type * from "../types";
 
 // Create API instances
 const terminalAPI = createTerminalAPI();

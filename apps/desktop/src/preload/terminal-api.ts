@@ -8,7 +8,7 @@ import type {
   PTYExitEvent,
   TerminalAPI,
   IpcEventHandler,
-} from "./types";
+} from "../types";
 
 /**
  * Creates the terminal API object for renderer process communication

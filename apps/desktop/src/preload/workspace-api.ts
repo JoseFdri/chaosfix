@@ -6,7 +6,7 @@ import type {
   CreateWorkspaceResult,
   ValidateRepoResult,
   WorkspaceAPI,
-} from "./types";
+} from "../types";
 
 /**
  * Creates the workspace API object for renderer process communication

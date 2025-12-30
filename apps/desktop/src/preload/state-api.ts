@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import { STATE_IPC_CHANNELS } from "@chaosfix/core";
 
 import type { AppState } from "@chaosfix/config";
-import type { StateAPI } from "./types";
+import type { StateAPI } from "../types";
 
 /**
  * Creates the state API object for renderer process communication
