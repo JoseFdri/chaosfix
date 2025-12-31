@@ -1,5 +1,10 @@
 export { SIDEBAR_WIDTH } from "./ui.constants";
-export { DEFAULT_CWD, DEFAULT_TERMINAL_LABEL } from "./terminal.constants";
+export {
+  DEFAULT_CWD,
+  DEFAULT_TERMINAL_LABEL,
+  INITIAL_TERMINAL_PID,
+  DEFAULT_TERMINAL_STATUS,
+} from "./terminal.constants";
 export {
   PATH_SEGMENT_REGEX,
   MAX_NAME_LENGTH,

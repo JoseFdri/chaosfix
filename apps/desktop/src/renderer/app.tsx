@@ -17,7 +17,8 @@ import {
   PlusIcon,
   InputDialog,
 } from "@chaosfix/ui";
-import { useApp } from "./contexts/app-context";
+import type { TerminalSession } from "@chaosfix/core";
+import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
 import {
   useFilteredRepositories,
   useRepositoryActions,
@@ -27,8 +28,45 @@ import {
   useCreateWorkspace,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
-import { SIDEBAR_WIDTH, WORKSPACE_DIALOG } from "../constants";
+import {
+  SIDEBAR_WIDTH,
+  WORKSPACE_DIALOG,
+  DEFAULT_TERMINAL_LABEL,
+  INITIAL_TERMINAL_PID,
+  DEFAULT_TERMINAL_STATUS,
+} from "../constants";
 import logoSrc from "./assets/logo.svg";
+
+/**
+ * Creates an initial terminal session for a workspace.
+ * The terminal ID is generated to match the pattern used by useTerminal hook.
+ */
+function createInitialTerminalSession(workspaceId: string): TerminalSession {
+  return {
+    id: `${workspaceId}-${Date.now()}`,
+    workspaceId,
+    pid: INITIAL_TERMINAL_PID,
+    title: DEFAULT_TERMINAL_LABEL,
+    status: DEFAULT_TERMINAL_STATUS,
+    createdAt: new Date(),
+  };
+}
+
+/**
+ * Handles workspace click by setting it active and auto-creating a terminal if needed.
+ */
+function handleWorkspaceClick(
+  workspace: WorkspaceWithTerminals,
+  setActive: (workspaceId: string | null) => void,
+  addTerminal: (workspaceId: string, terminal: TerminalSession) => void
+): void {
+  setActive(workspace.id);
+
+  if (workspace.terminals.length === 0) {
+    const terminal = createInitialTerminalSession(workspace.id);
+    addTerminal(workspace.id, terminal);
+  }
+}
 
 export const App: FC = () => {
   const {
@@ -159,7 +197,13 @@ export const App: FC = () => {
                       key={workspace.id}
                       label={workspace.name}
                       active={workspace.id === activeWorkspaceId}
-                      onClick={() => workspacesActions.setActive(workspace.id)}
+                      onClick={() =>
+                        handleWorkspaceClick(
+                          workspace,
+                          workspacesActions.setActive,
+                          workspacesActions.addTerminal
+                        )
+                      }
                       trailing={
                         <ActivityIndicator
                           status={workspace.status === "active" ? "active" : "idle"}
@@ -189,7 +233,10 @@ export const App: FC = () => {
           {/* Terminal Area */}
           <div className="flex-1 bg-gray-900">
             {activeWorkspace?.activeTerminalId ? (
-              <TerminalView workspaceId={activeWorkspace.id} />
+              <TerminalView
+                workspaceId={activeWorkspace.id}
+                worktreePath={activeWorkspace.worktreePath}
+              />
             ) : (
               <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
                 <ActionCardGroup>

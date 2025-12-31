@@ -325,7 +325,7 @@ Each phase should follow this structure:
 
 ### Warnings
 
-Plans MUST include warnings when the implementation could violate project rules or introduce anti-patterns. Common warnings to include:
+Plans MUST include warnings with a brief explanation when the implementation could violate project rules or introduce anti-patterns. Common warnings to include:
 
 | Scenario                 | Warning to Include                                                                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |

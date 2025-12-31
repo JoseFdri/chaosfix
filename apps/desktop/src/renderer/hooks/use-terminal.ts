@@ -5,13 +5,14 @@ import { DEFAULT_CWD } from "../../constants";
 
 export interface UseTerminalOptions {
   workspaceId: string;
+  cwd?: string;
 }
 
 export interface UseTerminalReturn {
   containerRef: (node: HTMLDivElement | null) => void;
 }
 
-export function useTerminal({ workspaceId }: UseTerminalOptions): UseTerminalReturn {
+export function useTerminal({ workspaceId, cwd }: UseTerminalOptions): UseTerminalReturn {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const terminalRef = useRef<TerminalController | null>(null);
   const ptyIdRef = useRef<string | null>(null);
@@ -27,7 +28,7 @@ export function useTerminal({ workspaceId }: UseTerminalOptions): UseTerminalRet
 
     const pty = await window.terminal.create({
       id: `${workspaceId}-${Date.now()}`,
-      cwd: process.env.HOME || DEFAULT_CWD,
+      cwd: cwd || DEFAULT_CWD,
     });
     ptyIdRef.current = pty.id;
 
@@ -65,7 +66,7 @@ export function useTerminal({ workspaceId }: UseTerminalOptions): UseTerminalRet
       }
       terminal.dispose();
     };
-  }, [workspaceId]);
+  }, [workspaceId, cwd]);
 
   useEffect(() => {
     let isMounted = true;
