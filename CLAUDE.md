@@ -285,7 +285,70 @@ For coding or code review use the react-guidelines and typescript-guidelines ski
 ```
 
 7. **Load Context:** When starting any task, read `agents-files/main/learning.md` to load additional context and lessons learned.
-8. Plans do not include code snippets unless explicitly requested.
+
+## Planning Guidelines
+
+When creating plans for tasks, follow these guidelines to ensure clarity and maintainability:
+
+### Plan Structure
+
+1. **High-Level Design Only**: Plans must NOT contain code examples or snippets unless explicitly requested by the user. Focus on describing the design, approach, and architecture in plain language.
+
+2. **Phase Requirements**: Each phase in a plan MUST include:
+   - **Expected Outcome**: Clear description of what will be achieved when this phase is complete
+   - **Architecture**: Which layers, packages, or components will be affected and how they interact
+   - **Files to Modify/Create**: List of files that will be touched (without code content)
+
+3. **No Implementation Details**: Avoid specifying exact function signatures, variable names, or implementation specifics. These decisions are made during execution by sub-agents.
+
+### Phase Template
+
+Each phase should follow this structure:
+
+```
+### Phase N: [Phase Name]
+
+**Expected Outcome**: [What will be working/complete after this phase]
+
+**Architecture**:
+- Layer(s) affected: [Presentation/Application/Domain/Infrastructure]
+- Package(s) involved: [e.g., @chaosfix/ui, @chaosfix/core]
+- Data flow: [How data moves between components]
+
+**Files**:
+- `path/to/file.ts` - [what changes conceptually]
+
+**Dependencies**: [Other phases this depends on, if any]
+
+**Warnings**: [Potential pitfalls the sub-agent must avoid]
+```
+
+### Warnings
+
+Plans MUST include warnings when the implementation could violate project rules or introduce anti-patterns. Common warnings to include:
+
+| Scenario                 | Warning to Include                                                                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Adding new types         | "Do NOT create a generic `types.ts` file. Create atomic files with category suffix (e.g., `types.workspace.ts`, `types.terminal.ts`)" |
+| Adding new constants     | "Do NOT add to existing constant files. Create a new file with appropriate suffix (e.g., `constants.events.ts`)"                      |
+| Adding shared utilities  | "Verify this doesn't already exist in `@chaosfix/core` before creating"                                                               |
+| Modifying IPC handlers   | "Ensure type-safe IPC contract is maintained in both main and preload"                                                                |
+| Adding React components  | "Check `@chaosfix/ui` for existing components before creating new ones"                                                               |
+| State management changes | "Follow existing Zustand patterns in `stores/` directory"                                                                             |
+| Terminal-related changes | "Respect the terminal-bridge architecture: xterm.js in renderer, node-pty in main"                                                    |
+
+Add custom warnings for any phase where you anticipate the sub-agent might:
+
+- Create files that should be split or organized differently
+- Duplicate existing functionality
+- Break established patterns in the codebase
+- Violate package boundaries
+
+### Rationale
+
+- High-level plans allow sub-agents to make implementation decisions with full context
+- Avoiding code in plans prevents outdated snippets and reduces plan maintenance
+- Clear expected outcomes make it easier to verify phase completion
 
 ## CRITICAL: Plan Execution Guidelines
 

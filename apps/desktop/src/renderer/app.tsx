@@ -64,7 +64,6 @@ export const App: FC = () => {
   const { handleAddRepository } = useRepositoryActions({
     repositories: allRepositories,
     addRepository: repositoriesActions.add,
-    addWorkspace: workspacesActions.add,
   });
 
   const activeWorkspace = allWorkspaces.find((w) => w.id === activeWorkspaceId);
@@ -141,7 +140,7 @@ export const App: FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Tab Bar */}
-        {activeWorkspace && (
+        {activeWorkspace?.activeTerminalId && (
           <TabBar
             tabs={tabs}
             activeTabId={activeWorkspace.activeTerminalId}
@@ -153,7 +152,7 @@ export const App: FC = () => {
 
         {/* Terminal Area */}
         <div className="flex-1 bg-gray-900">
-          {activeWorkspace ? (
+          {activeWorkspace?.activeTerminalId ? (
             <TerminalView workspaceId={activeWorkspace.id} />
           ) : (
             <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
