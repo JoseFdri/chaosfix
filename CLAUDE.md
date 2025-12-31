@@ -286,3 +286,38 @@ For coding or code review use the react-guidelines and typescript-guidelines ski
 
 7. **Load Context:** When starting any task, read `agents-files/main/learning.md` to load additional context and lessons learned.
 8. Plans do not include code snippets unless explicitly requested.
+
+## CRITICAL: Plan Execution Guidelines
+
+**MANDATORY: When a plan is approved and you exit plan mode, you MUST follow these steps. Do NOT make changes directly.**
+
+### Execution Process
+
+1. **Use Sub-Agents for Each Phase**: Launch a separate Task agent for each phase of the plan. Do NOT implement phases directly yourself.
+
+2. **Invoke Skills**: Each sub-agent MUST use the `typescript-guidelines` and `react-guidelines` skills before making changes.
+
+3. **Code Review**: After implementation, launch a separate review agent that uses the skills to validate the code.
+
+4. **Orchestration**: Your role is to orchestrate sub-agents, not to write code directly. You:
+   - Launch implementation agents (one per phase)
+   - Launch review agents after each phase
+   - Consolidate results and report to user
+
+### Example Execution Flow
+
+```
+Plan Approved → Exit Plan Mode
+    ↓
+Phase 1: Launch Task agent with typescript-guidelines skill
+    ↓
+Phase 1 Complete: Launch Review agent with react-guidelines skill
+    ↓
+Phase 2: Launch Task agent with typescript-guidelines skill
+    ↓
+... repeat for each phase ...
+    ↓
+Final: Report consolidated results
+```
+
+**REMINDER: Never write implementation code directly after plan approval. Always delegate to sub-agents.**
