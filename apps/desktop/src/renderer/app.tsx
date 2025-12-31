@@ -15,6 +15,7 @@ import {
   GlobeAltIcon,
   DocumentDuplicateIcon,
   PlusIcon,
+  InputDialog,
 } from "@chaosfix/ui";
 import { useApp } from "./contexts/app-context";
 import {
@@ -23,9 +24,10 @@ import {
   useWorkspaceTabs,
   useAppHandlers,
   usePersistence,
+  useCreateWorkspace,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
-import { SIDEBAR_WIDTH } from "../constants";
+import { SIDEBAR_WIDTH, WORKSPACE_DIALOG } from "../constants";
 import logoSrc from "./assets/logo.svg";
 
 export const App: FC = () => {
@@ -72,111 +74,146 @@ export const App: FC = () => {
     activeWorkspace,
   });
 
+  // Workspace creation dialog state and handlers
+  const {
+    isDialogOpen,
+    openDialog,
+    closeDialog,
+    isLoading: isCreatingWorkspace,
+    handleSubmit: handleWorkspaceSubmit,
+    pendingRepository,
+  } = useCreateWorkspace({
+    addWorkspace: workspacesActions.add,
+  });
+
   const {
     handleDisplaySettings,
     handleSettings,
     handleNewWorkspace,
     handleCloneFromUrl,
     handleQuickStart,
-  } = useAppHandlers();
+  } = useAppHandlers({
+    onNewWorkspace: openDialog,
+  });
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100">
-      {/* Sidebar */}
-      <Sidebar
-        width={SIDEBAR_WIDTH}
-        collapsed={sidebarCollapsed}
-        header={
-          <div className="p-3 pt-10">
-            <SearchInput
-              value={searchQuery}
-              onChange={(e) => ui.setSearchQuery(e.target.value)}
-              onClear={() => ui.setSearchQuery("")}
-              placeholder="Search repositories..."
+    <>
+      {/* Create Workspace Dialog */}
+      <InputDialog
+        open={isDialogOpen}
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            closeDialog();
+          }
+        }}
+        title={`${WORKSPACE_DIALOG.TITLE_PREFIX} ${pendingRepository?.name ?? WORKSPACE_DIALOG.TITLE_FALLBACK}`}
+        description={WORKSPACE_DIALOG.DESCRIPTION}
+        inputLabel={WORKSPACE_DIALOG.INPUT_LABEL}
+        inputPlaceholder={WORKSPACE_DIALOG.INPUT_PLACEHOLDER}
+        submitLabel={WORKSPACE_DIALOG.SUBMIT_LABEL}
+        cancelLabel={WORKSPACE_DIALOG.CANCEL_LABEL}
+        isLoading={isCreatingWorkspace}
+        onSubmit={handleWorkspaceSubmit}
+        onCancel={closeDialog}
+      />
+
+      <div className="flex h-screen bg-gray-900 text-gray-100">
+        {/* Sidebar */}
+        <Sidebar
+          width={SIDEBAR_WIDTH}
+          collapsed={sidebarCollapsed}
+          header={
+            <div className="p-3 pt-10">
+              <SearchInput
+                value={searchQuery}
+                onChange={(e) => ui.setSearchQuery(e.target.value)}
+                onClear={() => ui.setSearchQuery("")}
+                placeholder="Search repositories..."
+              />
+            </div>
+          }
+          footer={
+            <SidebarFooter
+              onAddRepository={handleAddRepository}
+              onDisplaySettings={handleDisplaySettings}
+              onSettings={handleSettings}
             />
-          </div>
-        }
-        footer={
-          <SidebarFooter
-            onAddRepository={handleAddRepository}
-            onDisplaySettings={handleDisplaySettings}
-            onSettings={handleSettings}
-          />
-        }
-      >
-        {filteredRepositories.length === 0 ? (
-          <div className="px-4 py-8 text-sm text-text-muted text-center">
-            {searchQuery ? "No repositories match your search" : "No repositories added"}
-          </div>
-        ) : (
-          filteredRepositories.map((repo) => {
-            const repoWorkspaces = allWorkspaces.filter((w) => w.repositoryId === repo.id);
-            return (
-              <RepositorySection key={repo.id} name={repo.name}>
-                <SidebarItem
-                  label="New workspace"
-                  icon={<PlusIcon className="w-4 h-4" />}
-                  onClick={() => handleNewWorkspace(repo.id)}
-                />
-                {repoWorkspaces.map((workspace) => (
-                  <SidebarItem
-                    key={workspace.id}
-                    label={workspace.name}
-                    active={workspace.id === activeWorkspaceId}
-                    onClick={() => workspacesActions.setActive(workspace.id)}
-                    trailing={
-                      <ActivityIndicator
-                        status={workspace.status === "active" ? "active" : "idle"}
-                      />
-                    }
-                  />
-                ))}
-              </RepositorySection>
-            );
-          })
-        )}
-      </Sidebar>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Tab Bar */}
-        {activeWorkspace?.activeTerminalId && (
-          <TabBar
-            tabs={tabs}
-            activeTabId={activeWorkspace.activeTerminalId}
-            onTabSelect={handleTabSelect}
-            onTabClose={handleTabClose}
-            onNewTab={handleNewTab}
-          />
-        )}
-
-        {/* Terminal Area */}
-        <div className="flex-1 bg-gray-900">
-          {activeWorkspace?.activeTerminalId ? (
-            <TerminalView workspaceId={activeWorkspace.id} />
+          }
+        >
+          {filteredRepositories.length === 0 ? (
+            <div className="px-4 py-8 text-sm text-text-muted text-center">
+              {searchQuery ? "No repositories match your search" : "No repositories added"}
+            </div>
           ) : (
-            <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
-              <ActionCardGroup>
-                <ActionCard
-                  icon={<DocumentTextIcon className="w-8 h-8" />}
-                  label="Open project"
-                  onClick={handleAddRepository}
-                />
-                <ActionCard
-                  icon={<GlobeAltIcon className="w-8 h-8" />}
-                  label="Clone from URL"
-                  onClick={handleCloneFromUrl}
-                />
-                <ActionCard
-                  icon={<DocumentDuplicateIcon className="w-8 h-8" />}
-                  label="Quick start"
-                  onClick={handleQuickStart}
-                />
-              </ActionCardGroup>
-            </WelcomeScreen>
+            filteredRepositories.map((repo) => {
+              const repoWorkspaces = allWorkspaces.filter((w) => w.repositoryId === repo.id);
+              return (
+                <RepositorySection key={repo.id} name={repo.name}>
+                  <SidebarItem
+                    label="New workspace"
+                    icon={<PlusIcon className="w-4 h-4" />}
+                    onClick={() => handleNewWorkspace(repo.id, repo.name, repo.path)}
+                  />
+                  {repoWorkspaces.map((workspace) => (
+                    <SidebarItem
+                      key={workspace.id}
+                      label={workspace.name}
+                      active={workspace.id === activeWorkspaceId}
+                      onClick={() => workspacesActions.setActive(workspace.id)}
+                      trailing={
+                        <ActivityIndicator
+                          status={workspace.status === "active" ? "active" : "idle"}
+                        />
+                      }
+                    />
+                  ))}
+                </RepositorySection>
+              );
+            })
           )}
+        </Sidebar>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Tab Bar */}
+          {activeWorkspace?.activeTerminalId && (
+            <TabBar
+              tabs={tabs}
+              activeTabId={activeWorkspace.activeTerminalId}
+              onTabSelect={handleTabSelect}
+              onTabClose={handleTabClose}
+              onNewTab={handleNewTab}
+            />
+          )}
+
+          {/* Terminal Area */}
+          <div className="flex-1 bg-gray-900">
+            {activeWorkspace?.activeTerminalId ? (
+              <TerminalView workspaceId={activeWorkspace.id} />
+            ) : (
+              <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
+                <ActionCardGroup>
+                  <ActionCard
+                    icon={<DocumentTextIcon className="w-8 h-8" />}
+                    label="Open project"
+                    onClick={handleAddRepository}
+                  />
+                  <ActionCard
+                    icon={<GlobeAltIcon className="w-8 h-8" />}
+                    label="Clone from URL"
+                    onClick={handleCloneFromUrl}
+                  />
+                  <ActionCard
+                    icon={<DocumentDuplicateIcon className="w-8 h-8" />}
+                    label="Quick start"
+                    onClick={handleQuickStart}
+                  />
+                </ActionCardGroup>
+              </WelcomeScreen>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

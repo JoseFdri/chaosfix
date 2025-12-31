@@ -42,12 +42,9 @@ export {
   type ActionCardGroupProps,
   StatsBar,
   type StatsBarProps,
+  InputDialog,
+  type InputDialogProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections
-export {
-  Sidebar,
-  type SidebarProps,
-  WelcomeScreen,
-  type WelcomeScreenProps,
-} from "./organisms";
+export { Sidebar, type SidebarProps, WelcomeScreen, type WelcomeScreenProps } from "./organisms";

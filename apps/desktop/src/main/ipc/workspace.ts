@@ -1,25 +1,28 @@
 import { ipcMain, type BrowserWindow } from "electron";
+import * as os from "os";
+import * as path from "path";
 import { WORKSPACE_IPC_CHANNELS } from "@chaosfix/core";
-import { GitService } from "@chaosfix/workspace-manager";
+import { GitService, WorktreeManager } from "@chaosfix/workspace-manager";
+
+import type {
+  ValidateRepoResult,
+  CreateWorkspaceOptions,
+  CreateWorkspaceResult,
+} from "../../types/workspace.types";
+import {
+  PATH_SEGMENT_REGEX,
+  MAX_NAME_LENGTH,
+  WORKSPACE_BASE_DIR,
+  WORKSPACE_SUBDIR,
+  WORKSPACE_ERRORS,
+} from "../../constants/workspace.constants";
 
 export interface WorkspaceIPCDependencies {
   getMainWindow: () => BrowserWindow | null;
 }
 
-interface ValidateRepoResult {
-  isValid: boolean;
-  defaultBranch?: string;
-  error?: string;
-}
-
-interface CreateWorkspaceOptions {
-  repoPath: string;
-  branch: string;
-}
-
-interface CreateWorkspaceResult {
-  worktreePath: string;
-  branch: string;
+function isValidPathSegment(name: string): boolean {
+  return PATH_SEGMENT_REGEX.test(name) && name.length > 0 && name.length <= MAX_NAME_LENGTH;
 }
 
 export function setupWorkspaceIPC(_deps: WorkspaceIPCDependencies): void {
@@ -54,11 +57,40 @@ export function setupWorkspaceIPC(_deps: WorkspaceIPCDependencies): void {
   ipcMain.handle(
     WORKSPACE_IPC_CHANNELS.CREATE,
     async (_event, options: CreateWorkspaceOptions): Promise<CreateWorkspaceResult> => {
-      // For now, just return the repo path as worktree path
-      // Full worktree support comes in a later phase
+      const { repositoryPath, repositoryName, workspaceName } = options;
+
+      if (!isValidPathSegment(repositoryName)) {
+        throw new Error(WORKSPACE_ERRORS.INVALID_REPOSITORY_NAME);
+      }
+
+      if (!isValidPathSegment(workspaceName)) {
+        throw new Error(WORKSPACE_ERRORS.INVALID_WORKSPACE_NAME);
+      }
+
+      const homeDir = os.homedir();
+      const worktreePath = path.join(
+        homeDir,
+        WORKSPACE_BASE_DIR,
+        WORKSPACE_SUBDIR,
+        repositoryName,
+        workspaceName
+      );
+
+      const worktreeManager = new WorktreeManager(repositoryPath);
+      const result = await worktreeManager.create({
+        repositoryPath,
+        worktreePath,
+        branchName: workspaceName,
+        createBranch: true,
+      });
+
+      if (!result.success) {
+        throw new Error(result.error.message);
+      }
+
       return {
-        worktreePath: options.repoPath,
-        branch: options.branch,
+        worktreePath: result.data.path,
+        branch: result.data.branch,
       };
     }
   );

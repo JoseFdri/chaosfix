@@ -360,7 +360,7 @@ Add custom warnings for any phase where you anticipate the sub-agent might:
 
 2. **Invoke Skills**: Each sub-agent MUST use the `typescript-guidelines` and `react-guidelines` skills before making changes.
 
-3. **Code Review**: After implementation, launch a separate review agent that uses the skills to validate the code.
+3. **Code Review**: After each phase is complete, launch a separate review agent that uses the skills to validate the code, before continuing to the next phase.
 
 4. **Orchestration**: Your role is to orchestrate sub-agents, not to write code directly. You:
    - Launch implementation agents (one per phase)
@@ -376,7 +376,7 @@ Phase 1: Launch Task agent with typescript-guidelines skill
     ↓
 Phase 1 Complete: Launch Review agent with react-guidelines skill
     ↓
-Phase 2: Launch Task agent with typescript-guidelines skill
+Phase 2: Phase 1 code review completed and fixes done then launch Task agent with typescript-guidelines skill
     ↓
 ... repeat for each phase ...
     ↓

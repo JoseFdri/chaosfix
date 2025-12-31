@@ -14,7 +14,13 @@ export { useWorkspaceTabs } from "./use-workspace-tabs";
 export type { UseWorkspaceTabsOptions, UseWorkspaceTabsReturn } from "./use-workspace-tabs";
 
 export { useAppHandlers } from "./use-app-handlers";
-export type { UseAppHandlersReturn } from "./use-app-handlers";
+export type { UseAppHandlersOptions, UseAppHandlersReturn } from "./use-app-handlers";
 
 export { usePersistence } from "./use-persistence";
 export type { UsePersistenceOptions } from "./use-persistence";
+
+export { useCreateWorkspace } from "./use-create-workspace.hook";
+export type {
+  UseCreateWorkspaceOptions,
+  UseCreateWorkspaceReturn,
+} from "./use-create-workspace.hook";

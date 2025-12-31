@@ -11,8 +11,12 @@ export interface ValidateRepoResult {
  * Options for creating a new workspace
  */
 export interface CreateWorkspaceOptions {
-  repoPath: string;
-  branch: string;
+  /** Path to the main git repository */
+  repositoryPath: string;
+  /** Name of the repository (used for path construction) */
+  repositoryName: string;
+  /** Name of the workspace/worktree (also used as branch name) */
+  workspaceName: string;
 }
 
 /**

@@ -12,6 +12,7 @@ import type {
 import { GitError } from "../types/git.types";
 import { parseWorktreeOutput } from "../libs/worktree-parser.lib";
 
+// todo: change this default to be ~/chaosfix/workspace/<repo_name>/<ramdon_name>
 const WORKTREES_DIR = ".chaosfix-worktrees";
 
 /**
@@ -44,13 +45,15 @@ export class WorktreeManager {
    * Create a new worktree for a workspace
    */
   async create(options: WorktreeCreateOptions): Promise<GitResult<WorktreeInfo>> {
-    const { branchName, baseBranch, createBranch = true } = options;
+    const { worktreePath: customPath, branchName, baseBranch, createBranch = true } = options;
 
     try {
-      // Ensure worktrees directory exists
-      await this.initialize();
+      // Use custom path if provided, otherwise use default worktrees directory
+      const worktreePath =
+        customPath || path.join(this.worktreesDir, branchName.replace(/\//g, "-"));
 
-      const worktreePath = path.join(this.worktreesDir, branchName.replace(/\//g, "-"));
+      // Ensure parent directory exists
+      await fs.mkdir(path.dirname(worktreePath), { recursive: true });
 
       // Check if worktree already exists
       const exists = await this.exists(worktreePath);
