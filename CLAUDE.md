@@ -188,6 +188,7 @@ src/
 4. **Type-safe IPC** - Typed communication between main and renderer processes
 5. **Package boundaries** - Each package has a single responsibility
 6. **No long constant files** - When creating new constants, types or any logic that can grow over time, create a folder for it with index.ts and split logic into multiple files as needed, using a suffix for the file category (e.g. `type.payments.ts`)
+7. **No direct `process.env` access** - Environment variables are costly to access repeatedly. Use `@chaosfix/config` for configuration values or define constants that are loaded once. In the main process, use `os.homedir()` for system paths. Never use `process.env` directly in renderer code.
 
 ## Tech Stack
 
@@ -336,6 +337,7 @@ Plans MUST include warnings with a brief explanation when the implementation cou
 | Adding React components  | "Check `@chaosfix/ui` for existing components before creating new ones"                                                               |
 | State management changes | "Follow existing Zustand patterns in `stores/` directory"                                                                             |
 | Terminal-related changes | "Respect the terminal-bridge architecture: xterm.js in renderer, node-pty in main"                                                    |
+| Using environment vars   | "Do NOT use `process.env` directly. Use `@chaosfix/config` or define constants loaded once. Use `os.homedir()` in main process"       |
 
 Add custom warnings for any phase where you anticipate the sub-agent might:
 
