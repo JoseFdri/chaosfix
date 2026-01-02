@@ -88,6 +88,9 @@ export class WorktreeManager {
 
   /**
    * Remove a worktree
+   *
+   * Attempts git worktree remove first. If that fails but the directory exists,
+   * manually removes the directory and prunes stale worktree entries.
    */
   async remove(options: WorktreeRemoveOptions): Promise<GitResult<void>> {
     const { worktreePath, force = false } = options;
@@ -101,8 +104,29 @@ export class WorktreeManager {
 
       await this.git.raw(args);
       return ok(undefined);
-    } catch (error) {
-      return err(new GitError(`Failed to remove worktree: ${error}`));
+    } catch (gitError) {
+      // Git worktree remove failed - try manual cleanup
+      const directoryExists = await this.exists(worktreePath);
+
+      if (!directoryExists) {
+        // Directory doesn't exist, just prune and return success
+        await this.prune();
+        return ok(undefined);
+      }
+
+      // Directory exists but git couldn't remove it - manually remove
+      try {
+        await fs.rm(worktreePath, { recursive: true, force: true });
+        // Prune to clean up any stale worktree references
+        await this.prune();
+        return ok(undefined);
+      } catch (fsError) {
+        return err(
+          new GitError(
+            `Failed to remove worktree. Git error: ${gitError}. Filesystem error: ${fsError}`
+          )
+        );
+      }
     }
   }
 

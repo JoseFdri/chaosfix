@@ -5,6 +5,7 @@
 
 // Outline icons (24x24, default)
 export {
+  ArchiveBoxXMarkIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
   FolderPlusIcon,

@@ -17,6 +17,9 @@ import {
   DocumentDuplicateIcon,
   PlusIcon,
   InputDialog,
+  ConfirmDialog,
+  IconButton,
+  ArchiveBoxXMarkIcon,
 } from "@chaosfix/ui";
 import type { TerminalSession } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
@@ -27,11 +30,13 @@ import {
   useAppHandlers,
   usePersistence,
   useCreateWorkspace,
+  useRemoveWorkspace,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
 import {
   SIDEBAR_WIDTH,
   WORKSPACE_DIALOG,
+  REMOVE_WORKSPACE_DIALOG,
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,
   DEFAULT_TERMINAL_STATUS,
@@ -149,6 +154,19 @@ export const App: FC = () => {
     onNewWorkspace: openDialog,
   });
 
+  // Workspace removal dialog state and handlers
+  const {
+    isDialogOpen: isRemoveDialogOpen,
+    openDialog: openRemoveDialog,
+    closeDialog: closeRemoveDialog,
+    isLoading: isRemovingWorkspace,
+    isCheckingStatus,
+    hasUncommittedChanges,
+    handleConfirm: handleRemoveConfirm,
+  } = useRemoveWorkspace({
+    removeWorkspace: workspacesActions.remove,
+  });
+
   return (
     <>
       {/* Create Workspace Dialog */}
@@ -168,6 +186,36 @@ export const App: FC = () => {
         isLoading={isCreatingWorkspace}
         onSubmit={handleWorkspaceSubmit}
         onCancel={closeDialog}
+      />
+
+      {/* Remove Workspace Confirm Dialog */}
+      <ConfirmDialog
+        open={isRemoveDialogOpen}
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            closeRemoveDialog();
+          }
+        }}
+        title={
+          hasUncommittedChanges
+            ? REMOVE_WORKSPACE_DIALOG.TITLE_WARNING
+            : REMOVE_WORKSPACE_DIALOG.TITLE
+        }
+        description={
+          hasUncommittedChanges
+            ? REMOVE_WORKSPACE_DIALOG.DESCRIPTION_WARNING
+            : REMOVE_WORKSPACE_DIALOG.DESCRIPTION
+        }
+        confirmLabel={
+          hasUncommittedChanges
+            ? REMOVE_WORKSPACE_DIALOG.FORCE_CONFIRM_LABEL
+            : REMOVE_WORKSPACE_DIALOG.CONFIRM_LABEL
+        }
+        cancelLabel={REMOVE_WORKSPACE_DIALOG.CANCEL_LABEL}
+        variant={hasUncommittedChanges ? "destructive" : "default"}
+        isLoading={isRemovingWorkspace || isCheckingStatus}
+        onConfirm={() => handleRemoveConfirm(hasUncommittedChanges)}
+        onCancel={closeRemoveDialog}
       />
 
       <div className="flex h-screen bg-gray-900 text-gray-100">
@@ -220,9 +268,22 @@ export const App: FC = () => {
                         )
                       }
                       trailing={
-                        <ActivityIndicator
-                          status={workspace.status === "active" ? "active" : "idle"}
-                        />
+                        <div className="flex items-center gap-1">
+                          <IconButton
+                            size="sm"
+                            variant="ghost"
+                            label="Remove workspace"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openRemoveDialog(workspace, repo.path);
+                            }}
+                          >
+                            <ArchiveBoxXMarkIcon className="w-4 h-4" />
+                          </IconButton>
+                          <ActivityIndicator
+                            status={workspace.status === "active" ? "active" : "idle"}
+                          />
+                        </div>
                       }
                     />
                   ))}

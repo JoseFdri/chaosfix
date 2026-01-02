@@ -44,6 +44,8 @@ export {
   type StatsBarProps,
   InputDialog,
   type InputDialogProps,
+  ConfirmDialog,
+  type ConfirmDialogProps,
   TitleBar,
   type TitleBarProps,
 } from "./molecules";

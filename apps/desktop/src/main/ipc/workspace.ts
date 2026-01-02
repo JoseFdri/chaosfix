@@ -8,6 +8,10 @@ import type {
   ValidateRepoResult,
   CreateWorkspaceOptions,
   CreateWorkspaceResult,
+  RemoveWorkspaceOptions,
+  RemoveWorkspaceResult,
+  CheckWorkspaceStatusOptions,
+  CheckWorkspaceStatusResult,
 } from "../../types/workspace.types";
 import {
   PATH_SEGMENT_REGEX,
@@ -92,6 +96,75 @@ export function setupWorkspaceIPC(_deps: WorkspaceIPCDependencies): void {
         worktreePath: result.data.path,
         branch: result.data.branch,
       };
+    }
+  );
+
+  ipcMain.handle(
+    WORKSPACE_IPC_CHANNELS.REMOVE,
+    async (_event, options: RemoveWorkspaceOptions): Promise<RemoveWorkspaceResult> => {
+      const { repositoryPath, worktreePath, force = false } = options;
+
+      try {
+        const worktreeManager = new WorktreeManager(repositoryPath);
+        const result = await worktreeManager.remove({
+          repositoryPath,
+          worktreePath,
+          force,
+        });
+
+        if (!result.success) {
+          return {
+            success: false,
+            error: result.error.message,
+          };
+        }
+
+        return { success: true };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "Failed to remove workspace",
+        };
+      }
+    }
+  );
+
+  ipcMain.handle(
+    WORKSPACE_IPC_CHANNELS.CHECK_STATUS,
+    async (_event, options: CheckWorkspaceStatusOptions): Promise<CheckWorkspaceStatusResult> => {
+      const { repositoryPath } = options;
+
+      try {
+        const gitService = new GitService(repositoryPath);
+        const result = await gitService.getStatus();
+
+        if (!result.success) {
+          return {
+            hasUncommittedChanges: false,
+            modified: [],
+            staged: [],
+            untracked: [],
+          };
+        }
+
+        const { modified, staged, untracked } = result.data;
+        const hasUncommittedChanges =
+          modified.length > 0 || staged.length > 0 || untracked.length > 0;
+
+        return {
+          hasUncommittedChanges,
+          modified,
+          staged,
+          untracked,
+        };
+      } catch {
+        return {
+          hasUncommittedChanges: false,
+          modified: [],
+          staged: [],
+          untracked: [],
+        };
+      }
     }
   );
 }

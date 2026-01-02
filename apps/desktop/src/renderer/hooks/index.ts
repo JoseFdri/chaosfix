@@ -24,3 +24,10 @@ export type {
   UseCreateWorkspaceOptions,
   UseCreateWorkspaceReturn,
 } from "./use-create-workspace.hook";
+
+export { useRemoveWorkspace } from "./use-remove-workspace.hook";
+export type {
+  UseRemoveWorkspaceOptions,
+  UseRemoveWorkspaceReturn,
+  StatusDetails,
+} from "./use-remove-workspace.hook";
