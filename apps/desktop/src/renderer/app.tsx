@@ -116,6 +116,7 @@ export const App: FC = () => {
     activeWorkspace,
     onAddTerminal: workspacesActions.addTerminal,
     onRemoveTerminal: workspacesActions.removeTerminal,
+    onSetActiveTerminal: workspacesActions.setActiveTerminal,
   });
 
   // Workspace creation dialog state and handlers

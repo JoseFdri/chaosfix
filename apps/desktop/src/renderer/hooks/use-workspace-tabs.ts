@@ -12,6 +12,7 @@ export interface UseWorkspaceTabsOptions {
   activeWorkspace: WorkspaceWithTerminals | undefined;
   onAddTerminal?: (workspaceId: string, terminal: TerminalSession) => void;
   onRemoveTerminal?: (workspaceId: string, terminalId: string) => void;
+  onSetActiveTerminal?: (workspaceId: string, terminalId: string | null) => void;
 }
 
 export interface UseWorkspaceTabsReturn {
@@ -26,6 +27,7 @@ export function useWorkspaceTabs({
   activeWorkspace,
   onAddTerminal,
   onRemoveTerminal,
+  onSetActiveTerminal,
 }: UseWorkspaceTabsOptions): UseWorkspaceTabsReturn {
   const tabs = useMemo<Tab[]>(() => {
     if (!activeWorkspace) {
@@ -40,9 +42,15 @@ export function useWorkspaceTabs({
 
   const activeTabId = activeWorkspace?.activeTerminalId ?? null;
 
-  const handleTabSelect = useCallback((_tabId: string): void => {
-    // TODO: Implement tab selection
-  }, []);
+  const handleTabSelect = useCallback(
+    (tabId: string): void => {
+      if (!activeWorkspace || !onSetActiveTerminal) {
+        return;
+      }
+      onSetActiveTerminal(activeWorkspace.id, tabId);
+    },
+    [activeWorkspace, onSetActiveTerminal]
+  );
 
   const handleTabClose = useCallback(
     (tabId: string): void => {

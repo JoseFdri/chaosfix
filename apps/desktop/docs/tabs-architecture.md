@@ -1,6 +1,6 @@
 # Tabs Architecture
 
-This document describes the files involved in the tab system for the desktop application.
+This document describes the files involved in the tab system for the desktop application, this documentation should not contain code examples, only keywords and file references to help developers navigate the codebase.
 
 ## Overview
 
@@ -41,10 +41,10 @@ Located in apps/desktop/src/renderer/contexts/
 
 Located in apps/desktop/src/renderer/hooks/
 
-| File                  | Description                                                                                                                              |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| use-workspace-tabs.ts | Bridges workspace state to TabBar component. Converts TerminalSession objects to Tab objects and provides handlers for tab interactions. |
-| index.ts              | Exports useWorkspaceTabs hook and related types.                                                                                         |
+| File                  | Description                                                                                                                                                                                                                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| use-workspace-tabs.ts | Bridges workspace state to TabBar component. Converts TerminalSession objects to Tab objects. Accepts onAddTerminal, onRemoveTerminal, and onSetActiveTerminal callbacks. Returns tabs, activeTabId, handleTabSelect, handleTabClose, and handleNewTab. See UseWorkspaceTabsOptions interface. |
+| index.ts              | Exports useWorkspaceTabs hook and related types.                                                                                                                                                                                                                                               |
 
 ### Constants
 
@@ -59,18 +59,21 @@ Located in apps/desktop/src/constants/
 
 Located in apps/desktop/src/renderer/
 
-| File                         | Description                                                                                                                                              |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| app.tsx                      | Root component that integrates TabBar with workspace state. Uses useWorkspaceTabs hook and conditionally renders the tab bar when a workspace is active. |
-| components/terminal-view.tsx | Renders the terminal content for the currently active tab.                                                                                               |
+| File                         | Description                                                                                                                                                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| app.tsx                      | Root component that integrates TabBar with workspace state. Uses useWorkspaceTabs hook with workspacesActions.addTerminal, workspacesActions.removeTerminal, and workspacesActions.setActiveTerminal. Conditionally renders the tab bar when a workspace is active. |
+| components/terminal-view.tsx | Renders the terminal content for the currently active tab.                                                                                                                                                                                                          |
 
 ## Data Flow
 
-1. TerminalSession objects are stored in the workspace state
-2. The useWorkspaceTabs hook converts terminal sessions to Tab objects
+1. TerminalSession objects are stored in workspaces.slice.ts
+2. useWorkspaceTabs hook converts terminal sessions to Tab objects
 3. TabBar component renders the tabs from the hook
-4. User interactions trigger workspace actions through the hook handlers
-5. State updates propagate back through the context to re-render
+4. User interactions trigger workspace actions through hook handlers:
+   - Tab click triggers handleTabSelect, which calls onSetActiveTerminal (bound to setActiveTerminal)
+   - Close button triggers handleTabClose, which calls onRemoveTerminal (bound to removeTerminal)
+   - New tab button triggers handleNewTab, which calls onAddTerminal (bound to addTerminal)
+5. State updates propagate back through app-context.tsx to re-render
 
 ## Use Cases
 
