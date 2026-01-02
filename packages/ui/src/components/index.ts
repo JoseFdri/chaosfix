@@ -44,6 +44,8 @@ export {
   type StatsBarProps,
   InputDialog,
   type InputDialogProps,
+  TitleBar,
+  type TitleBarProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections

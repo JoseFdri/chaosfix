@@ -3,6 +3,7 @@ import {
   Sidebar,
   SidebarItem,
   TabBar,
+  TitleBar,
   ActivityIndicator,
   SearchInput,
   SidebarFooter,
@@ -107,6 +108,9 @@ export const App: FC = () => {
   });
 
   const activeWorkspace = allWorkspaces.find((w) => w.id === activeWorkspaceId);
+  const activeRepository = activeWorkspace
+    ? allRepositories.find((r) => r.id === activeWorkspace.repositoryId)
+    : null;
 
   const { tabs, handleTabSelect, handleTabClose, handleNewTab } = useWorkspaceTabs({
     activeWorkspace,
@@ -220,6 +224,11 @@ export const App: FC = () => {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
+          {/* Title Bar */}
+          {activeWorkspace && (
+            <TitleBar title={activeWorkspace.name} subtitle={activeRepository?.name} />
+          )}
+
           {/* Tab Bar */}
           {activeWorkspace?.activeTerminalId && (
             <TabBar
