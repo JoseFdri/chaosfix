@@ -1,10 +1,16 @@
 import { useMemo, useCallback } from "react";
 import type { Tab } from "@chaosfix/ui";
+import type { TerminalSession } from "@chaosfix/core";
 import type { WorkspaceWithTerminals } from "../contexts/slices/workspaces.slice";
-import { DEFAULT_TERMINAL_LABEL } from "../../constants";
+import {
+  DEFAULT_TERMINAL_LABEL,
+  INITIAL_TERMINAL_PID,
+  DEFAULT_TERMINAL_STATUS,
+} from "../../constants";
 
 export interface UseWorkspaceTabsOptions {
   activeWorkspace: WorkspaceWithTerminals | undefined;
+  onAddTerminal?: (workspaceId: string, terminal: TerminalSession) => void;
   onRemoveTerminal?: (workspaceId: string, terminalId: string) => void;
 }
 
@@ -18,6 +24,7 @@ export interface UseWorkspaceTabsReturn {
 
 export function useWorkspaceTabs({
   activeWorkspace,
+  onAddTerminal,
   onRemoveTerminal,
 }: UseWorkspaceTabsOptions): UseWorkspaceTabsReturn {
   const tabs = useMemo<Tab[]>(() => {
@@ -48,8 +55,21 @@ export function useWorkspaceTabs({
   );
 
   const handleNewTab = useCallback((): void => {
-    // TODO: Implement new tab
-  }, []);
+    if (!activeWorkspace || !onAddTerminal) {
+      return;
+    }
+
+    const terminal: TerminalSession = {
+      id: `${activeWorkspace.id}-${Date.now()}`,
+      workspaceId: activeWorkspace.id,
+      pid: INITIAL_TERMINAL_PID,
+      title: DEFAULT_TERMINAL_LABEL,
+      status: DEFAULT_TERMINAL_STATUS,
+      createdAt: new Date(),
+    };
+
+    onAddTerminal(activeWorkspace.id, terminal);
+  }, [activeWorkspace, onAddTerminal]);
 
   return {
     tabs,
