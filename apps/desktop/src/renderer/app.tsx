@@ -112,12 +112,15 @@ export const App: FC = () => {
     ? allRepositories.find((r) => r.id === activeWorkspace.repositoryId)
     : null;
 
-  const { tabs, handleTabSelect, handleTabClose, handleNewTab } = useWorkspaceTabs({
-    activeWorkspace,
-    onAddTerminal: workspacesActions.addTerminal,
-    onRemoveTerminal: workspacesActions.removeTerminal,
-    onSetActiveTerminal: workspacesActions.setActiveTerminal,
-  });
+  const { tabs, handleTabSelect, handleTabClose, handleTabRename, handleNewTab } = useWorkspaceTabs(
+    {
+      activeWorkspace,
+      onAddTerminal: workspacesActions.addTerminal,
+      onRemoveTerminal: workspacesActions.removeTerminal,
+      onSetActiveTerminal: workspacesActions.setActiveTerminal,
+      onRenameTerminal: workspacesActions.renameTerminal,
+    }
+  );
 
   // Workspace creation dialog state and handlers
   const {
@@ -238,6 +241,7 @@ export const App: FC = () => {
               activeTabId={activeWorkspace.activeTerminalId}
               onTabSelect={handleTabSelect}
               onTabClose={handleTabClose}
+              onTabRename={handleTabRename}
               onNewTab={handleNewTab}
             />
           )}

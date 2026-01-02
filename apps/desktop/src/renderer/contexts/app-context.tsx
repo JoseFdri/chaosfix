@@ -102,6 +102,7 @@ interface WorkspacesActions {
   addTerminal: (workspaceId: string, terminal: TerminalSession) => void;
   removeTerminal: (workspaceId: string, terminalId: string) => void;
   setActiveTerminal: (workspaceId: string, terminalId: string | null) => void;
+  renameTerminal: (workspaceId: string, terminalId: string, title: string) => void;
   removeByRepository: (repositoryId: string) => void;
 }
 

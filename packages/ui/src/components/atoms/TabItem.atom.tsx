@@ -1,4 +1,4 @@
-import { type FC, type ReactNode } from "react";
+import { type FC, type ReactNode, useState, useRef, useEffect, type KeyboardEvent } from "react";
 import { cn } from "../../libs/cn.lib";
 
 export interface Tab {
@@ -13,9 +13,50 @@ export interface TabItemProps {
   isActive: boolean;
   onSelect: () => void;
   onClose?: () => void;
+  onRename?: (newLabel: string) => void;
 }
 
-export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose }) => {
+export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose, onRename }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(tab.label);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
+    setEditValue(tab.label);
+  }, [tab.label]);
+
+  const handleDoubleClick = (): void => {
+    if (onRename) {
+      setIsEditing(true);
+      setEditValue(tab.label);
+    }
+  };
+
+  const handleBlur = (): void => {
+    const trimmedValue = editValue.trim();
+    if (trimmedValue && trimmedValue !== tab.label) {
+      onRename?.(trimmedValue);
+    }
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      inputRef.current?.blur();
+    } else if (e.key === "Escape") {
+      setEditValue(tab.label);
+      setIsEditing(false);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -32,14 +73,32 @@ export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose }) 
       aria-selected={isActive}
     >
       {tab.icon && <span className="w-4 h-4 flex-shrink-0">{tab.icon}</span>}
-      <span
-        className={cn("text-sm truncate max-w-[120px]", {
-          "text-text-primary font-medium": isActive,
-          "text-text-secondary": !isActive,
-        })}
-      >
-        {tab.label}
-      </span>
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          onClick={(e) => e.stopPropagation()}
+          className={cn(
+            "text-sm w-[120px] px-1 py-0 border rounded",
+            "bg-surface-primary border-border-default",
+            "text-text-primary outline-none focus:border-accent-primary"
+          )}
+        />
+      ) : (
+        <span
+          className={cn("text-sm truncate max-w-[120px]", {
+            "text-text-primary font-medium": isActive,
+            "text-text-secondary": !isActive,
+          })}
+          onDoubleClick={handleDoubleClick}
+        >
+          {tab.label}
+        </span>
+      )}
       {tab.closable !== false && onClose && (
         <button
           type="button"

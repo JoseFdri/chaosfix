@@ -7,6 +7,7 @@ export interface TabBarProps {
   activeTabId: string | null;
   onTabSelect: (tabId: string) => void;
   onTabClose?: (tabId: string) => void;
+  onTabRename?: (tabId: string, newLabel: string) => void;
   onNewTab?: () => void;
   className?: string;
 }
@@ -16,6 +17,7 @@ export const TabBar: FC<TabBarProps> = ({
   activeTabId,
   onTabSelect,
   onTabClose,
+  onTabRename,
   onNewTab,
   className,
 }) => {
@@ -35,6 +37,7 @@ export const TabBar: FC<TabBarProps> = ({
             isActive={tab.id === activeTabId}
             onSelect={() => onTabSelect(tab.id)}
             onClose={onTabClose ? (): void => onTabClose(tab.id) : undefined}
+            onRename={onTabRename ? (newLabel): void => onTabRename(tab.id, newLabel) : undefined}
           />
         ))}
       </div>

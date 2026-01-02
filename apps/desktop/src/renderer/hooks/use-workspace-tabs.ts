@@ -13,6 +13,7 @@ export interface UseWorkspaceTabsOptions {
   onAddTerminal?: (workspaceId: string, terminal: TerminalSession) => void;
   onRemoveTerminal?: (workspaceId: string, terminalId: string) => void;
   onSetActiveTerminal?: (workspaceId: string, terminalId: string | null) => void;
+  onRenameTerminal?: (workspaceId: string, terminalId: string, title: string) => void;
 }
 
 export interface UseWorkspaceTabsReturn {
@@ -20,6 +21,7 @@ export interface UseWorkspaceTabsReturn {
   activeTabId: string | null;
   handleTabSelect: (tabId: string) => void;
   handleTabClose: (tabId: string) => void;
+  handleTabRename: (tabId: string, newLabel: string) => void;
   handleNewTab: () => void;
 }
 
@@ -28,6 +30,7 @@ export function useWorkspaceTabs({
   onAddTerminal,
   onRemoveTerminal,
   onSetActiveTerminal,
+  onRenameTerminal,
 }: UseWorkspaceTabsOptions): UseWorkspaceTabsReturn {
   const tabs = useMemo<Tab[]>(() => {
     if (!activeWorkspace) {
@@ -62,6 +65,16 @@ export function useWorkspaceTabs({
     [activeWorkspace, onRemoveTerminal]
   );
 
+  const handleTabRename = useCallback(
+    (tabId: string, newLabel: string): void => {
+      if (!activeWorkspace || !onRenameTerminal) {
+        return;
+      }
+      onRenameTerminal(activeWorkspace.id, tabId, newLabel);
+    },
+    [activeWorkspace, onRenameTerminal]
+  );
+
   const handleNewTab = useCallback((): void => {
     if (!activeWorkspace || !onAddTerminal) {
       return;
@@ -84,6 +97,7 @@ export function useWorkspaceTabs({
     activeTabId,
     handleTabSelect,
     handleTabClose,
+    handleTabRename,
     handleNewTab,
   };
 }

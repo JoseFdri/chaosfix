@@ -26,6 +26,10 @@ export type WorkspacesAction =
       type: "workspaces/setActiveTerminal";
       payload: { workspaceId: string; terminalId: string | null };
     }
+  | {
+      type: "workspaces/renameTerminal";
+      payload: { workspaceId: string; terminalId: string; title: string };
+    }
   | { type: "workspaces/removeByRepository"; payload: string };
 
 // Initial state
@@ -119,6 +123,22 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
       };
     }
 
+    case "workspaces/renameTerminal": {
+      return {
+        ...state,
+        workspaces: state.workspaces.map((w) =>
+          w.id === action.payload.workspaceId
+            ? {
+                ...w,
+                terminals: w.terminals.map((t) =>
+                  t.id === action.payload.terminalId ? { ...t, title: action.payload.title } : t
+                ),
+              }
+            : w
+        ),
+      };
+    }
+
     case "workspaces/removeByRepository": {
       return {
         ...state,
@@ -174,6 +194,11 @@ export const workspacesActions = {
   setActiveTerminal: (workspaceId: string, terminalId: string | null): WorkspacesAction => ({
     type: "workspaces/setActiveTerminal",
     payload: { workspaceId, terminalId },
+  }),
+
+  renameTerminal: (workspaceId: string, terminalId: string, title: string): WorkspacesAction => ({
+    type: "workspaces/renameTerminal",
+    payload: { workspaceId, terminalId, title },
   }),
 
   removeByRepository: (repositoryId: string): WorkspacesAction => ({
