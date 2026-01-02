@@ -5,6 +5,7 @@ import { DEFAULT_TERMINAL_LABEL } from "../../constants";
 
 export interface UseWorkspaceTabsOptions {
   activeWorkspace: WorkspaceWithTerminals | undefined;
+  onRemoveTerminal?: (workspaceId: string, terminalId: string) => void;
 }
 
 export interface UseWorkspaceTabsReturn {
@@ -17,6 +18,7 @@ export interface UseWorkspaceTabsReturn {
 
 export function useWorkspaceTabs({
   activeWorkspace,
+  onRemoveTerminal,
 }: UseWorkspaceTabsOptions): UseWorkspaceTabsReturn {
   const tabs = useMemo<Tab[]>(() => {
     if (!activeWorkspace) {
@@ -35,9 +37,15 @@ export function useWorkspaceTabs({
     // TODO: Implement tab selection
   }, []);
 
-  const handleTabClose = useCallback((_tabId: string): void => {
-    // TODO: Implement tab close
-  }, []);
+  const handleTabClose = useCallback(
+    (tabId: string): void => {
+      if (!activeWorkspace || !onRemoveTerminal) {
+        return;
+      }
+      onRemoveTerminal(activeWorkspace.id, tabId);
+    },
+    [activeWorkspace, onRemoveTerminal]
+  );
 
   const handleNewTab = useCallback((): void => {
     // TODO: Implement new tab

@@ -15,8 +15,24 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: [
+      "@chaosfix/core",
+      "@chaosfix/config",
+      "@chaosfix/ui",
+      "@chaosfix/terminal-bridge",
+      "@chaosfix/workspace-manager",
+    ],
+  },
   server: {
     port: 5173,
     strictPort: true,
+    hmr: {
+      overlay: true,
+    },
+    watch: {
+      usePolling: false,
+      ignored: ["!**/node_modules/@chaosfix/**"],
+    },
   },
 });

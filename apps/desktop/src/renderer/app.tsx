@@ -110,6 +110,7 @@ export const App: FC = () => {
 
   const { tabs, handleTabSelect, handleTabClose, handleNewTab } = useWorkspaceTabs({
     activeWorkspace,
+    onRemoveTerminal: workspacesActions.removeTerminal,
   });
 
   // Workspace creation dialog state and handlers
