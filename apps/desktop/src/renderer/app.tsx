@@ -132,6 +132,11 @@ export const App: FC = () => {
     pendingRepository,
   } = useCreateWorkspace({
     addWorkspace: workspacesActions.add,
+    onSuccess: (workspace) => {
+      // Auto-create initial terminal for the new workspace
+      const terminal = createInitialTerminalSession(workspace.id);
+      workspacesActions.addTerminal(workspace.id, terminal);
+    },
   });
 
   const {
