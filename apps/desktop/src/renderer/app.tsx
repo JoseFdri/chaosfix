@@ -243,14 +243,16 @@ export const App: FC = () => {
           )}
 
           {/* Terminal Area */}
-          <div className="flex-1 bg-gray-900">
-            {activeWorkspace?.activeTerminalId ? (
+          <div className="flex-1 bg-gray-900 relative">
+            {activeWorkspace?.terminals.map((terminal) => (
               <TerminalView
-                key={activeWorkspace.activeTerminalId}
-                workspaceId={activeWorkspace.id}
+                key={terminal.id}
+                terminalId={terminal.id}
                 worktreePath={activeWorkspace.worktreePath}
+                isActive={terminal.id === activeWorkspace.activeTerminalId}
               />
-            ) : (
+            ))}
+            {!activeWorkspace?.activeTerminalId && (
               <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
                 <ActionCardGroup>
                   <ActionCard

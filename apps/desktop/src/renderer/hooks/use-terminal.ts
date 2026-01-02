@@ -4,7 +4,7 @@ import { useResizeObserver } from "@chaosfix/ui";
 import { DEFAULT_CWD } from "../../constants";
 
 export interface UseTerminalOptions {
-  workspaceId: string;
+  terminalId: string;
   cwd?: string;
 }
 
@@ -12,7 +12,7 @@ export interface UseTerminalReturn {
   containerRef: (node: HTMLDivElement | null) => void;
 }
 
-export function useTerminal({ workspaceId, cwd }: UseTerminalOptions): UseTerminalReturn {
+export function useTerminal({ terminalId, cwd }: UseTerminalOptions): UseTerminalReturn {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const terminalRef = useRef<TerminalController | null>(null);
   const ptyIdRef = useRef<string | null>(null);
@@ -27,7 +27,7 @@ export function useTerminal({ workspaceId, cwd }: UseTerminalOptions): UseTermin
     terminalRef.current = terminal;
 
     const pty = await window.terminal.create({
-      id: `${workspaceId}-${Date.now()}`,
+      id: terminalId,
       cwd: cwd || DEFAULT_CWD,
     });
     ptyIdRef.current = pty.id;
@@ -66,7 +66,7 @@ export function useTerminal({ workspaceId, cwd }: UseTerminalOptions): UseTermin
       }
       terminal.dispose();
     };
-  }, [workspaceId, cwd]);
+  }, [terminalId, cwd]);
 
   useEffect(() => {
     let isMounted = true;
