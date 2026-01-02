@@ -246,16 +246,20 @@ export const App: FC = () => {
             />
           )}
 
-          {/* Terminal Area */}
+          {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
           <div className="flex-1 bg-gray-900 relative">
-            {activeWorkspace?.terminals.map((terminal) => (
-              <TerminalView
-                key={terminal.id}
-                terminalId={terminal.id}
-                worktreePath={activeWorkspace.worktreePath}
-                isActive={terminal.id === activeWorkspace.activeTerminalId}
-              />
-            ))}
+            {allWorkspaces.flatMap((workspace) =>
+              workspace.terminals.map((terminal) => (
+                <TerminalView
+                  key={terminal.id}
+                  terminalId={terminal.id}
+                  worktreePath={workspace.worktreePath}
+                  isActive={
+                    workspace.id === activeWorkspaceId && terminal.id === workspace.activeTerminalId
+                  }
+                />
+              ))
+            )}
             {!activeWorkspace?.activeTerminalId && (
               <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
                 <ActionCardGroup>
