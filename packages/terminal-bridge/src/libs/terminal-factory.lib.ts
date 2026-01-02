@@ -61,6 +61,10 @@ export function createTerminal(
   const resizeListeners: ((cols: number, rows: number) => void)[] = [];
   const titleListeners: ((title: string) => void)[] = [];
 
+  // Track last dimensions to avoid spurious resize events
+  let lastCols = terminal.cols;
+  let lastRows = terminal.rows;
+
   // Set up data handler
   terminal.onData((data) => {
     for (const listener of dataListeners) {
@@ -68,8 +72,13 @@ export function createTerminal(
     }
   });
 
-  // Set up resize handler
+  // Set up resize handler - only fire if dimensions actually changed
   terminal.onResize(({ cols, rows }) => {
+    if (cols === lastCols && rows === lastRows) {
+      return;
+    }
+    lastCols = cols;
+    lastRows = rows;
     for (const listener of resizeListeners) {
       listener(cols, rows);
     }

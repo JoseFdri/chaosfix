@@ -89,7 +89,8 @@ export function useTerminal({ terminalId, cwd }: UseTerminalOptions): UseTermina
   }, [initTerminal]);
 
   useEffect(() => {
-    if (terminalRef.current && size) {
+    // Skip fit when terminal is hidden (0 dimensions) to avoid unnecessary PTY resize
+    if (terminalRef.current && size && size.width > 0 && size.height > 0) {
       terminalRef.current.fit();
     }
   }, [size]);
