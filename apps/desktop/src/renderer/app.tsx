@@ -235,6 +235,7 @@ export const App: FC = () => {
           <div className="flex-1 bg-gray-900">
             {activeWorkspace?.activeTerminalId ? (
               <TerminalView
+                key={activeWorkspace.activeTerminalId}
                 workspaceId={activeWorkspace.id}
                 worktreePath={activeWorkspace.worktreePath}
               />
