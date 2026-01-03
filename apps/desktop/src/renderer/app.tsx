@@ -249,7 +249,14 @@ export const App: FC = () => {
             filteredRepositories.map((repo) => {
               const repoWorkspaces = allWorkspaces.filter((w) => w.repositoryId === repo.id);
               return (
-                <RepositorySection key={repo.id} name={repo.name}>
+                <RepositorySection
+                  key={repo.id}
+                  name={repo.name}
+                  onSettingsClick={() => {
+                    // TODO: Implement repository settings dialog
+                    console.log("Open settings for repository:", repo.id, repo.name);
+                  }}
+                >
                   <SidebarItem
                     label="New workspace"
                     icon={<PlusIcon className="w-4 h-4" />}
