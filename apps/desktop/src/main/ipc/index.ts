@@ -5,6 +5,7 @@ import { setupDialogIPC } from "./dialog";
 import { setupStateIPC } from "./state";
 import { setupWorkspaceIPC } from "./workspace";
 import { setupRepositoryIPC } from "./repository";
+import { setupRepositoryConfigIPC } from "./repository-config";
 
 export interface IPCDependencies {
   getMainWindow: () => BrowserWindow | null;
@@ -30,6 +31,10 @@ export function setupAllIPC(deps: IPCDependencies): void {
   setupRepositoryIPC({
     getMainWindow: deps.getMainWindow,
   });
+
+  setupRepositoryConfigIPC({
+    getMainWindow: deps.getMainWindow,
+  });
 }
 
 export { setupTerminalIPC } from "./terminal";
@@ -37,3 +42,4 @@ export { setupDialogIPC } from "./dialog";
 export { setupStateIPC } from "./state";
 export { setupWorkspaceIPC } from "./workspace";
 export { setupRepositoryIPC } from "./repository";
+export { setupRepositoryConfigIPC } from "./repository-config";

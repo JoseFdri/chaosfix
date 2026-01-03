@@ -3,6 +3,7 @@ export type * from "./dialog.types";
 export type * from "./state.types";
 export type * from "./workspace.types";
 export type * from "./repository.types";
+export type * from "./repository-config.types";
 export type * from "./ipc.types";
 export type * from "./slice-registry.types";
 

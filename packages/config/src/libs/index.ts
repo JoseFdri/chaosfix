@@ -4,5 +4,6 @@ export {
   APP_DATA_DIR,
   STATE_FILE_NAME,
   PREFERENCES_FILE_NAME,
+  REPO_CONFIG_DIR,
   DEFAULT_BRANCH,
 } from "./constants.lib";

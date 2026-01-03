@@ -41,3 +41,11 @@ export const REPOSITORY_IPC_CHANNELS = {
 
 export type RepositoryIPCChannel =
   (typeof REPOSITORY_IPC_CHANNELS)[keyof typeof REPOSITORY_IPC_CHANNELS];
+
+export const REPOSITORY_CONFIG_IPC_CHANNELS = {
+  LOAD: "repository-config:load",
+  SAVE: "repository-config:save",
+} as const;
+
+export type RepositoryConfigIPCChannel =
+  (typeof REPOSITORY_CONFIG_IPC_CHANNELS)[keyof typeof REPOSITORY_CONFIG_IPC_CHANNELS];

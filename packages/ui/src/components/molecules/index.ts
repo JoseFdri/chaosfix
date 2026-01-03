@@ -12,3 +12,5 @@ export {
   RepositorySettingsDialog,
   type RepositorySettingsDialogProps,
 } from "./RepositorySettingsDialog.molecule";
+export { GeneralSettingsTab, type GeneralSettingsTabProps } from "./GeneralSettingsTab.molecule";
+export { ConfigurationTab, type ConfigurationTabProps } from "./ConfigurationTab.molecule";

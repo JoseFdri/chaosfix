@@ -1,18 +1,21 @@
-import { useMemo, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  CollapsiblePath,
-  Select,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
   type DialogProps,
-  type SelectOption,
 } from "../atoms";
 import { ConfirmDialog } from "./ConfirmDialog.molecule";
+import { GeneralSettingsTab } from "./GeneralSettingsTab.molecule";
+import { ConfigurationTab } from "./ConfigurationTab.molecule";
 import { useRepositorySettings } from "../../hooks/useRepositorySettings.hook";
+import { useRepositoryConfig } from "../../hooks/useRepositoryConfig.hook";
 import { cn } from "../../libs/cn.lib";
-import { TrashIcon } from "../../icons";
 
 export interface RepositorySettingsDialogProps extends Omit<DialogProps, "children"> {
   repository: {
@@ -42,8 +45,8 @@ export const RepositorySettingsDialog = ({
     branches,
     remotes,
     workspacesPath,
-    isLoading,
-    error,
+    isLoading: isLoadingSettings,
+    error: settingsError,
     selectedBranch,
     setSelectedBranch,
     selectedRemote,
@@ -55,15 +58,22 @@ export const RepositorySettingsDialog = ({
     initialRemote: repository.defaultRemote,
   });
 
-  const branchOptions: SelectOption[] = useMemo(
-    () => branches.map((branch: string) => ({ value: branch, label: branch })),
-    [branches]
-  );
-
-  const remoteOptions: SelectOption[] = useMemo(
-    () => remotes.map((remote: string) => ({ value: remote, label: remote })),
-    [remotes]
-  );
+  const {
+    config,
+    source,
+    isLoading: isLoadingConfig,
+    error: configError,
+    isDirty,
+    isSaving,
+    isValid,
+    save,
+    setConfig,
+    setIsValid,
+  } = useRepositoryConfig({
+    repositoryId: repository.id,
+    repositoryPath: repository.path,
+    open: open ?? false,
+  });
 
   const handleBranchChange = useCallback(
     (value: string) => {
@@ -87,73 +97,63 @@ export const RepositorySettingsDialog = ({
     onRemove?.();
   }, [onOpenChange, onRemove]);
 
+  const handleSave = useCallback(() => {
+    void save();
+  }, [save]);
+
+  const isLoading = isLoadingSettings || isLoadingConfig;
+  const error = settingsError || configError;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...props}>
-      <DialogContent className={cn("max-w-md", className)} showCloseButton>
+      <DialogContent className={cn("max-w-lg", className)} showCloseButton>
         <DialogHeader>
           <DialogTitle>{repository.name}</DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
           <div className="py-8 text-center text-sm text-text-secondary">Loading settings...</div>
-        ) : error ? (
+        ) : error && !configError ? (
           <div className="py-8 text-center text-sm text-status-error">{error}</div>
         ) : (
-          <div className="flex flex-col gap-4 pt-2">
-            <CollapsiblePath label="Root path:" path={repository.path} />
+          <Tabs defaultValue="general" className="w-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="general" className="flex-1">
+                General
+              </TabsTrigger>
+              <TabsTrigger value="configuration" className="flex-1">
+                Configuration
+              </TabsTrigger>
+            </TabsList>
 
-            <CollapsiblePath label="Workspaces:" path={workspacesPath} />
-
-            <div className="border-t border-border-subtle my-2" />
-
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-text-primary">
-                Branch new workspaces from
-              </span>
-              <p className="text-xs text-text-secondary">
-                New workspaces will be created from this branch.
-              </p>
-              <Select
-                value={selectedBranch}
-                onValueChange={handleBranchChange}
-                options={branchOptions}
-                placeholder="Select branch..."
-                disabled={branchOptions.length === 0}
+            <TabsContent value="general">
+              <GeneralSettingsTab
+                repositoryPath={repository.path}
+                workspacesPath={workspacesPath}
+                branches={branches}
+                remotes={remotes}
+                selectedBranch={selectedBranch}
+                selectedRemote={selectedRemote}
+                onBranchChange={handleBranchChange}
+                onRemoteChange={handleRemoteChange}
+                onRemoveClick={onRemove ? (): void => setShowRemoveConfirm(true) : undefined}
               />
-            </div>
+            </TabsContent>
 
-            <div className="border-t border-border-subtle my-2" />
-
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-text-primary">Remote origin</span>
-              <p className="text-xs text-text-secondary">
-                The default remote for pushing and pulling changes.
-              </p>
-              <Select
-                value={selectedRemote}
-                onValueChange={handleRemoteChange}
-                options={remoteOptions}
-                placeholder="Select remote..."
-                disabled={remoteOptions.length === 0}
+            <TabsContent value="configuration">
+              <ConfigurationTab
+                config={config}
+                source={source}
+                isDirty={isDirty}
+                isSaving={isSaving}
+                isValid={isValid}
+                error={configError}
+                onConfigChange={setConfig}
+                onValidationChange={setIsValid}
+                onSave={handleSave}
               />
-            </div>
-
-            {onRemove && (
-              <>
-                <div className="border-t border-border-subtle my-2" />
-                <div className="flex justify-start">
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 text-sm text-red-500 hover:text-red-400 transition-colors"
-                    onClick={() => setShowRemoveConfirm(true)}
-                  >
-                    <TrashIcon className="w-4 h-4" />
-                    Remove
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+            </TabsContent>
+          </Tabs>
         )}
       </DialogContent>
 

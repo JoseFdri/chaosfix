@@ -18,3 +18,14 @@ export {
   type UseRepositorySettingsOptions,
   type UseRepositorySettingsReturn,
 } from "./useRepositorySettings.hook";
+export {
+  useJsonEditor,
+  type UseJsonEditorOptions,
+  type UseJsonEditorReturn,
+} from "./useJsonEditor.hook";
+export {
+  useRepositoryConfig,
+  type UseRepositoryConfigOptions,
+  type UseRepositoryConfigReturn,
+  type ConfigSource,
+} from "./useRepositoryConfig.hook";
