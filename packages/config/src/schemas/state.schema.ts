@@ -28,6 +28,8 @@ export const appStateSchema = z.object({
       name: z.string(),
       path: z.string(),
       defaultBranch: z.string(),
+      branchFrom: z.string().optional(),
+      defaultRemote: z.string().optional(),
     })
   ),
   workspaces: z.array(workspaceStateSchema),

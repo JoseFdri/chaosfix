@@ -6,6 +6,7 @@
 // Outline icons (24x24, default)
 export {
   ArchiveBoxXMarkIcon,
+  ChevronDownIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
   FolderPlusIcon,
@@ -18,6 +19,7 @@ export {
   DocumentDuplicateIcon,
   RocketLaunchIcon,
   PlayCircleIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 // Solid icons (20x20) - add as needed

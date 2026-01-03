@@ -32,3 +32,12 @@ export const WORKSPACE_IPC_CHANNELS = {
 
 export type WorkspaceIPCChannel =
   (typeof WORKSPACE_IPC_CHANNELS)[keyof typeof WORKSPACE_IPC_CHANNELS];
+
+export const REPOSITORY_IPC_CHANNELS = {
+  GET_BRANCHES: "repository:get-branches",
+  GET_REMOTES: "repository:get-remotes",
+  GET_WORKSPACES_PATH: "repository:get-workspaces-path",
+} as const;
+
+export type RepositoryIPCChannel =
+  (typeof REPOSITORY_IPC_CHANNELS)[keyof typeof REPOSITORY_IPC_CHANNELS];

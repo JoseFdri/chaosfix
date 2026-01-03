@@ -89,6 +89,7 @@ export function AppProvider({ children }: { children: React.ReactNode }): JSX.El
 interface RepositoriesActions {
   add: (repository: Repository) => void;
   remove: (repositoryId: string) => void;
+  update: (id: string, updates: Partial<Repository>) => void;
 }
 
 /**

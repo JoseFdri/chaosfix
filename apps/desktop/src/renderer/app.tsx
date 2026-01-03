@@ -1,4 +1,4 @@
-import { type FC, useState } from "react";
+import { type FC, useState, useCallback } from "react";
 import {
   Sidebar,
   SidebarItem,
@@ -161,6 +161,24 @@ export const App: FC = () => {
     ? allRepositories.find((r) => r.id === activeSettingsRepoId)
     : null;
 
+  // Repository settings callbacks
+  const handleRepositorySettingsChange = useCallback(
+    (id: string, updates: { branchFrom?: string; defaultRemote?: string }) => {
+      repositoriesActions.update(id, updates);
+    },
+    [repositoriesActions]
+  );
+
+  const handleRepositoryRemove = useCallback(() => {
+    if (!activeSettingsRepoId) {
+      return;
+    }
+    // Close the dialog first
+    setActiveSettingsRepoId(null);
+    // Remove the repository (cascades to remove workspaces in state via wrapReducer)
+    repositoriesActions.remove(activeSettingsRepoId);
+  }, [activeSettingsRepoId, repositoriesActions]);
+
   // Workspace removal dialog state and handlers
   const {
     isDialogOpen: isRemoveDialogOpen,
@@ -226,15 +244,25 @@ export const App: FC = () => {
       />
 
       {/* Repository Settings Dialog */}
-      <RepositorySettingsDialog
-        open={activeSettingsRepoId !== null}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            setActiveSettingsRepoId(null);
-          }
-        }}
-        repositoryName={activeSettingsRepo?.name ?? ""}
-      />
+      {activeSettingsRepo && (
+        <RepositorySettingsDialog
+          open={activeSettingsRepoId !== null}
+          onOpenChange={(open: boolean) => {
+            if (!open) {
+              setActiveSettingsRepoId(null);
+            }
+          }}
+          repository={{
+            id: activeSettingsRepo.id,
+            name: activeSettingsRepo.name,
+            path: activeSettingsRepo.path,
+            branchFrom: activeSettingsRepo.branchFrom,
+            defaultRemote: activeSettingsRepo.defaultRemote,
+          }}
+          onSettingsChange={handleRepositorySettingsChange}
+          onRemove={handleRepositoryRemove}
+        />
+      )}
 
       <div className="flex h-screen bg-gray-900 text-gray-100">
         {/* Sidebar */}

@@ -9,7 +9,8 @@ export interface RepositoriesState {
 // Actions
 export type RepositoriesAction =
   | { type: "repositories/add"; payload: Repository }
-  | { type: "repositories/remove"; payload: string };
+  | { type: "repositories/remove"; payload: string }
+  | { type: "repositories/update"; payload: { id: string; updates: Partial<Repository> } };
 
 // Initial state
 const initialState: RepositoriesState = {
@@ -30,6 +31,14 @@ function reducer(state: RepositoriesState, action: RepositoriesAction): Reposito
       return {
         ...state,
         repositories: state.repositories.filter((r) => r.id !== action.payload),
+      };
+    }
+
+    case "repositories/update": {
+      const { id, updates } = action.payload;
+      return {
+        ...state,
+        repositories: state.repositories.map((r) => (r.id === id ? { ...r, ...updates } : r)),
       };
     }
 
@@ -56,5 +65,10 @@ export const repositoriesActions = {
   remove: (repositoryId: string): RepositoriesAction => ({
     type: "repositories/remove",
     payload: repositoryId,
+  }),
+
+  update: (id: string, updates: Partial<Repository>): RepositoriesAction => ({
+    type: "repositories/update",
+    payload: { id, updates },
   }),
 };

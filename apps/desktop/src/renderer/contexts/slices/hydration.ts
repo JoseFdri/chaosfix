@@ -33,6 +33,8 @@ interface SerializedRepository {
   name: string;
   path: string;
   defaultBranch: string;
+  branchFrom?: string;
+  defaultRemote?: string;
   workspaces: string[];
   createdAt: string;
 }
@@ -74,6 +76,8 @@ function serializeRepository(repo: Repository): SerializedRepository {
     name: repo.name,
     path: repo.path,
     defaultBranch: repo.defaultBranch,
+    branchFrom: repo.branchFrom,
+    defaultRemote: repo.defaultRemote,
     workspaces: repo.workspaces,
     createdAt: repo.createdAt.toISOString(),
   };
@@ -124,6 +128,8 @@ function deserializeRepository(serialized: AppState["repositories"][number]): Re
     name: serialized.name,
     path: serialized.path,
     defaultBranch: serialized.defaultBranch,
+    branchFrom: serialized.branchFrom,
+    defaultRemote: serialized.defaultRemote,
     workspaces: [],
     createdAt: new Date(),
   };
