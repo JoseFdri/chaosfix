@@ -39,7 +39,7 @@ chaosfix/
 ├─────────────────────────────────────────────────────────────┤
 │                    Application Layer                         │
 │  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────┐ │
-│  │ Session Manager  │ │ Workspace Router │ │ State Store  │ │
+│  │ Session Manager  │ │ Workspace Router │ │ App Context  │ │
 │  └──────────────────┘ └──────────────────┘ └──────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
 │                    Domain Layer                              │
@@ -166,7 +166,8 @@ src/
 └── renderer/       # React application
     ├── app.tsx           # Root component
     ├── components/       # App-specific components
-    └── stores/           # Zustand state management
+    └── contexts/         # State management (slice-based reducer pattern)
+        └── slices/       # Domain slices (repositories, workspaces, ui, persistence)
 ```
 
 **Build outputs**:
@@ -195,7 +196,7 @@ src/
 - **Runtime**: Electron + React + TypeScript
 - **Terminal**: xterm.js (rendering) + node-pty (PTY management)
 - **Build**: Turborepo, tsup (packages), Vite (renderer)
-- **State**: Zustand
+- **State**: Custom slice-based reducer pattern (React useReducer + Context)
 - **Validation**: Zod
 - **Testing**: Vitest
 
@@ -328,16 +329,16 @@ Each phase should follow this structure:
 
 Plans MUST include warnings with a brief explanation when the implementation could violate project rules or introduce anti-patterns. Common warnings to include:
 
-| Scenario                 | Warning to Include                                                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Adding new types         | "Do NOT create a generic `types.ts` file. Create atomic files with category suffix (e.g., `types.workspace.ts`, `types.terminal.ts`)" |
-| Adding new constants     | "Do NOT add to existing constant files. Create a new file with appropriate suffix (e.g., `constants.events.ts`)"                      |
-| Adding shared utilities  | "Verify this doesn't already exist in `@chaosfix/core` before creating"                                                               |
-| Modifying IPC handlers   | "Ensure type-safe IPC contract is maintained in both main and preload"                                                                |
-| Adding React components  | "Check `@chaosfix/ui` for existing components before creating new ones"                                                               |
-| State management changes | "Follow existing Zustand patterns in `stores/` directory"                                                                             |
-| Terminal-related changes | "Respect the terminal-bridge architecture: xterm.js in renderer, node-pty in main"                                                    |
-| Using environment vars   | "Do NOT use `process.env` directly. Use `@chaosfix/config` or define constants loaded once. Use `os.homedir()` in main process"       |
+| Scenario                 | Warning to Include                                                                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adding new types         | "Do NOT create a generic `types.ts` file. Create atomic files with category suffix (e.g., `types.workspace.ts`, `types.terminal.ts`)"           |
+| Adding new constants     | "Do NOT add to existing constant files. Create a new file with appropriate suffix (e.g., `constants.events.ts`)"                                |
+| Adding shared utilities  | "Verify this doesn't already exist in `@chaosfix/core` before creating"                                                                         |
+| Modifying IPC handlers   | "Ensure type-safe IPC contract is maintained in both main and preload"                                                                          |
+| Adding React components  | "Check `@chaosfix/ui` for existing components before creating new ones"                                                                         |
+| State management changes | "Follow the slice-based reducer pattern in `contexts/slices/`. Create new slices using `createRegisteredSlice()` and register in `registry.ts`" |
+| Terminal-related changes | "Respect the terminal-bridge architecture: xterm.js in renderer, node-pty in main"                                                              |
+| Using environment vars   | "Do NOT use `process.env` directly. Use `@chaosfix/config` or define constants loaded once. Use `os.homedir()` in main process"                 |
 
 Add custom warnings for any phase where you anticipate the sub-agent might:
 

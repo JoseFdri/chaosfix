@@ -1,4 +1,4 @@
-import { type FC } from "react";
+import { type FC, useState } from "react";
 import {
   Sidebar,
   SidebarItem,
@@ -18,6 +18,7 @@ import {
   PlusIcon,
   InputDialog,
   ConfirmDialog,
+  RepositorySettingsDialog,
   IconButton,
   ArchiveBoxXMarkIcon,
 } from "@chaosfix/ui";
@@ -154,6 +155,12 @@ export const App: FC = () => {
     onNewWorkspace: openDialog,
   });
 
+  // Repository settings dialog state
+  const [activeSettingsRepoId, setActiveSettingsRepoId] = useState<string | null>(null);
+  const activeSettingsRepo = activeSettingsRepoId
+    ? allRepositories.find((r) => r.id === activeSettingsRepoId)
+    : null;
+
   // Workspace removal dialog state and handlers
   const {
     isDialogOpen: isRemoveDialogOpen,
@@ -218,6 +225,17 @@ export const App: FC = () => {
         onCancel={closeRemoveDialog}
       />
 
+      {/* Repository Settings Dialog */}
+      <RepositorySettingsDialog
+        open={activeSettingsRepoId !== null}
+        onOpenChange={(open: boolean) => {
+          if (!open) {
+            setActiveSettingsRepoId(null);
+          }
+        }}
+        repositoryName={activeSettingsRepo?.name ?? ""}
+      />
+
       <div className="flex h-screen bg-gray-900 text-gray-100">
         {/* Sidebar */}
         <Sidebar
@@ -252,10 +270,7 @@ export const App: FC = () => {
                 <RepositorySection
                   key={repo.id}
                   name={repo.name}
-                  onSettingsClick={() => {
-                    // TODO: Implement repository settings dialog
-                    console.log("Open settings for repository:", repo.id, repo.name);
-                  }}
+                  onSettingsClick={() => setActiveSettingsRepoId(repo.id)}
                 >
                   <SidebarItem
                     label="New workspace"

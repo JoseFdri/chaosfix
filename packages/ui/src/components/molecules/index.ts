@@ -8,3 +8,7 @@ export { StatsBar, type StatsBarProps } from "./StatsBar.molecule";
 export { InputDialog, type InputDialogProps } from "./InputDialog.molecule";
 export { ConfirmDialog, type ConfirmDialogProps } from "./ConfirmDialog.molecule";
 export { TitleBar, type TitleBarProps } from "./TitleBar.molecule";
+export {
+  RepositorySettingsDialog,
+  type RepositorySettingsDialogProps,
+} from "./RepositorySettingsDialog.molecule";

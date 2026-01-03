@@ -28,7 +28,7 @@ chaosfix/
 - **Runtime**: Electron + React + TypeScript
 - **Terminal**: xterm.js (rendering) + node-pty (PTY management)
 - **Build**: Turborepo, tsup (packages), Vite (renderer)
-- **State**: Zustand
+- **State**: Custom slice-based reducer pattern (React useReducer + Context)
 - **Validation**: Zod
 
 ## Prerequisites
@@ -53,19 +53,19 @@ pnpm build
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm install` | Install all dependencies |
-| `pnpm dev` | Start development mode with hot reload |
-| `pnpm build` | Build all packages for production |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm lint` | Run ESLint across all packages |
-| `pnpm lint:fix` | Fix auto-fixable lint issues |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check code formatting |
-| `pnpm test` | Run all tests |
-| `pnpm test:watch` | Run tests in watch mode |
-| `pnpm clean` | Clean build artifacts and node_modules |
+| Command             | Description                            |
+| ------------------- | -------------------------------------- |
+| `pnpm install`      | Install all dependencies               |
+| `pnpm dev`          | Start development mode with hot reload |
+| `pnpm build`        | Build all packages for production      |
+| `pnpm typecheck`    | Run TypeScript type checking           |
+| `pnpm lint`         | Run ESLint across all packages         |
+| `pnpm lint:fix`     | Fix auto-fixable lint issues           |
+| `pnpm format`       | Format code with Prettier              |
+| `pnpm format:check` | Check code formatting                  |
+| `pnpm test`         | Run all tests                          |
+| `pnpm test:watch`   | Run tests in watch mode                |
+| `pnpm clean`        | Clean build artifacts and node_modules |
 
 ## Documentation
 

@@ -48,6 +48,8 @@ export {
   type ConfirmDialogProps,
   TitleBar,
   type TitleBarProps,
+  RepositorySettingsDialog,
+  type RepositorySettingsDialogProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections
