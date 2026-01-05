@@ -5,6 +5,8 @@ import { cn } from "../../libs/cn.lib";
 export interface SidebarProps {
   width?: number;
   collapsed?: boolean;
+  /** When true, disables width transition for smooth dragging */
+  isResizing?: boolean;
   children: ReactNode;
   header?: ReactNode;
   footer?: ReactNode;
@@ -14,6 +16,7 @@ export interface SidebarProps {
 export const Sidebar: FC<SidebarProps> = ({
   width = 250,
   collapsed = false,
+  isResizing = false,
   children,
   header,
   footer,
@@ -22,9 +25,9 @@ export const Sidebar: FC<SidebarProps> = ({
   return (
     <aside
       className={cn(
-        "flex flex-col bg-surface-secondary border-r border-border-default",
-        "transition-all duration-200 ease-in-out",
+        "flex flex-col flex-shrink-0 bg-surface-secondary border-r border-border-default",
         "overflow-hidden",
+        !isResizing && "transition-all duration-200 ease-in-out",
         className
       )}
       style={{ width: collapsed ? 0 : width }}

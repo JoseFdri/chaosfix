@@ -96,7 +96,11 @@ export const App: FC = () => {
   const searchQuery = state.ui.searchQuery;
 
   // Sidebar resize
-  const { width: sidebarWidth, handleMouseDown } = useDragResize({
+  const {
+    width: sidebarWidth,
+    isDragging,
+    handleMouseDown,
+  } = useDragResize({
     initialWidth: state.ui.sidebarWidth,
     minWidth: MIN_SIDEBAR_WIDTH,
     maxWidth: MAX_SIDEBAR_WIDTH,
@@ -283,6 +287,7 @@ export const App: FC = () => {
         <Sidebar
           width={sidebarWidth}
           collapsed={sidebarCollapsed}
+          isResizing={isDragging}
           header={
             <div className="p-3 pt-10">
               <SearchInput

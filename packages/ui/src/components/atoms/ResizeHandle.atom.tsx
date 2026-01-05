@@ -12,7 +12,7 @@ export const ResizeHandle: FC<ResizeHandleProps> = ({ onMouseDown, className }) 
       role="separator"
       aria-orientation="vertical"
       className={cn(
-        "flex-shrink-0 w-1 h-full cursor-col-resize group",
+        "flex-shrink-0 w-3 h-full cursor-col-resize group",
         "flex items-center justify-center",
         className
       )}
