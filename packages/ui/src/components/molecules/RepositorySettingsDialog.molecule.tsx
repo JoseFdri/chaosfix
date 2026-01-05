@@ -119,8 +119,8 @@ export const RepositorySettingsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...props}>
-      <DialogContent className={cn("max-w-lg", className)} showCloseButton>
-        <DialogHeader>
+      <DialogContent className={cn("max-w-lg h-[420px] flex flex-col", className)} showCloseButton>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>{repository.name}</DialogTitle>
         </DialogHeader>
 
@@ -129,8 +129,8 @@ export const RepositorySettingsDialog = ({
         ) : error && !configError ? (
           <div className="py-8 text-center text-sm text-status-error">{error}</div>
         ) : (
-          <Tabs defaultValue="general" className="w-full">
-            <TabsList className="w-full">
+          <Tabs defaultValue="general" className="w-full flex-1 flex flex-col min-h-0">
+            <TabsList className="w-full flex-shrink-0">
               <TabsTrigger value="general" className="flex-1">
                 General
               </TabsTrigger>
@@ -139,7 +139,7 @@ export const RepositorySettingsDialog = ({
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="general">
+            <TabsContent value="general" className="flex-1 overflow-y-auto">
               <GeneralSettingsTab
                 repositoryPath={repository.path}
                 workspacesPath={workspacesPath}
@@ -153,7 +153,7 @@ export const RepositorySettingsDialog = ({
               />
             </TabsContent>
 
-            <TabsContent value="configuration">
+            <TabsContent value="configuration" className="flex-1 overflow-y-auto">
               <ConfigurationTab
                 config={config}
                 isDirty={isDirty}
