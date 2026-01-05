@@ -19,7 +19,12 @@ export interface UseSetupScriptOptions {
  */
 export interface UseSetupScriptReturn {
   /** Runs the setup script for a workspace */
-  runSetup: (workspaceId: string, worktreePath: string, repositoryPath: string) => Promise<void>;
+  runSetup: (
+    workspaceId: string,
+    worktreePath: string,
+    repositoryId: string,
+    repositoryPath: string
+  ) => Promise<void>;
   /** Whether a setup script is currently running */
   isRunning: boolean;
   /** Current error message, if any */
@@ -45,13 +50,18 @@ export function useSetupScript({
   const [error, setError] = useState<string | null>(null);
 
   const runSetup = useCallback(
-    async (workspaceId: string, worktreePath: string, repositoryPath: string): Promise<void> => {
+    async (
+      workspaceId: string,
+      worktreePath: string,
+      repositoryId: string,
+      repositoryPath: string
+    ): Promise<void> => {
       setError(null);
 
       try {
-        // Load repository configuration
+        // Load repository configuration (can be stored in repo or app config)
         const configResult = await window.repositoryConfig.load({
-          repositoryId: workspaceId,
+          repositoryId,
           repositoryPath,
         });
 

@@ -179,8 +179,11 @@ export const App: FC = () => {
       workspacesActions.addTerminal(workspace.id, terminal);
 
       // Run setup script in the background (after workspace is in state)
-      // Note: repositoryId is the repository path in the current data model
-      runSetup(workspace.id, workspace.worktreePath, workspace.repositoryId);
+      // Config can be stored in repo (chaosfix.json) or app storage (~/.chaosfix/configs/{repoId}.json)
+      const repository = allRepositories.find((r) => r.id === workspace.repositoryId);
+      if (repository) {
+        runSetup(workspace.id, workspace.worktreePath, repository.id, repository.path);
+      }
     },
   });
 
