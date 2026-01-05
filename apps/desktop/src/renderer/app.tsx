@@ -121,6 +121,7 @@ export const App: FC = () => {
   const filteredRepositories = useFilteredRepositories({
     repositories: allRepositories,
     searchQuery,
+    workspaces: allWorkspaces,
   });
   const { handleAddRepository } = useRepositoryActions({
     repositories: allRepositories,
