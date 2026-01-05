@@ -28,6 +28,8 @@ export interface SaveConfigOptions {
   repositoryId: string;
   repositoryPath: string;
   config: ProjectConfig;
+  /** Whether to save to repository (true) or app storage only (false). Defaults to true. */
+  saveToRepo?: boolean;
 }
 
 /**

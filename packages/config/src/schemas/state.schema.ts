@@ -30,6 +30,7 @@ export const appStateSchema = z.object({
       defaultBranch: z.string(),
       branchFrom: z.string().optional(),
       defaultRemote: z.string().optional(),
+      saveConfigToRepo: z.boolean().optional(),
     })
   ),
   workspaces: z.array(workspaceStateSchema),

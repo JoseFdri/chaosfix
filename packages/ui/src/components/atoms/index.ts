@@ -41,3 +41,4 @@ export {
   type TabsTriggerProps,
   type TabsContentProps,
 } from "./Tabs.atom";
+export { Switch, type SwitchProps } from "./Switch.atom";

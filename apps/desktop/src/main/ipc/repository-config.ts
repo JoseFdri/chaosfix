@@ -80,13 +80,16 @@ async function saveConfig(options: SaveConfigOptions): Promise<SaveConfigResult>
   }
 
   const configContent = JSON.stringify(result.data, null, 2);
+  const saveToRepo = options.saveToRepo ?? true;
 
-  const repoConfigPath = getRepoConfigPath(options.repositoryPath);
-  try {
-    await fs.writeFile(repoConfigPath, configContent, "utf-8");
-    return { success: true, location: "repo" };
-  } catch {
-    // Fallback to app storage
+  if (saveToRepo) {
+    const repoConfigPath = getRepoConfigPath(options.repositoryPath);
+    try {
+      await fs.writeFile(repoConfigPath, configContent, "utf-8");
+      return { success: true, location: "repo" };
+    } catch {
+      // Fallback to app storage if repo save fails
+    }
   }
 
   const appConfigPath = getAppConfigPath(options.repositoryId);

@@ -32,6 +32,7 @@ interface RepositoryConfigAPI {
     repositoryId: string;
     repositoryPath: string;
     config: Record<string, unknown>;
+    saveToRepo?: boolean;
   }) => Promise<SaveConfigResult>;
 }
 
@@ -54,6 +55,8 @@ export interface UseRepositoryConfigOptions {
   repositoryId: string;
   repositoryPath: string;
   open: boolean;
+  /** Whether to save config to repo. Defaults to true. */
+  saveToRepo?: boolean;
 }
 
 export interface UseRepositoryConfigReturn {
@@ -76,6 +79,7 @@ export function useRepositoryConfig({
   repositoryId,
   repositoryPath,
   open,
+  saveToRepo = true,
 }: UseRepositoryConfigOptions): UseRepositoryConfigReturn {
   const [config, setConfigState] = useState<string>("");
   const [originalConfig, setOriginalConfig] = useState<string>("");
@@ -153,6 +157,7 @@ export function useRepositoryConfig({
         repositoryId,
         repositoryPath,
         config: parsedConfig,
+        saveToRepo,
       });
 
       if (result.success) {
@@ -170,7 +175,7 @@ export function useRepositoryConfig({
     } finally {
       setIsSaving(false);
     }
-  }, [repositoryId, repositoryPath, config, isValid, isDirty]);
+  }, [repositoryId, repositoryPath, config, isValid, isDirty, saveToRepo]);
 
   useEffect(() => {
     if (open && !hasLoadedRef.current) {

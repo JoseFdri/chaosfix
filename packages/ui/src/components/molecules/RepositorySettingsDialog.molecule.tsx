@@ -24,8 +24,12 @@ export interface RepositorySettingsDialogProps extends Omit<DialogProps, "childr
     path: string;
     branchFrom?: string;
     defaultRemote?: string;
+    saveConfigToRepo?: boolean;
   };
-  onSettingsChange?: (id: string, updates: { branchFrom?: string; defaultRemote?: string }) => void;
+  onSettingsChange?: (
+    id: string,
+    updates: { branchFrom?: string; defaultRemote?: string; saveConfigToRepo?: boolean }
+  ) => void;
   onRemove?: () => void;
   className?: string;
 }
@@ -40,6 +44,7 @@ export const RepositorySettingsDialog = ({
   ...props
 }: RepositorySettingsDialogProps): React.JSX.Element => {
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [saveToRepo, setSaveToRepo] = useState(repository.saveConfigToRepo ?? true);
 
   const {
     branches,
@@ -73,6 +78,7 @@ export const RepositorySettingsDialog = ({
     repositoryId: repository.id,
     repositoryPath: repository.path,
     open: open ?? false,
+    saveToRepo,
   });
 
   const handleBranchChange = useCallback(
@@ -89,6 +95,14 @@ export const RepositorySettingsDialog = ({
       onSettingsChange?.(repository.id, { defaultRemote: value });
     },
     [setSelectedRemote, onSettingsChange, repository.id]
+  );
+
+  const handleSaveToRepoChange = useCallback(
+    (value: boolean) => {
+      setSaveToRepo(value);
+      onSettingsChange?.(repository.id, { saveConfigToRepo: value });
+    },
+    [onSettingsChange, repository.id]
   );
 
   const handleRemoveConfirm = useCallback(() => {
@@ -148,8 +162,10 @@ export const RepositorySettingsDialog = ({
                 isSaving={isSaving}
                 isValid={isValid}
                 error={configError}
+                saveToRepo={saveToRepo}
                 onConfigChange={setConfig}
                 onValidationChange={setIsValid}
+                onSaveToRepoChange={handleSaveToRepoChange}
                 onSave={handleSave}
               />
             </TabsContent>

@@ -163,7 +163,10 @@ export const App: FC = () => {
 
   // Repository settings callbacks
   const handleRepositorySettingsChange = useCallback(
-    (id: string, updates: { branchFrom?: string; defaultRemote?: string }) => {
+    (
+      id: string,
+      updates: { branchFrom?: string; defaultRemote?: string; saveConfigToRepo?: boolean }
+    ) => {
       repositoriesActions.update(id, updates);
     },
     [repositoriesActions]
@@ -258,6 +261,7 @@ export const App: FC = () => {
             path: activeSettingsRepo.path,
             branchFrom: activeSettingsRepo.branchFrom,
             defaultRemote: activeSettingsRepo.defaultRemote,
+            saveConfigToRepo: activeSettingsRepo.saveConfigToRepo,
           }}
           onSettingsChange={handleRepositorySettingsChange}
           onRemove={handleRepositoryRemove}
