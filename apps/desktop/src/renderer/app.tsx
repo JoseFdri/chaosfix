@@ -4,7 +4,6 @@ import {
   SidebarItem,
   TabBar,
   TitleBar,
-  ActivityIndicator,
   SearchInput,
   SidebarFooter,
   RepositorySection,
@@ -322,22 +321,17 @@ export const App: FC = () => {
                         )
                       }
                       trailing={
-                        <div className="flex items-center gap-1">
-                          <IconButton
-                            size="sm"
-                            variant="ghost"
-                            label="Remove workspace"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openRemoveDialog(workspace, repo.path);
-                            }}
-                          >
-                            <ArchiveBoxXMarkIcon className="w-4 h-4" />
-                          </IconButton>
-                          <ActivityIndicator
-                            status={workspace.status === "active" ? "active" : "idle"}
-                          />
-                        </div>
+                        <IconButton
+                          size="sm"
+                          variant="ghost"
+                          label="Remove workspace"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openRemoveDialog(workspace, repo.path);
+                          }}
+                        >
+                          <ArchiveBoxXMarkIcon className="w-4 h-4" />
+                        </IconButton>
                       }
                     />
                   ))}
