@@ -1,11 +1,8 @@
 import { useCallback } from "react";
 import { Button, JsonEditor, Switch } from "../atoms";
-import { cn } from "../../libs/cn.lib";
-import type { ConfigSource } from "../../hooks/useRepositoryConfig.hook";
 
 export interface ConfigurationTabProps {
   config: string;
-  source: ConfigSource;
   isDirty: boolean;
   isSaving: boolean;
   isValid: boolean;
@@ -17,21 +14,8 @@ export interface ConfigurationTabProps {
   onSave: () => void;
 }
 
-const SOURCE_LABELS: Record<ConfigSource, string> = {
-  repo: "Repository",
-  app: "Application",
-  default: "Default",
-};
-
-const SOURCE_DESCRIPTIONS: Record<ConfigSource, string> = {
-  repo: "Loaded from .chaosfix.json in repository root",
-  app: "Loaded from application settings for this repository",
-  default: "Using default configuration",
-};
-
 export function ConfigurationTab({
   config,
-  source,
   isDirty,
   isSaving,
   isValid,
@@ -57,29 +41,6 @@ export function ConfigurationTab({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-text-primary">Configuration Source</span>
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                {
-                  "bg-green-500/20 text-green-400": source === "repo",
-                  "bg-blue-500/20 text-blue-400": source === "app",
-                  "bg-gray-500/20 text-gray-400": source === "default",
-                }
-              )}
-            >
-              {SOURCE_LABELS[source]}
-            </span>
-          </div>
-          <p className="text-xs text-text-secondary">{SOURCE_DESCRIPTIONS[source]}</p>
-        </div>
-      </div>
-
-      <div className="border-t border-border-subtle my-1" />
-
       <div className="flex items-center justify-between py-2">
         <div className="flex flex-col gap-1">
           <span className="text-sm font-medium text-text-primary">Save to repository</span>

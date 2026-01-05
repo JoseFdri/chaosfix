@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /**
  * Source of the loaded configuration
  */
-export type ConfigSource = "repo" | "app" | "default";
+type ConfigSource = "repo" | "app" | "default";
 
 /**
  * Result from loading repository configuration
@@ -61,7 +61,6 @@ export interface UseRepositoryConfigOptions {
 
 export interface UseRepositoryConfigReturn {
   config: string;
-  source: ConfigSource;
   isLoading: boolean;
   error: string | null;
   isDirty: boolean;
@@ -83,7 +82,6 @@ export function useRepositoryConfig({
 }: UseRepositoryConfigOptions): UseRepositoryConfigReturn {
   const [config, setConfigState] = useState<string>("");
   const [originalConfig, setOriginalConfig] = useState<string>("");
-  const [source, setSource] = useState<ConfigSource>("default");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -122,7 +120,6 @@ export function useRepositoryConfig({
       const configString = JSON.stringify(result.config, null, 2);
       setConfigState(configString);
       setOriginalConfig(configString);
-      setSource(result.source);
       hasLoadedRef.current = true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to load configuration";
@@ -162,7 +159,6 @@ export function useRepositoryConfig({
 
       if (result.success) {
         setOriginalConfig(config);
-        setSource(result.location);
         return true;
       }
 
@@ -187,14 +183,12 @@ export function useRepositoryConfig({
     hasLoadedRef.current = false;
     setConfigState("");
     setOriginalConfig("");
-    setSource("default");
     setError(null);
     setIsValid(true);
   }, [repositoryId]);
 
   return {
     config,
-    source,
     isLoading,
     error,
     isDirty,

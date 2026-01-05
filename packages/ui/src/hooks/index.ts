@@ -27,5 +27,4 @@ export {
   useRepositoryConfig,
   type UseRepositoryConfigOptions,
   type UseRepositoryConfigReturn,
-  type ConfigSource,
 } from "./useRepositoryConfig.hook";

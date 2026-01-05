@@ -65,7 +65,6 @@ export const RepositorySettingsDialog = ({
 
   const {
     config,
-    source,
     isLoading: isLoadingConfig,
     error: configError,
     isDirty,
@@ -157,7 +156,6 @@ export const RepositorySettingsDialog = ({
             <TabsContent value="configuration">
               <ConfigurationTab
                 config={config}
-                source={source}
                 isDirty={isDirty}
                 isSaving={isSaving}
                 isValid={isValid}
