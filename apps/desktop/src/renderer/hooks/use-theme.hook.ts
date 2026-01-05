@@ -57,15 +57,10 @@ export function useTheme(): UseThemeReturn {
     }
   }, [isDark]);
 
-  // Toggle through themes: system -> light -> dark -> system
+  // Toggle based on resolved appearance (not theme preference)
   const toggleTheme = useCallback(() => {
-    const nextTheme: Record<Theme, Theme> = {
-      system: "light",
-      light: "dark",
-      dark: "system",
-    };
-    preferences.setTheme(nextTheme[theme]);
-  }, [theme, preferences]);
+    preferences.setTheme(isDark ? "light" : "dark");
+  }, [isDark, preferences]);
 
   // Set specific theme
   const setTheme = useCallback(
