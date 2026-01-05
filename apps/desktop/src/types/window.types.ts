@@ -1,6 +1,7 @@
 import type { DialogAPI } from "./dialog.types";
 import type { RepositoryAPI } from "./repository.types";
 import type { RepositoryConfigAPI } from "./repository-config.types";
+import type { SetupScriptAPI } from "./setup-script.types";
 import type { StateAPI } from "./state.types";
 import type { TerminalAPI } from "./terminal.types";
 import type { WorkspaceAPI } from "./workspace.types";
@@ -16,5 +17,6 @@ declare global {
     workspace: WorkspaceAPI;
     repository: RepositoryAPI;
     repositoryConfig: RepositoryConfigAPI;
+    setupScript: SetupScriptAPI;
   }
 }

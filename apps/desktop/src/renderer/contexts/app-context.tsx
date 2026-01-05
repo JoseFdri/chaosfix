@@ -14,7 +14,9 @@ import {
   type UIState,
   type PersistenceState,
   type PreferencesState,
+  type NotificationsState,
   type Theme,
+  type Notification,
   type WorkspaceWithTerminals,
   type SerializableState,
   type BaseAction,
@@ -29,6 +31,7 @@ interface AppCombinedState {
   ui: UIState;
   persistence: PersistenceState;
   preferences: PreferencesState;
+  notifications: NotificationsState;
 }
 
 /**
@@ -136,6 +139,15 @@ interface PreferencesActions {
 }
 
 /**
+ * Bound actions for notifications operations.
+ */
+interface NotificationsActions {
+  add: (notification: Omit<Notification, "id"> & { id?: string }) => void;
+  remove: (id: string) => void;
+  clear: () => void;
+}
+
+/**
  * Return type for the useApp hook.
  */
 interface UseAppReturn {
@@ -145,6 +157,7 @@ interface UseAppReturn {
   ui: UIActions;
   persistence: PersistenceActions;
   preferences: PreferencesActions;
+  notifications: NotificationsActions;
   hydrateState: (appState: AppState) => void;
   getSerializableState: () => SerializableState;
 }
@@ -176,6 +189,7 @@ export function useApp(): UseAppReturn {
     ui: UIActions;
     persistence: PersistenceActions;
     preferences: PreferencesActions;
+    notifications: NotificationsActions;
     dispatch: (action: BaseAction) => void;
   };
 
@@ -203,6 +217,7 @@ export function useApp(): UseAppReturn {
     ui: typedContext.ui,
     persistence: typedContext.persistence,
     preferences: typedContext.preferences,
+    notifications: typedContext.notifications,
     hydrateState,
     getSerializableState,
   };

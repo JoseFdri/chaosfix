@@ -43,6 +43,15 @@ export {
   type Theme,
 } from "./preferences.slice";
 
+export {
+  notificationsSlice,
+  notificationsActions,
+  type NotificationsState,
+  type NotificationsAction,
+  type Notification,
+  type NotificationType,
+} from "./notifications.slice";
+
 // Hydration utilities
 export {
   hydrationActions,

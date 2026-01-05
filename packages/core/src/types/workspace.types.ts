@@ -9,4 +9,4 @@ export interface Workspace {
   status: WorkspaceStatus;
 }
 
-export type WorkspaceStatus = "active" | "idle" | "error" | "archived";
+export type WorkspaceStatus = "active" | "idle" | "error" | "archived" | "setting_up";

@@ -2,7 +2,7 @@ import { type FC } from "react";
 import { cn } from "../../libs/cn.lib";
 
 export interface ActivityIndicatorProps {
-  status: "active" | "idle" | "error";
+  status: "active" | "idle" | "error" | "setting_up";
   size?: "sm" | "md";
   className?: string;
 }
@@ -12,6 +12,8 @@ export const ActivityIndicator: FC<ActivityIndicatorProps> = ({
   size = "sm",
   className,
 }) => {
+  const ariaLabel = status === "setting_up" ? "Status: setting up" : `Status: ${status}`;
+
   return (
     <span
       className={cn(
@@ -21,8 +23,9 @@ export const ActivityIndicator: FC<ActivityIndicatorProps> = ({
           "bg-accent-success": status === "active",
           "bg-text-muted": status === "idle",
           "bg-accent-error": status === "error",
-          // Animation for active status
-          "animate-pulse": status === "active",
+          "bg-accent-warning": status === "setting_up",
+          // Animations
+          "animate-pulse": status === "active" || status === "setting_up",
           // Sizes
           "w-2 h-2": size === "sm",
           "w-3 h-3": size === "md",
@@ -30,7 +33,7 @@ export const ActivityIndicator: FC<ActivityIndicatorProps> = ({
         className
       )}
       role="status"
-      aria-label={`Status: ${status}`}
+      aria-label={ariaLabel}
     />
   );
 };

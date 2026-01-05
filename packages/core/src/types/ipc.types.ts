@@ -49,3 +49,10 @@ export const REPOSITORY_CONFIG_IPC_CHANNELS = {
 
 export type RepositoryConfigIPCChannel =
   (typeof REPOSITORY_CONFIG_IPC_CHANNELS)[keyof typeof REPOSITORY_CONFIG_IPC_CHANNELS];
+
+export const SETUP_SCRIPT_IPC_CHANNELS = {
+  RUN: "setup-script:run",
+} as const;
+
+export type SetupScriptIPCChannel =
+  (typeof SETUP_SCRIPT_IPC_CHANNELS)[keyof typeof SETUP_SCRIPT_IPC_CHANNELS];

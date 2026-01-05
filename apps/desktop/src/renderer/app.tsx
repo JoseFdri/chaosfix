@@ -35,8 +35,10 @@ import {
   useCreateWorkspace,
   useRemoveWorkspace,
   useTheme,
+  useSetupScript,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
+import { NotificationContainer } from "./components/NotificationContainer.component";
 import {
   WORKSPACE_DIALOG,
   REMOVE_WORKSPACE_DIALOG,
@@ -86,6 +88,7 @@ export const App: FC = () => {
     workspaces: workspacesActions,
     ui,
     persistence,
+    notifications,
     hydrateState,
     getSerializableState,
   } = useApp();
@@ -148,6 +151,18 @@ export const App: FC = () => {
     }
   );
 
+  // Setup script hook for running workspace setup after creation
+  const { runSetup } = useSetupScript({
+    updateWorkspaceStatus: workspacesActions.updateStatus,
+    onError: (_workspaceId, error) => {
+      notifications.add({
+        type: "error",
+        title: "Setup Failed",
+        message: `Workspace setup script failed: ${error}`,
+      });
+    },
+  });
+
   // Workspace creation dialog state and handlers
   const {
     isDialogOpen,
@@ -162,6 +177,10 @@ export const App: FC = () => {
       // Auto-create initial terminal for the new workspace
       const terminal = createInitialTerminalSession(workspace.id);
       workspacesActions.addTerminal(workspace.id, terminal);
+
+      // Run setup script in the background (after workspace is in state)
+      // Note: repositoryId is the repository path in the current data model
+      runSetup(workspace.id, workspace.worktreePath, workspace.repositoryId);
     },
   });
 
@@ -427,6 +446,9 @@ export const App: FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Notification Container - renders toast notifications */}
+      <NotificationContainer />
     </>
   );
 };

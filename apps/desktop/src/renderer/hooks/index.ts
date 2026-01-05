@@ -34,3 +34,6 @@ export type {
 
 export { useTheme } from "./use-theme.hook";
 export type { UseThemeReturn } from "./use-theme.hook";
+
+export { useSetupScript } from "./use-setup-script.hook";
+export type { UseSetupScriptOptions, UseSetupScriptReturn } from "./use-setup-script.hook";
