@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+---
+
+> **⚠️ STOP! Before implementing any approved plan:**
+>
+> **DO NOT write code directly.** You MUST use sub-agents (Task tool) for each phase.
+> See [Plan Execution Guidelines](#critical-plan-execution-guidelines) below.
+
+---
+
 ## Project Overview
 
 ChaosFix is a macOS Electron application for running multiple Claude Code sessions in parallel. Users interact directly with Claude Code CLI in terminal panels, with each workspace isolated in its own git worktree.
@@ -387,3 +396,14 @@ Final: Report consolidated results
 ```
 
 **REMINDER: Never write implementation code directly after plan approval. Always delegate to sub-agents.**
+
+### Pre-Implementation Checklist
+
+Before writing ANY code after a plan is approved, verify:
+
+- [ ] Am I about to use the Edit/Write tool directly? **STOP - use Task tool instead**
+- [ ] Have I launched a Task agent for this phase?
+- [ ] Did the Task agent invoke the required skills (typescript-guidelines, react-guidelines)?
+- [ ] After the phase, did I launch a review agent?
+
+If you find yourself editing files directly after plan approval, you are violating this guideline.

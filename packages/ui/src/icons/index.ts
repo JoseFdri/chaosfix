@@ -20,6 +20,8 @@ export {
   RocketLaunchIcon,
   PlayCircleIcon,
   TrashIcon,
+  SunIcon,
+  MoonIcon,
 } from "@heroicons/react/24/outline";
 
 // Solid icons (20x20) - add as needed

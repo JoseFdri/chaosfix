@@ -13,6 +13,8 @@ import {
   type WorkspacesState,
   type UIState,
   type PersistenceState,
+  type PreferencesState,
+  type Theme,
   type WorkspaceWithTerminals,
   type SerializableState,
   type BaseAction,
@@ -26,6 +28,7 @@ interface AppCombinedState {
   workspaces: WorkspacesState;
   ui: UIState;
   persistence: PersistenceState;
+  preferences: PreferencesState;
 }
 
 /**
@@ -126,6 +129,13 @@ interface PersistenceActions {
 }
 
 /**
+ * Bound actions for preferences operations.
+ */
+interface PreferencesActions {
+  setTheme: (theme: Theme) => void;
+}
+
+/**
  * Return type for the useApp hook.
  */
 interface UseAppReturn {
@@ -134,6 +144,7 @@ interface UseAppReturn {
   workspaces: WorkspacesActions;
   ui: UIActions;
   persistence: PersistenceActions;
+  preferences: PreferencesActions;
   hydrateState: (appState: AppState) => void;
   getSerializableState: () => SerializableState;
 }
@@ -164,6 +175,7 @@ export function useApp(): UseAppReturn {
     workspaces: WorkspacesActions;
     ui: UIActions;
     persistence: PersistenceActions;
+    preferences: PreferencesActions;
     dispatch: (action: BaseAction) => void;
   };
 
@@ -190,6 +202,7 @@ export function useApp(): UseAppReturn {
     workspaces: typedContext.workspaces,
     ui: typedContext.ui,
     persistence: typedContext.persistence,
+    preferences: typedContext.preferences,
     hydrateState,
     getSerializableState,
   };

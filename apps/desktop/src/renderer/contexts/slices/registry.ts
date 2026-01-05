@@ -2,6 +2,7 @@ import { repositoriesSlice, repositoriesActions } from "./repositories.slice";
 import { workspacesSlice, workspacesActions } from "./workspaces.slice";
 import { uiSlice, uiActions } from "./ui.slice";
 import { persistenceSlice, persistenceActions } from "./persistence.slice";
+import { preferencesSlice, preferencesActions } from "./preferences.slice";
 import type { BaseAction, Slice } from "./types";
 import type { RegisteredSlice } from "../../../types/slice-registry.types";
 
@@ -30,6 +31,7 @@ export const sliceRegistry = {
   workspaces: createRegisteredSlice(workspacesSlice, workspacesActions),
   ui: createRegisteredSlice(uiSlice, uiActions),
   persistence: createRegisteredSlice(persistenceSlice, persistenceActions),
+  preferences: createRegisteredSlice(preferencesSlice, preferencesActions),
 } as const;
 
 /**

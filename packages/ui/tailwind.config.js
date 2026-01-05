@@ -1,30 +1,29 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        // Surface colors - Background layers
+        // Surface colors - Background layers (using CSS variables for theme switching)
         surface: {
-          primary: "#111827", // gray-900
-          secondary: "#1f2937", // gray-800
-          hover: "#374151", // gray-700
-          active: "#4b5563", // gray-600
+          primary: "var(--color-surface-primary)",
+          secondary: "var(--color-surface-secondary)",
+          hover: "var(--color-surface-hover)",
+          active: "var(--color-surface-active)",
         },
         // Text colors - Typography
         text: {
-          primary: "#f3f4f6", // gray-100
-          secondary: "#9ca3af", // gray-400
-          muted: "#6b7280", // gray-500
-          inverse: "#111827", // gray-900
+          primary: "var(--color-text-primary)",
+          secondary: "var(--color-text-secondary)",
+          muted: "var(--color-text-muted)",
+          inverse: "var(--color-text-inverse)",
         },
         // Border colors - Dividers and outlines
         border: {
-          default: "#374151", // gray-700
-          subtle: "#4b5563", // gray-600
-          focus: "#3b82f6", // blue-500
+          default: "var(--color-border-default)",
+          subtle: "var(--color-border-subtle)",
+          focus: "var(--color-border-focus)",
         },
         // Accent colors - Interactive and status
         accent: {

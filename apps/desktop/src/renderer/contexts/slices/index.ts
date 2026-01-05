@@ -35,6 +35,14 @@ export {
   type PersistenceAction,
 } from "./persistence.slice";
 
+export {
+  preferencesSlice,
+  preferencesActions,
+  type PreferencesState,
+  type PreferencesAction,
+  type Theme,
+} from "./preferences.slice";
+
 // Hydration utilities
 export {
   hydrationActions,

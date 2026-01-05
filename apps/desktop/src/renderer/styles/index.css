@@ -8,6 +8,36 @@
 
 /* Base styles */
 @layer base {
+  /* Light theme colors (default) */
+  :root {
+    --color-surface-primary: #ffffff;
+    --color-surface-secondary: #f9fafb;
+    --color-surface-hover: #f3f4f6;
+    --color-surface-active: #e5e7eb;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-muted: #6b7280;
+    --color-text-inverse: #f3f4f6;
+    --color-border-default: #e5e7eb;
+    --color-border-subtle: #d1d5db;
+    --color-border-focus: #3b82f6;
+  }
+
+  /* Dark theme colors */
+  .dark {
+    --color-surface-primary: #111827;
+    --color-surface-secondary: #1f2937;
+    --color-surface-hover: #374151;
+    --color-surface-active: #4b5563;
+    --color-text-primary: #f3f4f6;
+    --color-text-secondary: #9ca3af;
+    --color-text-muted: #6b7280;
+    --color-text-inverse: #111827;
+    --color-border-default: #374151;
+    --color-border-subtle: #4b5563;
+    --color-border-focus: #3b82f6;
+  }
+
   *,
   *::before,
   *::after {

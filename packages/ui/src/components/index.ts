@@ -52,6 +52,8 @@ export {
   type TitleBarProps,
   RepositorySettingsDialog,
   type RepositorySettingsDialogProps,
+  ThemeToggle,
+  type ThemeToggleProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections

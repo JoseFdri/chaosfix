@@ -31,3 +31,6 @@ export type {
   UseRemoveWorkspaceReturn,
   StatusDetails,
 } from "./use-remove-workspace.hook";
+
+export { useTheme } from "./use-theme.hook";
+export type { UseThemeReturn } from "./use-theme.hook";

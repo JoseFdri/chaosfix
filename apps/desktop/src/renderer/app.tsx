@@ -22,6 +22,7 @@ import {
   ArchiveBoxXMarkIcon,
   ResizeHandle,
   useDragResize,
+  ThemeToggle,
 } from "@chaosfix/ui";
 import type { TerminalSession } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
@@ -33,6 +34,7 @@ import {
   usePersistence,
   useCreateWorkspace,
   useRemoveWorkspace,
+  useTheme,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
 import {
@@ -106,6 +108,9 @@ export const App: FC = () => {
     maxWidth: MAX_SIDEBAR_WIDTH,
     onWidthChange: ui.setSidebarWidth,
   });
+
+  // Theme management
+  const { isDark, toggleTheme } = useTheme();
 
   // Initialize persistence (load on mount, auto-save on changes)
   usePersistence({
@@ -283,7 +288,7 @@ export const App: FC = () => {
         />
       )}
 
-      <div className="flex h-screen bg-gray-900 text-gray-100">
+      <div className="flex h-screen bg-surface-primary text-text-primary">
         {/* Sidebar */}
         <Sidebar
           width={sidebarWidth}
@@ -365,7 +370,11 @@ export const App: FC = () => {
         <div className="flex-1 flex flex-col">
           {/* Title Bar */}
           {activeWorkspace && (
-            <TitleBar title={activeWorkspace.name} subtitle={activeRepository?.name} />
+            <TitleBar
+              title={activeWorkspace.name}
+              subtitle={activeRepository?.name}
+              actions={<ThemeToggle isDark={isDark} onToggle={toggleTheme} />}
+            />
           )}
 
           {/* Tab Bar */}
@@ -381,7 +390,7 @@ export const App: FC = () => {
           )}
 
           {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
-          <div className="flex-1 bg-gray-900 relative">
+          <div className="flex-1 bg-surface-primary relative">
             {allWorkspaces.flatMap((workspace) =>
               workspace.terminals.map((terminal) => (
                 <TerminalView
