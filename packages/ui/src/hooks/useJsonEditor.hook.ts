@@ -45,14 +45,25 @@ export function useJsonEditor({
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isExternalUpdateRef = useRef(false);
 
-  const handleValidation = useCallback(
-    (content: string): void => {
-      const validationErrors = validateJson(content);
-      setErrors(validationErrors);
-      onValidationChange?.(validationErrors);
-    },
-    [onValidationChange]
-  );
+  // Stable refs for callbacks and initial value to avoid recreating the editor
+  const onChangeRef = useRef(onChange);
+  const onValidationChangeRef = useRef(onValidationChange);
+  const initialValueRef = useRef(value);
+
+  // Keep refs in sync with latest props
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    onValidationChangeRef.current = onValidationChange;
+  }, [onValidationChange]);
+
+  const handleValidation = useCallback((content: string): void => {
+    const validationErrors = validateJson(content);
+    setErrors(validationErrors);
+    onValidationChangeRef.current?.(validationErrors);
+  }, []);
 
   const handleUpdate = useCallback(
     (update: { docChanged: boolean; state: EditorState }): void => {
@@ -61,7 +72,7 @@ export function useJsonEditor({
       }
 
       const newValue = update.state.doc.toString();
-      onChange(newValue);
+      onChangeRef.current(newValue);
 
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
@@ -71,7 +82,7 @@ export function useJsonEditor({
         handleValidation(newValue);
       }, VALIDATION_DEBOUNCE_MS);
     },
-    [onChange, handleValidation]
+    [handleValidation]
   );
 
   const editorRef = useCallback(
@@ -89,7 +100,7 @@ export function useJsonEditor({
       containerRef.current = node;
 
       const state = EditorState.create({
-        doc: value,
+        doc: initialValueRef.current,
         extensions: [
           basicSetup,
           json(),
@@ -121,9 +132,9 @@ export function useJsonEditor({
         parent: node,
       });
 
-      handleValidation(value);
+      handleValidation(initialValueRef.current);
     },
-    [value, handleUpdate, handleValidation]
+    [handleUpdate, handleValidation]
   );
 
   useEffect(() => {
