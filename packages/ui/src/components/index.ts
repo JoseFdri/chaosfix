@@ -26,6 +26,8 @@ export {
   type ToastProps,
   ToastViewport,
   type ToastViewportProps,
+  ResizeHandle,
+  type ResizeHandleProps,
 } from "./atoms";
 
 // Molecules - Simple combinations of atoms

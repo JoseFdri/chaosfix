@@ -20,6 +20,8 @@ import {
   RepositorySettingsDialog,
   IconButton,
   ArchiveBoxXMarkIcon,
+  ResizeHandle,
+  useDragResize,
 } from "@chaosfix/ui";
 import type { TerminalSession } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
@@ -34,12 +36,13 @@ import {
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
 import {
-  SIDEBAR_WIDTH,
   WORKSPACE_DIALOG,
   REMOVE_WORKSPACE_DIALOG,
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,
   DEFAULT_TERMINAL_STATUS,
+  MIN_SIDEBAR_WIDTH,
+  MAX_SIDEBAR_WIDTH,
 } from "../constants";
 import logoSrc from "./assets/logo.svg";
 
@@ -91,6 +94,14 @@ export const App: FC = () => {
   const activeWorkspaceId = state.workspaces.activeWorkspaceId;
   const sidebarCollapsed = state.ui.sidebarCollapsed;
   const searchQuery = state.ui.searchQuery;
+
+  // Sidebar resize
+  const { width: sidebarWidth, handleMouseDown } = useDragResize({
+    initialWidth: state.ui.sidebarWidth,
+    minWidth: MIN_SIDEBAR_WIDTH,
+    maxWidth: MAX_SIDEBAR_WIDTH,
+    onWidthChange: ui.setSidebarWidth,
+  });
 
   // Initialize persistence (load on mount, auto-save on changes)
   usePersistence({
@@ -270,7 +281,7 @@ export const App: FC = () => {
       <div className="flex h-screen bg-gray-900 text-gray-100">
         {/* Sidebar */}
         <Sidebar
-          width={SIDEBAR_WIDTH}
+          width={sidebarWidth}
           collapsed={sidebarCollapsed}
           header={
             <div className="p-3 pt-10">
@@ -340,6 +351,9 @@ export const App: FC = () => {
             })
           )}
         </Sidebar>
+
+        {/* Resize Handle */}
+        <ResizeHandle onMouseDown={handleMouseDown} />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">

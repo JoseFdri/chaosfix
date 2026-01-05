@@ -42,3 +42,4 @@ export {
   type TabsContentProps,
 } from "./Tabs.atom";
 export { Switch, type SwitchProps } from "./Switch.atom";
+export { ResizeHandle, type ResizeHandleProps } from "./ResizeHandle.atom";

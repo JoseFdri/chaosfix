@@ -28,3 +28,8 @@ export {
   type UseRepositoryConfigOptions,
   type UseRepositoryConfigReturn,
 } from "./useRepositoryConfig.hook";
+export {
+  useDragResize,
+  type UseDragResizeOptions,
+  type UseDragResizeReturn,
+} from "./useDragResize.hook";

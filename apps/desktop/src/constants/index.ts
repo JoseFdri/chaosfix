@@ -1,4 +1,4 @@
-export { SIDEBAR_WIDTH } from "./ui.constants";
+export { SIDEBAR_WIDTH, MIN_SIDEBAR_WIDTH, MAX_SIDEBAR_WIDTH } from "./ui.constants";
 export {
   DEFAULT_CWD,
   DEFAULT_TERMINAL_LABEL,
