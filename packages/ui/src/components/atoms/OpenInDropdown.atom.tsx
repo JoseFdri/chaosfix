@@ -1,5 +1,6 @@
 import { type FC, type ReactNode, forwardRef, type ComponentPropsWithoutRef } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { cn } from "../../libs/cn.lib";
 import { ChevronDownIcon } from "../../icons";
 
@@ -36,7 +37,7 @@ const TriggerButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<"bu
         "bg-surface-secondary border border-border-default rounded-md",
         "text-text-primary",
         "hover:bg-surface-hover transition-colors duration-150",
-        "focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-1",
+        "focus:outline-none",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
@@ -61,28 +62,56 @@ export const OpenInDropdown: FC<OpenInDropdownProps> = ({
   const hasApps = apps.length > 0;
   const canQuickOpen = selectedApp && onWorkspaceClick && !disabled;
 
+  const tooltipContent = selectedApp ? `Open in ${selectedApp.name} ⌘O` : null;
+
   return (
     <div className="flex items-center">
       {/* Selected app icon + slash + clickable workspace name */}
-      <button
-        type="button"
-        className={cn(
-          "flex items-center gap-1.5 px-2.5 py-1 text-sm",
-          "bg-surface-secondary border border-r-0 border-border-default rounded-l-md",
-          "text-text-primary",
-          canQuickOpen && "hover:bg-surface-hover cursor-pointer",
-          !canQuickOpen && "cursor-default",
-          "transition-colors duration-150",
-          "focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-1",
-          disabled && "opacity-50"
-        )}
-        onClick={canQuickOpen ? onWorkspaceClick : undefined}
-        disabled={disabled}
-      >
-        {selectedApp?.icon && <span className="flex-shrink-0 w-4 h-4">{selectedApp.icon}</span>}
-        <span className="font-medium text-text-muted">/</span>
-        <span className="font-medium">{workspaceName}</span>
-      </button>
+      <Tooltip.Provider delayDuration={300}>
+        <Tooltip.Root>
+          <Tooltip.Trigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 text-sm",
+                "bg-surface-secondary border border-r-0 border-border-default rounded-l-md",
+                "text-text-primary",
+                canQuickOpen && "hover:bg-surface-hover cursor-pointer",
+                !canQuickOpen && "cursor-default",
+                "transition-colors duration-150",
+                "focus:outline-none",
+                disabled && "opacity-50"
+              )}
+              onClick={canQuickOpen ? onWorkspaceClick : undefined}
+              disabled={disabled}
+            >
+              {selectedApp?.icon && (
+                <span className="flex-shrink-0 w-4 h-4">{selectedApp.icon}</span>
+              )}
+              <span className="font-medium text-text-muted">/</span>
+              <span className="font-medium">{workspaceName}</span>
+            </button>
+          </Tooltip.Trigger>
+          {tooltipContent && (
+            <Tooltip.Portal>
+              <Tooltip.Content
+                className={cn(
+                  "px-2.5 py-1.5 text-xs",
+                  "bg-surface-secondary border border-border-default rounded-md",
+                  "text-text-primary shadow-lg",
+                  "data-[state=delayed-open]:animate-in data-[state=closed]:animate-out",
+                  "data-[state=closed]:fade-out-0 data-[state=delayed-open]:fade-in-0",
+                  "data-[state=closed]:zoom-out-95 data-[state=delayed-open]:zoom-in-95"
+                )}
+                sideOffset={6}
+              >
+                {tooltipContent}
+                <Tooltip.Arrow className="fill-border-default" />
+              </Tooltip.Content>
+            </Tooltip.Portal>
+          )}
+        </Tooltip.Root>
+      </Tooltip.Provider>
 
       {/* Dropdown trigger for app selection */}
       <DropdownMenu.Root>

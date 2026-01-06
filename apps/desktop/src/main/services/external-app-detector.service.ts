@@ -38,14 +38,14 @@ const APP_DEFINITIONS: AppDefinition[] = [
     name: "Cursor",
     bundlePath: "/Applications/Cursor.app",
     cliCommand: "cursor",
-    openCommand: 'cursor "{path}"',
+    openCommand: 'open -a Cursor "{path}"',
   },
   {
     id: "vscode",
     name: "VS Code",
     bundlePath: "/Applications/Visual Studio Code.app",
     cliCommand: "code",
-    openCommand: 'code "{path}"',
+    openCommand: 'open -a "Visual Studio Code" "{path}"',
   },
   {
     id: "xcode",
@@ -76,7 +76,7 @@ const APP_DEFINITIONS: AppDefinition[] = [
     name: "Windsurf",
     bundlePath: "/Applications/Windsurf.app",
     cliCommand: "windsurf",
-    openCommand: 'windsurf "{path}"',
+    openCommand: 'open -a Windsurf "{path}"',
   },
 ];
 
