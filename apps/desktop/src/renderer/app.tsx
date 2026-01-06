@@ -402,6 +402,15 @@ export const App: FC = () => {
             />
           )}
 
+          {/* Workspace Status Bar */}
+          {activeWorkspace?.activeTerminalId && (
+            <WorkspaceStatusBar>
+              {activeWorkspace.status === "setting_up" && (
+                <StatusBarItem icon={<Spinner size="xs" />} label="Setting up..." />
+              )}
+            </WorkspaceStatusBar>
+          )}
+
           {/* Tab Bar */}
           {activeWorkspace?.activeTerminalId && (
             <TabBar
@@ -412,15 +421,6 @@ export const App: FC = () => {
               onTabRename={handleTabRename}
               onNewTab={handleNewTab}
             />
-          )}
-
-          {/* Workspace Status Bar */}
-          {activeWorkspace?.activeTerminalId && (
-            <WorkspaceStatusBar>
-              {activeWorkspace.status === "setting_up" && (
-                <StatusBarItem icon={<Spinner size="xs" />} label="Setting up..." />
-              )}
-            </WorkspaceStatusBar>
           )}
 
           {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
