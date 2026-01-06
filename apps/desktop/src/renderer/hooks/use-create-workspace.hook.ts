@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 
+import { generateRandomWorkspaceName } from "@chaosfix/core";
+
 import type { WorkspaceWithTerminals } from "../contexts/app-context";
 import { WORKSPACE_ERRORS, DEFAULT_WORKSPACE_STATUS } from "../../constants/workspace.constants";
 
@@ -42,6 +44,8 @@ export interface UseCreateWorkspaceReturn {
   handleSubmit: (workspaceName: string) => Promise<void>;
   /** Current pending repository info (for display purposes) */
   pendingRepository: PendingRepository | null;
+  /** Default workspace name generated when dialog opens */
+  defaultWorkspaceName: string;
 }
 
 /**
@@ -65,9 +69,11 @@ export function useCreateWorkspace({
   const [pendingRepository, setPendingRepository] = useState<PendingRepository | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [defaultWorkspaceName, setDefaultWorkspaceName] = useState("");
 
   const openDialog = useCallback((repoId: string, repoName: string, repoPath: string): void => {
     setPendingRepository({ id: repoId, name: repoName, path: repoPath });
+    setDefaultWorkspaceName(generateRandomWorkspaceName());
     setError(null);
     setIsDialogOpen(true);
   }, []);
@@ -146,5 +152,6 @@ export function useCreateWorkspace({
     error,
     handleSubmit,
     pendingRepository,
+    defaultWorkspaceName,
   };
 }

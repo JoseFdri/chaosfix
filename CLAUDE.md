@@ -362,7 +362,7 @@ Add custom warnings for any phase where you anticipate the sub-agent might:
 - Avoiding code in plans prevents outdated snippets and reduces plan maintenance
 - Clear expected outcomes make it easier to verify phase completion
 
-## CRITICAL: Plan Execution Guidelines
+## CRITICAL: Plan Execution Guidelines for plans with more than 2 phases
 
 **MANDATORY: When a plan is approved and you exit plan mode, you MUST follow these steps. Do NOT make changes directly.**
 
@@ -378,6 +378,8 @@ Add custom warnings for any phase where you anticipate the sub-agent might:
    - Launch implementation agents (one per phase)
    - Launch review agents after each phase
    - Consolidate results and report to user
+
+5. **Sub agent models**: Use the latest Opus model for sub-agents to ensure quality.
 
 ### Example Execution Flow
 

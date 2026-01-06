@@ -60,6 +60,7 @@ export const InputDialog = forwardRef<HTMLInputElement, InputDialogProps>(
     } = useInputDialog({
       inputDefaultValue,
       isLoading,
+      open,
       onSubmit,
       onCancel,
       onOpenChange,

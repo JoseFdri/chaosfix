@@ -174,6 +174,7 @@ export const App: FC = () => {
     isLoading: isCreatingWorkspace,
     handleSubmit: handleWorkspaceSubmit,
     pendingRepository,
+    defaultWorkspaceName,
   } = useCreateWorkspace({
     addWorkspace: workspacesActions.add,
     onSuccess: (workspace) => {
@@ -252,6 +253,7 @@ export const App: FC = () => {
         description={WORKSPACE_DIALOG.DESCRIPTION}
         inputLabel={WORKSPACE_DIALOG.INPUT_LABEL}
         inputPlaceholder={WORKSPACE_DIALOG.INPUT_PLACEHOLDER}
+        inputDefaultValue={defaultWorkspaceName}
         submitLabel={WORKSPACE_DIALOG.SUBMIT_LABEL}
         cancelLabel={WORKSPACE_DIALOG.CANCEL_LABEL}
         isLoading={isCreatingWorkspace}

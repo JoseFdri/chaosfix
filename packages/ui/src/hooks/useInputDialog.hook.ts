@@ -1,8 +1,17 @@
-import { useState, useCallback, type FormEvent, type KeyboardEvent, type ChangeEvent } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  type FormEvent,
+  type KeyboardEvent,
+  type ChangeEvent,
+} from "react";
 
 export interface UseInputDialogOptions {
   inputDefaultValue?: string;
   isLoading?: boolean;
+  open?: boolean;
   onSubmit: (value: string) => void | Promise<void>;
   onCancel?: () => void;
   onOpenChange?: (open: boolean) => void;
@@ -22,6 +31,7 @@ export interface UseInputDialogReturn {
 export const useInputDialog = ({
   inputDefaultValue = "",
   isLoading = false,
+  open = false,
   onSubmit,
   onCancel,
   onOpenChange,
@@ -29,6 +39,16 @@ export const useInputDialog = ({
 }: UseInputDialogOptions): UseInputDialogReturn => {
   const [value, setValue] = useState(inputDefaultValue);
   const [error, setError] = useState<string | undefined>();
+  const wasOpen = useRef(open);
+
+  // Sync value with inputDefaultValue when dialog opens
+  useEffect(() => {
+    if (open && !wasOpen.current) {
+      setValue(inputDefaultValue);
+      setError(undefined);
+    }
+    wasOpen.current = open;
+  }, [open, inputDefaultValue]);
 
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {
