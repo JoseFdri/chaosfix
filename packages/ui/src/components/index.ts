@@ -34,6 +34,16 @@ export {
   type SpinnerProps,
   OpenInDropdown,
   type OpenInDropdownProps,
+  FinderIcon,
+  VSCodeIcon,
+  CursorIcon,
+  XcodeIcon,
+  GhosttyIcon,
+  ITermIcon,
+  TerminalIcon,
+  WindsurfIcon,
+  APP_ICONS,
+  getAppIcon,
 } from "./atoms";
 
 // Molecules - Simple combinations of atoms

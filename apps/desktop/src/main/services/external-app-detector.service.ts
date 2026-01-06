@@ -28,11 +28,10 @@ interface AppDefinition {
 
 const APP_DEFINITIONS: AppDefinition[] = [
   {
-    id: "vscode",
-    name: "Visual Studio Code",
-    bundlePath: "/Applications/Visual Studio Code.app",
-    cliCommand: "code",
-    openCommand: 'code "{path}"',
+    id: "finder",
+    name: "Finder",
+    bundlePath: null,
+    openCommand: 'open "{path}"',
   },
   {
     id: "cursor",
@@ -42,11 +41,17 @@ const APP_DEFINITIONS: AppDefinition[] = [
     openCommand: 'cursor "{path}"',
   },
   {
-    id: "windsurf",
-    name: "Windsurf",
-    bundlePath: "/Applications/Windsurf.app",
-    cliCommand: "windsurf",
-    openCommand: 'windsurf "{path}"',
+    id: "vscode",
+    name: "VS Code",
+    bundlePath: "/Applications/Visual Studio Code.app",
+    cliCommand: "code",
+    openCommand: 'code "{path}"',
+  },
+  {
+    id: "xcode",
+    name: "Xcode",
+    bundlePath: "/Applications/Xcode.app",
+    openCommand: 'open -a Xcode "{path}"',
   },
   {
     id: "ghostty",
@@ -61,10 +66,17 @@ const APP_DEFINITIONS: AppDefinition[] = [
     openCommand: 'open -a iTerm "{path}"',
   },
   {
-    id: "finder",
-    name: "Finder",
-    bundlePath: null,
-    openCommand: 'open "{path}"',
+    id: "terminal",
+    name: "Terminal",
+    bundlePath: "/System/Applications/Utilities/Terminal.app",
+    openCommand: 'open -a Terminal "{path}"',
+  },
+  {
+    id: "windsurf",
+    name: "Windsurf",
+    bundlePath: "/Applications/Windsurf.app",
+    cliCommand: "windsurf",
+    openCommand: 'windsurf "{path}"',
   },
 ];
 

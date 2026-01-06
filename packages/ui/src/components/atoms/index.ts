@@ -46,3 +46,15 @@ export { ResizeHandle, type ResizeHandleProps } from "./ResizeHandle.atom";
 export { StatusBarItem, type StatusBarItemProps } from "./StatusBarItem.atom";
 export { Spinner, type SpinnerProps } from "./Spinner.atom";
 export { OpenInDropdown, type OpenInDropdownProps } from "./OpenInDropdown.atom";
+export {
+  FinderIcon,
+  VSCodeIcon,
+  CursorIcon,
+  XcodeIcon,
+  GhosttyIcon,
+  ITermIcon,
+  TerminalIcon,
+  WindsurfIcon,
+  APP_ICONS,
+  getAppIcon,
+} from "./AppIcons.atom";

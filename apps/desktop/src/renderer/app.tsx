@@ -27,6 +27,7 @@ import {
   StatusBarItem,
   Spinner,
   OpenInDropdown,
+  getAppIcon,
 } from "@chaosfix/ui";
 import type { TerminalSession, ExternalAppId } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
@@ -402,10 +403,23 @@ export const App: FC = () => {
               )}
               <div className="ml-auto">
                 <OpenInDropdown
-                  apps={apps}
+                  workspaceName={activeWorkspace.name}
+                  apps={apps.map((app) => {
+                    const IconComponent = getAppIcon(app.id);
+                    return {
+                      ...app,
+                      icon: IconComponent ? <IconComponent className="w-5 h-5" /> : undefined,
+                      shortcut: app.id === "ghostty" ? "⌘O" : undefined,
+                    };
+                  })}
                   onSelect={(appId) => {
                     if (activeWorkspace.worktreePath) {
                       openIn(appId as ExternalAppId, activeWorkspace.worktreePath);
+                    }
+                  }}
+                  onCopyPath={() => {
+                    if (activeWorkspace.worktreePath) {
+                      navigator.clipboard.writeText(activeWorkspace.worktreePath);
                     }
                   }}
                   disabled={isLoadingExternalApps || !activeWorkspace.worktreePath}

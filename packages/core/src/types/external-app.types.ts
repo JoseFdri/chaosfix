@@ -1,4 +1,12 @@
-export type ExternalAppId = "vscode" | "cursor" | "windsurf" | "ghostty" | "iterm" | "finder";
+export type ExternalAppId =
+  | "vscode"
+  | "cursor"
+  | "windsurf"
+  | "ghostty"
+  | "iterm"
+  | "terminal"
+  | "xcode"
+  | "finder";
 
 export interface ExternalApp {
   id: ExternalAppId;
