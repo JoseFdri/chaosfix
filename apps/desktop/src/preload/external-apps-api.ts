@@ -13,7 +13,7 @@ export function createExternalAppsAPI(): ExternalAppsAPI {
       return ipcRenderer.invoke(EXTERNAL_APPS_IPC_CHANNELS.LIST);
     },
     open: (appId: ExternalAppId, path: string): Promise<OpenInExternalAppResult> => {
-      return ipcRenderer.invoke(EXTERNAL_APPS_IPC_CHANNELS.OPEN, appId, path);
+      return ipcRenderer.invoke(EXTERNAL_APPS_IPC_CHANNELS.OPEN, { appId, path });
     },
   };
 }
