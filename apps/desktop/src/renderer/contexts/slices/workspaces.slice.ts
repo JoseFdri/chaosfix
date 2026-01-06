@@ -1,4 +1,4 @@
-import type { Workspace, WorkspaceStatus, TerminalSession } from "@chaosfix/core";
+import type { Workspace, WorkspaceStatus, TerminalSession, ExternalAppId } from "@chaosfix/core";
 import type { Slice } from "./types";
 
 // Extended workspace type with terminal management
@@ -6,6 +6,8 @@ export interface WorkspaceWithTerminals extends Omit<Workspace, "status"> {
   status: WorkspaceStatus;
   terminals: TerminalSession[];
   activeTerminalId: string | null;
+  /** The selected external app for quick-open (persisted per workspace) */
+  selectedAppId: ExternalAppId | null;
 }
 
 // State
@@ -30,7 +32,11 @@ export type WorkspacesAction =
       type: "workspaces/renameTerminal";
       payload: { workspaceId: string; terminalId: string; title: string };
     }
-  | { type: "workspaces/removeByRepository"; payload: string };
+  | { type: "workspaces/removeByRepository"; payload: string }
+  | {
+      type: "workspaces/setSelectedApp";
+      payload: { workspaceId: string; appId: ExternalAppId | null };
+    };
 
 // Initial state
 const initialState: WorkspacesState = {
@@ -146,6 +152,15 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
       };
     }
 
+    case "workspaces/setSelectedApp": {
+      return {
+        ...state,
+        workspaces: state.workspaces.map((w) =>
+          w.id === action.payload.workspaceId ? { ...w, selectedAppId: action.payload.appId } : w
+        ),
+      };
+    }
+
     default: {
       return state;
     }
@@ -204,5 +219,10 @@ export const workspacesActions = {
   removeByRepository: (repositoryId: string): WorkspacesAction => ({
     type: "workspaces/removeByRepository",
     payload: repositoryId,
+  }),
+
+  setSelectedApp: (workspaceId: string, appId: ExternalAppId | null): WorkspacesAction => ({
+    type: "workspaces/setSelectedApp",
+    payload: { workspaceId, appId },
   }),
 };

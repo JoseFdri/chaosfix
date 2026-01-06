@@ -1,4 +1,4 @@
-import type { Repository, TerminalSession } from "@chaosfix/core";
+import type { Repository, TerminalSession, ExternalAppId } from "@chaosfix/core";
 import type { AppState } from "@chaosfix/config";
 import type { WorkspaceWithTerminals, WorkspacesState } from "./workspaces.slice";
 import type { RepositoriesState } from "./repositories.slice";
@@ -55,6 +55,8 @@ interface SerializedWorkspace {
     scrollbackHistory?: string;
   }>;
   activeTerminalId: string | null;
+  /** The selected external app for quick-open */
+  selectedAppId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -101,6 +103,7 @@ function serializeWorkspace(workspace: WorkspaceWithTerminals): SerializedWorksp
       scrollbackHistory: undefined,
     })),
     activeTerminalId: workspace.activeTerminalId,
+    selectedAppId: workspace.selectedAppId,
     createdAt: workspace.createdAt.toISOString(),
     updatedAt: workspace.updatedAt.toISOString(),
   };
@@ -169,6 +172,7 @@ function deserializeWorkspace(serialized: AppState["workspaces"][number]): Works
     status: "idle",
     terminals: serialized.terminals.map((t) => deserializeTerminal(t, serialized.id)),
     activeTerminalId: serialized.activeTerminalId,
+    selectedAppId: (serialized.selectedAppId as ExternalAppId) ?? null,
     createdAt: new Date(serialized.createdAt),
     updatedAt: new Date(serialized.updatedAt),
   };

@@ -1,4 +1,4 @@
-import { type FC, useState, useCallback } from "react";
+import { type FC, type ReactNode, useState, useCallback } from "react";
 import {
   Sidebar,
   SidebarItem,
@@ -149,6 +149,27 @@ export const App: FC = () => {
   const activeRepository = activeWorkspace
     ? allRepositories.find((r) => r.id === activeWorkspace.repositoryId)
     : null;
+
+  // Compute selected app with icon for the OpenInDropdown
+  const getSelectedAppForDropdown = (): {
+    id: string;
+    name: string;
+    icon?: ReactNode;
+  } | null => {
+    if (!activeWorkspace?.selectedAppId) {
+      return null;
+    }
+    const app = apps.find((a) => a.id === activeWorkspace.selectedAppId);
+    if (!app) {
+      return null;
+    }
+    const IconComponent = getAppIcon(app.id);
+    return {
+      ...app,
+      icon: IconComponent ? <IconComponent className="w-4 h-4" /> : undefined,
+    };
+  };
+  const selectedAppForDropdown = getSelectedAppForDropdown();
 
   const { tabs, handleTabSelect, handleTabClose, handleTabRename, handleNewTab } = useWorkspaceTabs(
     {
@@ -412,9 +433,17 @@ export const App: FC = () => {
                       shortcut: app.id === "ghostty" ? "⌘O" : undefined,
                     };
                   })}
+                  selectedApp={selectedAppForDropdown}
                   onSelect={(appId) => {
                     if (activeWorkspace.worktreePath) {
+                      // Save the selected app for this workspace
+                      workspacesActions.setSelectedApp(activeWorkspace.id, appId as ExternalAppId);
                       openIn(appId as ExternalAppId, activeWorkspace.worktreePath);
+                    }
+                  }}
+                  onWorkspaceClick={() => {
+                    if (activeWorkspace.selectedAppId && activeWorkspace.worktreePath) {
+                      openIn(activeWorkspace.selectedAppId, activeWorkspace.worktreePath);
                     }
                   }}
                   onCopyPath={() => {

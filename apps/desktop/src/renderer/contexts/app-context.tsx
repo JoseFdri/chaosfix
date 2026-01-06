@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { AppState } from "@chaosfix/config";
-import type { Repository, TerminalSession, WorkspaceStatus } from "@chaosfix/core";
+import type { Repository, TerminalSession, WorkspaceStatus, ExternalAppId } from "@chaosfix/core";
 import {
   createAppContext,
   sliceRegistry,
@@ -111,6 +111,7 @@ interface WorkspacesActions {
   setActiveTerminal: (workspaceId: string, terminalId: string | null) => void;
   renameTerminal: (workspaceId: string, terminalId: string, title: string) => void;
   removeByRepository: (repositoryId: string) => void;
+  setSelectedApp: (workspaceId: string, appId: ExternalAppId | null) => void;
 }
 
 /**

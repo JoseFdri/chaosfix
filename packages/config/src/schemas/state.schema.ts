@@ -16,6 +16,8 @@ export const workspaceStateSchema = z.object({
     })
   ),
   activeTerminalId: z.string().nullable(),
+  /** The selected external app for quick-open (e.g., "vscode", "cursor") */
+  selectedAppId: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

@@ -121,6 +121,7 @@ export function useCreateWorkspace({
           status: DEFAULT_WORKSPACE_STATUS,
           terminals: [],
           activeTerminalId: null,
+          selectedAppId: null,
           createdAt: now,
           updatedAt: now,
         };
