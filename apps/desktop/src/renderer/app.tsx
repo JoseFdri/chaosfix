@@ -218,13 +218,7 @@ export const App: FC = () => {
     },
   });
 
-  const {
-    handleDisplaySettings,
-    handleSettings,
-    handleNewWorkspace,
-    handleCloneFromUrl,
-    handleQuickStart,
-  } = useAppHandlers({
+  const { handleNewWorkspace, handleCloneFromUrl, handleQuickStart } = useAppHandlers({
     onNewWorkspace: openDialog,
   });
 
@@ -343,13 +337,7 @@ export const App: FC = () => {
               />
             </div>
           }
-          footer={
-            <SidebarFooter
-              onAddRepository={handleAddRepository}
-              onDisplaySettings={handleDisplaySettings}
-              onSettings={handleSettings}
-            />
-          }
+          footer={<SidebarFooter onAddRepository={handleAddRepository} />}
         >
           {filteredRepositories.length === 0 ? (
             <div className="px-4 py-8 text-sm text-text-muted text-center">
