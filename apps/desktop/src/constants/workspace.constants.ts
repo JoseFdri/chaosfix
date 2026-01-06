@@ -35,12 +35,8 @@ export const WORKSPACE_DIALOG = {
 // Remove workspace dialog text
 export const REMOVE_WORKSPACE_DIALOG = {
   TITLE: "Remove Workspace",
-  TITLE_WARNING: "Workspace Has Uncommitted Changes",
   DESCRIPTION: "Are you sure you want to remove this workspace? This will delete the git worktree.",
-  DESCRIPTION_WARNING:
-    "This workspace has uncommitted changes. Removing it will discard these changes.",
   CONFIRM_LABEL: "Remove",
-  FORCE_CONFIRM_LABEL: "Force Remove",
   CANCEL_LABEL: "Cancel",
 } as const;
 

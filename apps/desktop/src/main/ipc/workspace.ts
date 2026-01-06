@@ -10,8 +10,6 @@ import type {
   CreateWorkspaceResult,
   RemoveWorkspaceOptions,
   RemoveWorkspaceResult,
-  CheckWorkspaceStatusOptions,
-  CheckWorkspaceStatusResult,
 } from "../../types/workspace.types";
 import {
   PATH_SEGMENT_REGEX,
@@ -124,45 +122,6 @@ export function setupWorkspaceIPC(_deps: WorkspaceIPCDependencies): void {
         return {
           success: false,
           error: error instanceof Error ? error.message : "Failed to remove workspace",
-        };
-      }
-    }
-  );
-
-  ipcMain.handle(
-    WORKSPACE_IPC_CHANNELS.CHECK_STATUS,
-    async (_event, options: CheckWorkspaceStatusOptions): Promise<CheckWorkspaceStatusResult> => {
-      const { repositoryPath } = options;
-
-      try {
-        const gitService = new GitService(repositoryPath);
-        const result = await gitService.getStatus();
-
-        if (!result.success) {
-          return {
-            hasUncommittedChanges: false,
-            modified: [],
-            staged: [],
-            untracked: [],
-          };
-        }
-
-        const { modified, staged, untracked } = result.data;
-        const hasUncommittedChanges =
-          modified.length > 0 || staged.length > 0 || untracked.length > 0;
-
-        return {
-          hasUncommittedChanges,
-          modified,
-          staged,
-          untracked,
-        };
-      } catch {
-        return {
-          hasUncommittedChanges: false,
-          modified: [],
-          staged: [],
-          untracked: [],
         };
       }
     }

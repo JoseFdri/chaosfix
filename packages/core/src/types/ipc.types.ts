@@ -27,7 +27,6 @@ export const WORKSPACE_IPC_CHANNELS = {
   CREATE: "workspace:create",
   VALIDATE_REPO: "workspace:validate-repo",
   REMOVE: "workspace:remove",
-  CHECK_STATUS: "workspace:check-status",
 } as const;
 
 export type WorkspaceIPCChannel =

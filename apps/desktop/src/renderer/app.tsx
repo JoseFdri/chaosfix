@@ -233,8 +233,6 @@ export const App: FC = () => {
     openDialog: openRemoveDialog,
     closeDialog: closeRemoveDialog,
     isLoading: isRemovingWorkspace,
-    isCheckingStatus,
-    hasUncommittedChanges,
     handleConfirm: handleRemoveConfirm,
   } = useRemoveWorkspace({
     removeWorkspace: workspacesActions.remove,
@@ -269,25 +267,12 @@ export const App: FC = () => {
             closeRemoveDialog();
           }
         }}
-        title={
-          hasUncommittedChanges
-            ? REMOVE_WORKSPACE_DIALOG.TITLE_WARNING
-            : REMOVE_WORKSPACE_DIALOG.TITLE
-        }
-        description={
-          hasUncommittedChanges
-            ? REMOVE_WORKSPACE_DIALOG.DESCRIPTION_WARNING
-            : REMOVE_WORKSPACE_DIALOG.DESCRIPTION
-        }
-        confirmLabel={
-          hasUncommittedChanges
-            ? REMOVE_WORKSPACE_DIALOG.FORCE_CONFIRM_LABEL
-            : REMOVE_WORKSPACE_DIALOG.CONFIRM_LABEL
-        }
+        title={REMOVE_WORKSPACE_DIALOG.TITLE}
+        description={REMOVE_WORKSPACE_DIALOG.DESCRIPTION}
+        confirmLabel={REMOVE_WORKSPACE_DIALOG.CONFIRM_LABEL}
         cancelLabel={REMOVE_WORKSPACE_DIALOG.CANCEL_LABEL}
-        variant={hasUncommittedChanges ? "destructive" : "default"}
-        isLoading={isRemovingWorkspace || isCheckingStatus}
-        onConfirm={() => handleRemoveConfirm(hasUncommittedChanges)}
+        isLoading={isRemovingWorkspace}
+        onConfirm={handleRemoveConfirm}
         onCancel={closeRemoveDialog}
       />
 

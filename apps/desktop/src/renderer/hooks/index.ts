@@ -29,7 +29,6 @@ export { useRemoveWorkspace } from "./use-remove-workspace.hook";
 export type {
   UseRemoveWorkspaceOptions,
   UseRemoveWorkspaceReturn,
-  StatusDetails,
 } from "./use-remove-workspace.hook";
 
 export { useTheme } from "./use-theme.hook";

@@ -2,8 +2,6 @@ import { ipcRenderer } from "electron";
 import { WORKSPACE_IPC_CHANNELS } from "@chaosfix/core";
 
 import type {
-  CheckWorkspaceStatusOptions,
-  CheckWorkspaceStatusResult,
   CreateWorkspaceOptions,
   CreateWorkspaceResult,
   RemoveWorkspaceOptions,
@@ -27,10 +25,6 @@ export function createWorkspaceAPI(): WorkspaceAPI {
 
     remove: (options: RemoveWorkspaceOptions): Promise<RemoveWorkspaceResult> => {
       return ipcRenderer.invoke(WORKSPACE_IPC_CHANNELS.REMOVE, options);
-    },
-
-    checkStatus: (options: CheckWorkspaceStatusOptions): Promise<CheckWorkspaceStatusResult> => {
-      return ipcRenderer.invoke(WORKSPACE_IPC_CHANNELS.CHECK_STATUS, options);
     },
   };
 }

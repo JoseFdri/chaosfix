@@ -45,28 +45,10 @@ export interface RemoveWorkspaceResult {
 }
 
 /**
- * Options for checking workspace status
- */
-export interface CheckWorkspaceStatusOptions {
-  repositoryPath: string;
-}
-
-/**
- * Result from checking workspace status
- */
-export interface CheckWorkspaceStatusResult {
-  hasUncommittedChanges: boolean;
-  modified: string[];
-  staged: string[];
-  untracked: string[];
-}
-
-/**
  * Workspace API exposed to renderer process
  */
 export interface WorkspaceAPI {
   validateRepository: (path: string) => Promise<ValidateRepoResult>;
   create: (options: CreateWorkspaceOptions) => Promise<CreateWorkspaceResult>;
   remove: (options: RemoveWorkspaceOptions) => Promise<RemoveWorkspaceResult>;
-  checkStatus: (options: CheckWorkspaceStatusOptions) => Promise<CheckWorkspaceStatusResult>;
 }
