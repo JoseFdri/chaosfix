@@ -28,6 +28,10 @@ export {
   type ToastViewportProps,
   ResizeHandle,
   type ResizeHandleProps,
+  StatusBarItem,
+  type StatusBarItemProps,
+  Spinner,
+  type SpinnerProps,
 } from "./atoms";
 
 // Molecules - Simple combinations of atoms
@@ -54,6 +58,8 @@ export {
   type RepositorySettingsDialogProps,
   ThemeToggle,
   type ThemeToggleProps,
+  WorkspaceStatusBar,
+  type WorkspaceStatusBarProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections

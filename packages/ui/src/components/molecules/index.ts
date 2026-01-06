@@ -15,3 +15,4 @@ export {
 export { GeneralSettingsTab, type GeneralSettingsTabProps } from "./GeneralSettingsTab.molecule";
 export { ConfigurationTab, type ConfigurationTabProps } from "./ConfigurationTab.molecule";
 export { ThemeToggle, type ThemeToggleProps } from "./ThemeToggle.molecule";
+export { WorkspaceStatusBar, type WorkspaceStatusBarProps } from "./WorkspaceStatusBar.molecule";

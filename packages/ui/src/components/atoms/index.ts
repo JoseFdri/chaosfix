@@ -43,3 +43,5 @@ export {
 } from "./Tabs.atom";
 export { Switch, type SwitchProps } from "./Switch.atom";
 export { ResizeHandle, type ResizeHandleProps } from "./ResizeHandle.atom";
+export { StatusBarItem, type StatusBarItemProps } from "./StatusBarItem.atom";
+export { Spinner, type SpinnerProps } from "./Spinner.atom";
