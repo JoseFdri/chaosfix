@@ -32,6 +32,8 @@ export {
   type StatusBarItemProps,
   Spinner,
   type SpinnerProps,
+  OpenInDropdown,
+  type OpenInDropdownProps,
 } from "./atoms";
 
 // Molecules - Simple combinations of atoms

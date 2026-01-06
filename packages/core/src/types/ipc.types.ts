@@ -55,3 +55,11 @@ export const SETUP_SCRIPT_IPC_CHANNELS = {
 
 export type SetupScriptIPCChannel =
   (typeof SETUP_SCRIPT_IPC_CHANNELS)[keyof typeof SETUP_SCRIPT_IPC_CHANNELS];
+
+export const EXTERNAL_APPS_IPC_CHANNELS = {
+  LIST: "external-apps:list",
+  OPEN: "external-apps:open",
+} as const;
+
+export type ExternalAppsIPCChannel =
+  (typeof EXTERNAL_APPS_IPC_CHANNELS)[keyof typeof EXTERNAL_APPS_IPC_CHANNELS];

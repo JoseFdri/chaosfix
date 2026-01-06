@@ -26,8 +26,9 @@ import {
   WorkspaceStatusBar,
   StatusBarItem,
   Spinner,
+  OpenInDropdown,
 } from "@chaosfix/ui";
-import type { TerminalSession } from "@chaosfix/core";
+import type { TerminalSession, ExternalAppId } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
 import {
   useFilteredRepositories,
@@ -39,6 +40,7 @@ import {
   useRemoveWorkspace,
   useTheme,
   useSetupScript,
+  useExternalApps,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
 import { NotificationContainer } from "./components/NotificationContainer.component";
@@ -117,6 +119,9 @@ export const App: FC = () => {
 
   // Theme management
   const { isDark, toggleTheme } = useTheme();
+
+  // External apps integration (Open in VSCode, Finder, etc.)
+  const { apps, openIn, isLoading: isLoadingExternalApps } = useExternalApps();
 
   // Initialize persistence (load on mount, auto-save on changes)
   usePersistence({
@@ -395,6 +400,17 @@ export const App: FC = () => {
               {activeWorkspace.status === "setting_up" && (
                 <StatusBarItem icon={<Spinner size="xs" />} label="Setting up..." />
               )}
+              <div className="ml-auto">
+                <OpenInDropdown
+                  apps={apps}
+                  onSelect={(appId) => {
+                    if (activeWorkspace.worktreePath) {
+                      openIn(appId as ExternalAppId, activeWorkspace.worktreePath);
+                    }
+                  }}
+                  disabled={isLoadingExternalApps || !activeWorkspace.worktreePath}
+                />
+              </div>
             </WorkspaceStatusBar>
           )}
 

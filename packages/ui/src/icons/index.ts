@@ -6,6 +6,7 @@
 // Outline icons (24x24, default)
 export {
   ArchiveBoxXMarkIcon,
+  ArrowTopRightOnSquareIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
   XMarkIcon,

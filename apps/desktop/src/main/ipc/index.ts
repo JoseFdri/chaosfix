@@ -7,6 +7,7 @@ import { setupWorkspaceIPC } from "./workspace";
 import { setupRepositoryIPC } from "./repository";
 import { setupRepositoryConfigIPC } from "./repository-config";
 import { setupSetupScriptIPC } from "./setup-script";
+import { setupExternalAppsIPC } from "./external-apps";
 
 export interface IPCDependencies {
   getMainWindow: () => BrowserWindow | null;
@@ -40,6 +41,10 @@ export function setupAllIPC(deps: IPCDependencies): void {
   setupSetupScriptIPC({
     getMainWindow: deps.getMainWindow,
   });
+
+  setupExternalAppsIPC({
+    getMainWindow: deps.getMainWindow,
+  });
 }
 
 export { setupTerminalIPC } from "./terminal";
@@ -49,3 +54,4 @@ export { setupWorkspaceIPC } from "./workspace";
 export { setupRepositoryIPC } from "./repository";
 export { setupRepositoryConfigIPC } from "./repository-config";
 export { setupSetupScriptIPC } from "./setup-script";
+export { setupExternalAppsIPC } from "./external-apps";
