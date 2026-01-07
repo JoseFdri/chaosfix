@@ -13,7 +13,6 @@ export interface UseAppHandlersOptions {
 export interface UseAppHandlersReturn {
   handleNewWorkspace: (repoId: string, repoName: string, repoPath: string) => void;
   handleCloneFromUrl: () => void;
-  handleQuickStart: () => void;
 }
 
 export function useAppHandlers(options: UseAppHandlersOptions = {}): UseAppHandlersReturn {
@@ -30,13 +29,8 @@ export function useAppHandlers(options: UseAppHandlersOptions = {}): UseAppHandl
     onCloneFromUrl?.();
   }, [onCloneFromUrl]);
 
-  const handleQuickStart = useCallback((): void => {
-    // TODO: Implement quick start
-  }, []);
-
   return {
     handleNewWorkspace,
     handleCloneFromUrl,
-    handleQuickStart,
   };
 }

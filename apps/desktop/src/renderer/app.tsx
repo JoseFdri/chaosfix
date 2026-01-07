@@ -13,7 +13,6 @@ import {
   Logo,
   DocumentTextIcon,
   GlobeAltIcon,
-  DocumentDuplicateIcon,
   PlusIcon,
   InputDialog,
   ConfirmDialog,
@@ -220,7 +219,7 @@ export const App: FC = () => {
     },
   });
 
-  const { handleNewWorkspace, handleCloneFromUrl, handleQuickStart } = useAppHandlers({
+  const { handleNewWorkspace, handleCloneFromUrl } = useAppHandlers({
     onNewWorkspace: openDialog,
     onCloneFromUrl: () => setCloneDialogOpen(true),
   });
@@ -524,11 +523,6 @@ export const App: FC = () => {
                     icon={<GlobeAltIcon className="w-8 h-8" />}
                     label="Clone from URL"
                     onClick={handleCloneFromUrl}
-                  />
-                  <ActionCard
-                    icon={<DocumentDuplicateIcon className="w-8 h-8" />}
-                    label="Quick start"
-                    onClick={handleQuickStart}
                   />
                 </ActionCardGroup>
               </WelcomeScreen>
