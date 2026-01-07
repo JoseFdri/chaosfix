@@ -10,6 +10,7 @@ export {
   ChevronDownIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
+  FolderIcon,
   FolderPlusIcon,
   ComputerDesktopIcon,
   Cog6ToothIcon,

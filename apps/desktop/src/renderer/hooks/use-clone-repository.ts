@@ -1,6 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
 import type { CloneResult, CloneProgress } from "../../types";
 
+export interface CloneData {
+  url: string;
+  destinationPath?: string;
+}
+
 export interface UseCloneRepositoryOptions {
   onSuccess: (result: CloneResult) => void;
   onError: (error: string) => void;
@@ -11,7 +16,8 @@ export interface UseCloneRepositoryReturn {
   setIsOpen: (open: boolean) => void;
   progress: CloneProgress | null;
   isCloning: boolean;
-  handleClone: (url: string) => Promise<void>;
+  handleClone: (data: CloneData) => Promise<void>;
+  handleSelectDirectory: () => Promise<string | null>;
 }
 
 export function useCloneRepository({
@@ -32,12 +38,15 @@ export function useCloneRepository({
   }, []);
 
   const handleClone = useCallback(
-    async (url: string): Promise<void> => {
+    async (data: CloneData): Promise<void> => {
       setIsCloning(true);
       setProgress(null);
 
       try {
-        const result = await window.git.clone({ url });
+        const result = await window.git.clone({
+          url: data.url,
+          destinationPath: data.destinationPath,
+        });
 
         if (result.success) {
           onSuccess(result);
@@ -56,11 +65,17 @@ export function useCloneRepository({
     [onSuccess, onError]
   );
 
+  const handleSelectDirectory = useCallback(async (): Promise<string | null> => {
+    const result = await window.dialog.selectDirectory();
+    return result?.path ?? null;
+  }, []);
+
   return {
     isOpen,
     setIsOpen,
     progress,
     isCloning,
     handleClone,
+    handleSelectDirectory,
   };
 }

@@ -11,10 +11,16 @@ import {
   type DialogProps,
 } from "../atoms";
 import { cn } from "../../libs/cn.lib";
-import { useCloneDialog, type CloneProgress } from "../../hooks/useCloneDialog.hook";
+import {
+  useCloneDialog,
+  type CloneProgress,
+  type CloneDialogData,
+} from "../../hooks/useCloneDialog.hook";
+import { FolderIcon } from "../../icons";
 
 export interface CloneDialogProps extends Omit<DialogProps, "children"> {
-  onClone: (url: string) => Promise<void>;
+  onClone: (data: CloneDialogData) => Promise<void>;
+  onSelectDirectory?: () => Promise<string | null>;
   progress?: CloneProgress | null;
   isCloning?: boolean;
   className?: string;
@@ -24,6 +30,7 @@ export const CloneDialog = forwardRef<HTMLInputElement, CloneDialogProps>(
   (
     {
       onClone,
+      onSelectDirectory,
       progress: externalProgress,
       isCloning: externalIsCloning,
       className,
@@ -35,15 +42,28 @@ export const CloneDialog = forwardRef<HTMLInputElement, CloneDialogProps>(
   ) => {
     const {
       url,
+      destinationPath,
+      setDestinationPath,
       error,
       progress: internalProgress,
       isCloning: internalIsCloning,
       handleSubmit,
       handleUrlChange,
+      handleDestinationChange,
       handleOpenChange,
       setProgress,
       setIsCloning,
     } = useCloneDialog({ open, onOpenChange });
+
+    const handleBrowseDirectory = useCallback(async () => {
+      if (!onSelectDirectory) {
+        return;
+      }
+      const selectedPath = await onSelectDirectory();
+      if (selectedPath) {
+        setDestinationPath(selectedPath);
+      }
+    }, [onSelectDirectory, setDestinationPath]);
 
     // Use external progress/isCloning if provided, otherwise use internal state
     const progress = externalProgress !== undefined ? externalProgress : internalProgress;
@@ -107,6 +127,34 @@ export const CloneDialog = forwardRef<HTMLInputElement, CloneDialogProps>(
               disabled={isCloning}
               autoFocus
             />
+
+            <div className="mt-4">
+              <label className="mb-1.5 block text-sm font-medium text-text-primary">
+                Destination Directory
+                <span className="ml-1 text-text-muted">(optional)</span>
+              </label>
+              <div className="flex gap-2">
+                <div className="min-w-0 flex-1">
+                  <Input
+                    placeholder="Default: ~/.chaosfix/repos"
+                    value={destinationPath}
+                    onChange={handleDestinationChange}
+                    disabled={isCloning}
+                  />
+                </div>
+                {onSelectDirectory && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleBrowseDirectory}
+                    disabled={isCloning}
+                    className="shrink-0"
+                  >
+                    <FolderIcon className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
 
             {isCloning && progress && (
               <div className="mt-4 space-y-2">

@@ -6,6 +6,11 @@ export interface CloneProgress {
   progress: number;
 }
 
+export interface CloneDialogData {
+  url: string;
+  destinationPath?: string;
+}
+
 export interface UseCloneDialogOptions {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -14,11 +19,16 @@ export interface UseCloneDialogOptions {
 export interface UseCloneDialogReturn {
   url: string;
   setUrl: (value: string) => void;
+  destinationPath: string;
+  setDestinationPath: (value: string) => void;
   error: string | undefined;
   progress: CloneProgress | null;
   isCloning: boolean;
-  handleSubmit: (onClone: (url: string) => Promise<void>) => (e: FormEvent) => Promise<void>;
+  handleSubmit: (
+    onClone: (data: CloneDialogData) => Promise<void>
+  ) => (e: FormEvent) => Promise<void>;
   handleUrlChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleDestinationChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleOpenChange: (isOpen: boolean) => void;
   setProgress: (progress: CloneProgress | null) => void;
   setIsCloning: (value: boolean) => void;
@@ -30,6 +40,7 @@ export const useCloneDialog = ({
   onOpenChange,
 }: UseCloneDialogOptions): UseCloneDialogReturn => {
   const [url, setUrl] = useState("");
+  const [destinationPath, setDestinationPath] = useState("");
   const [error, setError] = useState<string | undefined>();
   const [progress, setProgress] = useState<CloneProgress | null>(null);
   const [isCloning, setIsCloning] = useState(false);
@@ -37,6 +48,7 @@ export const useCloneDialog = ({
 
   const reset = useCallback(() => {
     setUrl("");
+    setDestinationPath("");
     setError(undefined);
     setProgress(null);
     setIsCloning(false);
@@ -70,8 +82,12 @@ export const useCloneDialog = ({
     [error]
   );
 
+  const handleDestinationChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setDestinationPath(e.target.value);
+  }, []);
+
   const handleSubmit = useCallback(
-    (onClone: (url: string) => Promise<void>): ((e: FormEvent) => Promise<void>) =>
+    (onClone: (data: CloneDialogData) => Promise<void>): ((e: FormEvent) => Promise<void>) =>
       async (e: FormEvent): Promise<void> => {
         e.preventDefault();
 
@@ -80,6 +96,7 @@ export const useCloneDialog = ({
         }
 
         const trimmedUrl = url.trim();
+        const trimmedDestination = destinationPath.trim();
 
         if (!trimmedUrl) {
           setError("Please enter a repository URL");
@@ -92,19 +109,25 @@ export const useCloneDialog = ({
         }
 
         setError(undefined);
-        await onClone(trimmedUrl);
+        await onClone({
+          url: trimmedUrl,
+          destinationPath: trimmedDestination || undefined,
+        });
       },
-    [url, isCloning]
+    [url, destinationPath, isCloning]
   );
 
   return {
     url,
     setUrl,
+    destinationPath,
+    setDestinationPath,
     error,
     progress,
     isCloning,
     handleSubmit,
     handleUrlChange,
+    handleDestinationChange,
     handleOpenChange,
     setProgress,
     setIsCloning,

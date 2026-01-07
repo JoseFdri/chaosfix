@@ -270,6 +270,7 @@ export const App: FC = () => {
     progress: cloneProgress,
     isCloning,
     handleClone,
+    handleSelectDirectory,
   } = useCloneRepository({
     onSuccess: (result) => {
       repositoriesActions.add({
@@ -356,6 +357,7 @@ export const App: FC = () => {
         open={isCloneDialogOpen}
         onOpenChange={setCloneDialogOpen}
         onClone={handleClone}
+        onSelectDirectory={handleSelectDirectory}
         progress={cloneProgress}
         isCloning={isCloning}
       />
