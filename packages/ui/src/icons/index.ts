@@ -24,6 +24,10 @@ export {
   TrashIcon,
   SunIcon,
   MoonIcon,
+  Squares2X2Icon,
+  ShieldCheckIcon,
+  CommandLineIcon,
+  RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 
 // Solid icons (20x20) - add as needed

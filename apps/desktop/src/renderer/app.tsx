@@ -10,7 +10,7 @@ import {
   WelcomeScreen,
   ActionCard,
   ActionCardGroup,
-  Logo,
+  AnimatedLogo,
   DocumentTextIcon,
   GlobeAltIcon,
   PlusIcon,
@@ -54,6 +54,7 @@ import {
   DEFAULT_TERMINAL_STATUS,
   MIN_SIDEBAR_WIDTH,
   MAX_SIDEBAR_WIDTH,
+  HOMEPAGE_FEATURES,
 } from "../constants";
 import logoSrc from "./assets/logo.svg";
 
@@ -512,7 +513,10 @@ export const App: FC = () => {
               ))
             )}
             {!activeWorkspace?.activeTerminalId && (
-              <WelcomeScreen logo={<Logo src={logoSrc} alt="ChaosFix Logo" />}>
+              <WelcomeScreen
+                logo={<AnimatedLogo src={logoSrc} alt="ChaosFix Logo" size={180} />}
+                features={HOMEPAGE_FEATURES}
+              >
                 <ActionCardGroup>
                   <ActionCard
                     icon={<DocumentTextIcon className="w-8 h-8" />}

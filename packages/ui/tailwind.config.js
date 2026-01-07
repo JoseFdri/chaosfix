@@ -47,10 +47,38 @@ module.exports = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(100%)" },
         },
+        // Fade animations
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        fadeUp: {
+          from: { opacity: "0", transform: "translateY(10px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // Ambient animations
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-3px)" },
+        },
+        glowPulse: {
+          "0%, 100%": { boxShadow: "0 0 5px rgba(59, 130, 246, 0.3)" },
+          "50%": { boxShadow: "0 0 15px rgba(59, 130, 246, 0.6)" },
+        },
+        gradientShift: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
       },
       animation: {
         slideIn: "slideIn 150ms ease-out",
         slideOut: "slideOut 150ms ease-in",
+        fadeIn: "fadeIn 300ms ease-out",
+        fadeUp: "fadeUp 400ms ease-out forwards",
+        float: "float 4s ease-in-out infinite",
+        glowPulse: "glowPulse 2s ease-in-out infinite",
+        gradientShift: "gradientShift 10s ease infinite",
       },
     },
   },

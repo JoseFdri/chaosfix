@@ -1,5 +1,6 @@
 // Custom hooks
 export { useEventListener } from "./useEventListener.hook";
+export { useMousePosition, type MousePosition } from "./useMousePosition.hook";
 export {
   useInputDialog,
   type UseInputDialogOptions,

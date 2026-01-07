@@ -15,3 +15,4 @@ export {
   REMOVE_WORKSPACE_DIALOG,
   DEFAULT_WORKSPACE_STATUS,
 } from "./workspace.constants";
+export { HOMEPAGE_FEATURES } from "./features.constants";

@@ -1,4 +1,6 @@
 // Atoms - Basic, reusable UI building blocks
+export { AnimatedBackground, type AnimatedBackgroundProps } from "./AnimatedBackground.atom";
+export { AnimatedLogo, type AnimatedLogoProps } from "./AnimatedLogo.atom";
 export { Button, type ButtonProps } from "./Button.atom";
 export { IconButton, type IconButtonProps } from "./IconButton.atom";
 export { ActivityIndicator, type ActivityIndicatorProps } from "./ActivityIndicator.atom";
@@ -6,6 +8,7 @@ export { SidebarItem, type SidebarItemProps } from "./SidebarItem.atom";
 export { TabItem, type TabItemProps, type Tab } from "./TabItem.atom";
 export { SearchInput, type SearchInputProps } from "./SearchInput.atom";
 export { ActionCard, type ActionCardProps } from "./ActionCard.atom";
+export { InteractiveCard, type InteractiveCardProps } from "./InteractiveCard.atom";
 export { StatItem, type StatItemProps } from "./StatItem.atom";
 export { Logo, type LogoProps } from "./Logo.atom";
 export { MenuButton, type MenuButtonProps, type MenuButtonItemProps } from "./MenuButton.atom";

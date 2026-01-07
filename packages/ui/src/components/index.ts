@@ -1,5 +1,9 @@
 // Atoms - Basic, reusable UI building blocks
 export {
+  AnimatedBackground,
+  type AnimatedBackgroundProps,
+  AnimatedLogo,
+  type AnimatedLogoProps,
   Button,
   type ButtonProps,
   IconButton,
@@ -15,6 +19,8 @@ export {
   type SearchInputProps,
   ActionCard,
   type ActionCardProps,
+  InteractiveCard,
+  type InteractiveCardProps,
   StatItem,
   type StatItemProps,
   Logo,
@@ -74,6 +80,11 @@ export {
   type WorkspaceStatusBarProps,
   CloneDialog,
   type CloneDialogProps,
+  FeatureCard,
+  type FeatureCardProps,
+  FeatureHighlights,
+  type FeatureHighlightsProps,
+  type Feature,
 } from "./molecules";
 
 // Organisms - Complex UI sections

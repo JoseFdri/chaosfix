@@ -17,3 +17,9 @@ export { ConfigurationTab, type ConfigurationTabProps } from "./ConfigurationTab
 export { ThemeToggle, type ThemeToggleProps } from "./ThemeToggle.molecule";
 export { WorkspaceStatusBar, type WorkspaceStatusBarProps } from "./WorkspaceStatusBar.molecule";
 export { CloneDialog, type CloneDialogProps } from "./CloneDialog.molecule";
+export { FeatureCard, type FeatureCardProps } from "./FeatureCard.molecule";
+export {
+  FeatureHighlights,
+  type FeatureHighlightsProps,
+  type Feature,
+} from "./FeatureHighlights.molecule";
