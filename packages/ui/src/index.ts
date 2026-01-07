@@ -4,3 +4,4 @@ export * from "./hooks";
 export * from "./icons";
 export * from "./libs";
 export * from "./providers/ToastProvider";
+export * from "./types";

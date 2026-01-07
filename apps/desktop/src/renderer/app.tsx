@@ -43,8 +43,11 @@ import {
   useSetupScript,
   useExternalApps,
   useCloneRepository,
+  useSplitActions,
+  useKeyboardShortcuts,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
+import { TerminalSplitContainer } from "./components/terminal-split-container";
 import { NotificationContainer } from "./components/NotificationContainer.component";
 import {
   WORKSPACE_DIALOG,
@@ -182,6 +185,27 @@ export const App: FC = () => {
       onRenameTerminal: workspacesActions.renameTerminal,
     }
   );
+
+  // Split pane actions hook
+  const { handleSplit, handleResizePanes, handlePaneClick, handleClosePane, canSplit } =
+    useSplitActions({
+      activeWorkspace,
+      onSplitTerminal: workspacesActions.splitTerminal,
+      onResizePanes: workspacesActions.resizePanes,
+      onSetFocusedPane: workspacesActions.setFocusedPane,
+      onClosePane: workspacesActions.closePane,
+    });
+
+  // Keyboard shortcuts for split operations
+  useKeyboardShortcuts({
+    canSplit,
+    hasSplitLayout: Boolean(activeWorkspace?.splitLayout),
+    focusedTerminalId:
+      activeWorkspace?.focusedTerminalId ?? activeWorkspace?.activeTerminalId ?? null,
+    onSplit: handleSplit,
+    onClosePane: handleClosePane,
+    onCloseTab: handleTabClose,
+  });
 
   // Setup script hook for running workspace setup after creation
   const { runSetup } = useSetupScript({
@@ -495,23 +519,41 @@ export const App: FC = () => {
               onTabClose={handleTabClose}
               onTabRename={handleTabRename}
               onNewTab={handleNewTab}
+              onSplit={handleSplit}
+              canSplit={canSplit}
             />
           )}
 
           {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
           <div className="flex-1 bg-surface-primary relative">
-            {allWorkspaces.flatMap((workspace) =>
-              workspace.terminals.map((terminal) => (
+            {/* Render terminals for all workspaces (hidden when not active) */}
+            {allWorkspaces.flatMap((workspace) => {
+              const isActiveWorkspace = workspace.id === activeWorkspaceId;
+
+              // If this workspace has a split layout and is active, render with split container
+              if (isActiveWorkspace && workspace.splitLayout) {
+                return (
+                  <TerminalSplitContainer
+                    key={`split-${workspace.id}`}
+                    paneNode={workspace.splitLayout}
+                    worktreePath={workspace.worktreePath}
+                    focusedTerminalId={workspace.focusedTerminalId}
+                    onResizePanes={handleResizePanes}
+                    onPaneClick={handlePaneClick}
+                  />
+                );
+              }
+
+              // For non-split workspaces or hidden workspaces, render flat terminals
+              return workspace.terminals.map((terminal) => (
                 <TerminalView
                   key={terminal.id}
                   terminalId={terminal.id}
                   worktreePath={workspace.worktreePath}
-                  isActive={
-                    workspace.id === activeWorkspaceId && terminal.id === workspace.activeTerminalId
-                  }
+                  isActive={isActiveWorkspace && terminal.id === workspace.activeTerminalId}
                 />
-              ))
-            )}
+              ));
+            })}
             {!activeWorkspace?.activeTerminalId && (
               <WelcomeScreen
                 logo={<AnimatedLogo src={logoSrc} alt="ChaosFix Logo" size={180} />}

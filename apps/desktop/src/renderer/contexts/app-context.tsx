@@ -1,6 +1,13 @@
 import { useCallback } from "react";
 import type { AppState } from "@chaosfix/config";
-import type { Repository, TerminalSession, WorkspaceStatus, ExternalAppId } from "@chaosfix/core";
+import type {
+  Repository,
+  TerminalSession,
+  WorkspaceStatus,
+  ExternalAppId,
+  SplitDirection,
+  PaneNode,
+} from "@chaosfix/core";
 import {
   createAppContext,
   sliceRegistry,
@@ -112,6 +119,15 @@ interface WorkspacesActions {
   renameTerminal: (workspaceId: string, terminalId: string, title: string) => void;
   removeByRepository: (repositoryId: string) => void;
   setSelectedApp: (workspaceId: string, appId: ExternalAppId | null) => void;
+  splitTerminal: (
+    workspaceId: string,
+    direction: SplitDirection,
+    newTerminal: TerminalSession
+  ) => void;
+  closePane: (workspaceId: string, terminalId: string) => void;
+  resizePanes: (workspaceId: string, splitId: string, sizes: number[]) => void;
+  setFocusedPane: (workspaceId: string, terminalId: string | null) => void;
+  setSplitLayout: (workspaceId: string, layout: PaneNode | null) => void;
 }
 
 /**

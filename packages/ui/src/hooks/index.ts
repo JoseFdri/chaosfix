@@ -40,3 +40,4 @@ export {
   type UseCloneDialogOptions,
   type UseCloneDialogReturn,
 } from "./useCloneDialog.hook";
+export { useSplitResize } from "./useSplitResize.hook";

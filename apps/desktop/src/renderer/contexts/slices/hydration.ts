@@ -1,10 +1,38 @@
-import type { Repository, TerminalSession, ExternalAppId } from "@chaosfix/core";
+import type { Repository, TerminalSession, ExternalAppId, PaneNode } from "@chaosfix/core";
 import type { AppState } from "@chaosfix/config";
 import type { WorkspaceWithTerminals, WorkspacesState } from "./workspaces.slice";
 import type { RepositoriesState } from "./repositories.slice";
 
 // Default PID value for terminals that need to be reconnected
 const DEFAULT_TERMINAL_PID = -1;
+
+/**
+ * Extracts all terminal IDs from a split layout tree.
+ * Used for validation during deserialization.
+ */
+function getAllTerminalIdsFromLayout(node: PaneNode): string[] {
+  if (node.type === "terminal") {
+    return [node.terminalId];
+  }
+  return node.children.flatMap((child) => getAllTerminalIdsFromLayout(child));
+}
+
+/**
+ * Validates that all terminal IDs referenced in a split layout exist in the terminal list.
+ * Returns the layout if valid, null if invalid (to reset to non-split state).
+ */
+function validateSplitLayout(layout: PaneNode | null, terminalIds: string[]): PaneNode | null {
+  if (!layout) {
+    return null;
+  }
+
+  const layoutTerminalIds = getAllTerminalIdsFromLayout(layout);
+  const terminalIdSet = new Set(terminalIds);
+  const allExist = layoutTerminalIds.every((id) => terminalIdSet.has(id));
+
+  // If any referenced terminal doesn't exist, reset the layout
+  return allExist ? layout : null;
+}
 
 /**
  * Hydration action for restoring state from persistence.
@@ -57,6 +85,10 @@ interface SerializedWorkspace {
   activeTerminalId: string | null;
   /** The selected external app for quick-open */
   selectedAppId?: string | null;
+  /** Split pane layout tree (null means no splits) */
+  splitLayout?: PaneNode | null;
+  /** Terminal with keyboard focus */
+  focusedTerminalId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -104,6 +136,8 @@ function serializeWorkspace(workspace: WorkspaceWithTerminals): SerializedWorksp
     })),
     activeTerminalId: workspace.activeTerminalId,
     selectedAppId: workspace.selectedAppId,
+    splitLayout: workspace.splitLayout,
+    focusedTerminalId: workspace.focusedTerminalId,
     createdAt: workspace.createdAt.toISOString(),
     updatedAt: workspace.updatedAt.toISOString(),
   };
@@ -161,8 +195,23 @@ function deserializeTerminal(
 
 /**
  * Converts a serialized workspace from persistence to a WorkspaceWithTerminals.
+ * Validates that all terminal references in splitLayout exist in the terminals array.
  */
 function deserializeWorkspace(serialized: AppState["workspaces"][number]): WorkspaceWithTerminals {
+  // Cast splitLayout from the schema type to PaneNode since the zod recursive type is not perfectly inferred
+  const rawSplitLayout = serialized.splitLayout as PaneNode | null | undefined;
+
+  // Get terminal IDs for validation
+  const terminalIds = serialized.terminals.map((t) => t.id);
+
+  // Validate split layout - reset to null if any terminal reference is invalid
+  const validatedSplitLayout = validateSplitLayout(rawSplitLayout ?? null, terminalIds);
+
+  // Validate focusedTerminalId - reset to null if terminal doesn't exist
+  const focusedTerminalId = serialized.focusedTerminalId;
+  const validatedFocusedTerminalId =
+    focusedTerminalId && terminalIds.includes(focusedTerminalId) ? focusedTerminalId : null;
+
   return {
     id: serialized.id,
     name: serialized.name,
@@ -173,6 +222,8 @@ function deserializeWorkspace(serialized: AppState["workspaces"][number]): Works
     terminals: serialized.terminals.map((t) => deserializeTerminal(t, serialized.id)),
     activeTerminalId: serialized.activeTerminalId,
     selectedAppId: (serialized.selectedAppId as ExternalAppId) ?? null,
+    splitLayout: validatedSplitLayout,
+    focusedTerminalId: validatedFocusedTerminalId,
     createdAt: new Date(serialized.createdAt),
     updatedAt: new Date(serialized.updatedAt),
   };

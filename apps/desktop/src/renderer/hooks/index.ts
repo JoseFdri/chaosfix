@@ -42,3 +42,9 @@ export type { UseExternalAppsReturn } from "./use-external-apps.hook";
 
 export { useCloneRepository } from "./use-clone-repository";
 export type { UseCloneRepositoryOptions, UseCloneRepositoryReturn } from "./use-clone-repository";
+
+export { useSplitActions } from "./use-split-actions";
+export type { UseSplitActionsOptions, UseSplitActionsReturn } from "./use-split-actions";
+
+export { useKeyboardShortcuts } from "./use-keyboard-shortcuts";
+export type { UseKeyboardShortcutsOptions } from "./use-keyboard-shortcuts";

@@ -5,9 +5,16 @@ interface TerminalViewProps {
   terminalId: string;
   worktreePath: string;
   isActive: boolean;
+  /** Optional click handler for selecting this terminal pane */
+  onClick?: () => void;
 }
 
-export const TerminalView: FC<TerminalViewProps> = ({ terminalId, worktreePath, isActive }) => {
+export const TerminalView: FC<TerminalViewProps> = ({
+  terminalId,
+  worktreePath,
+  isActive,
+  onClick,
+}) => {
   const { containerRef } = useTerminal({ terminalId, cwd: worktreePath });
 
   return (
@@ -15,6 +22,18 @@ export const TerminalView: FC<TerminalViewProps> = ({ terminalId, worktreePath, 
       ref={containerRef}
       className="terminal-container w-full h-full"
       style={{ display: isActive ? "block" : "none" }}
+      onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (e): void => {
+              if (e.key === "Enter") {
+                onClick();
+              }
+            }
+          : undefined
+      }
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
     />
   );
 };

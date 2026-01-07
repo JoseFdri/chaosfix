@@ -23,3 +23,5 @@ export {
   type FeatureHighlightsProps,
   type Feature,
 } from "./FeatureHighlights.molecule";
+export { SplitPane } from "./SplitPane.molecule";
+export type { SplitPaneProps } from "../../types";

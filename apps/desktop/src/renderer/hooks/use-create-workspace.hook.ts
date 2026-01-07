@@ -122,6 +122,8 @@ export function useCreateWorkspace({
           terminals: [],
           activeTerminalId: null,
           selectedAppId: null,
+          splitLayout: null,
+          focusedTerminalId: null,
           createdAt: now,
           updatedAt: now,
         };

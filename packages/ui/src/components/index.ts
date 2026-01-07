@@ -50,6 +50,7 @@ export {
   WindsurfIcon,
   APP_ICONS,
   getAppIcon,
+  SplitResizeHandle,
 } from "./atoms";
 
 // Molecules - Simple combinations of atoms
@@ -85,6 +86,7 @@ export {
   FeatureHighlights,
   type FeatureHighlightsProps,
   type Feature,
+  SplitPane,
 } from "./molecules";
 
 // Organisms - Complex UI sections
