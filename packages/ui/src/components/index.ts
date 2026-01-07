@@ -72,6 +72,8 @@ export {
   type ThemeToggleProps,
   WorkspaceStatusBar,
   type WorkspaceStatusBarProps,
+  CloneDialog,
+  type CloneDialogProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections

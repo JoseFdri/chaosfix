@@ -63,3 +63,10 @@ export const EXTERNAL_APPS_IPC_CHANNELS = {
 
 export type ExternalAppsIPCChannel =
   (typeof EXTERNAL_APPS_IPC_CHANNELS)[keyof typeof EXTERNAL_APPS_IPC_CHANNELS];
+
+export const GIT_IPC_CHANNELS = {
+  CLONE: "git:clone",
+  CLONE_PROGRESS: "git:clone-progress",
+} as const;
+
+export type GitIPCChannel = (typeof GIT_IPC_CHANNELS)[keyof typeof GIT_IPC_CHANNELS];

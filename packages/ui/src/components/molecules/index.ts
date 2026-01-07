@@ -16,3 +16,4 @@ export { GeneralSettingsTab, type GeneralSettingsTabProps } from "./GeneralSetti
 export { ConfigurationTab, type ConfigurationTabProps } from "./ConfigurationTab.molecule";
 export { ThemeToggle, type ThemeToggleProps } from "./ThemeToggle.molecule";
 export { WorkspaceStatusBar, type WorkspaceStatusBarProps } from "./WorkspaceStatusBar.molecule";
+export { CloneDialog, type CloneDialogProps } from "./CloneDialog.molecule";

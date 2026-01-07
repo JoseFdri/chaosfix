@@ -39,3 +39,6 @@ export type { UseSetupScriptOptions, UseSetupScriptReturn } from "./use-setup-sc
 
 export { useExternalApps } from "./use-external-apps.hook";
 export type { UseExternalAppsReturn } from "./use-external-apps.hook";
+
+export { useCloneRepository } from "./use-clone-repository";
+export type { UseCloneRepositoryOptions, UseCloneRepositoryReturn } from "./use-clone-repository";

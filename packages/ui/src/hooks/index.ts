@@ -33,3 +33,9 @@ export {
   type UseDragResizeOptions,
   type UseDragResizeReturn,
 } from "./useDragResize.hook";
+export {
+  useCloneDialog,
+  type CloneProgress,
+  type UseCloneDialogOptions,
+  type UseCloneDialogReturn,
+} from "./useCloneDialog.hook";

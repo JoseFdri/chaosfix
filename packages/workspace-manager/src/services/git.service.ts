@@ -1,10 +1,39 @@
 import simpleGit, { SimpleGit } from "simple-git";
 import { ok, err } from "@chaosfix/core";
 
-import type { GitResult, BranchInfo, RepositoryInfo } from "../types/git.types";
+import type {
+  GitResult,
+  BranchInfo,
+  RepositoryInfo,
+  CloneProgress,
+  CloneData,
+} from "../types/git.types";
 import type { WorktreeInfo } from "../types/worktree.types";
 import { GitError } from "../types/git.types";
 import { parseWorktreeOutput } from "../libs/worktree-parser.lib";
+
+/**
+ * Extract repository name from a git URL (HTTPS or SSH format)
+ */
+function extractRepoNameFromUrl(url: string): string {
+  // Remove trailing .git if present
+  const cleanUrl = url.replace(/\.git$/, "");
+
+  // Handle SSH format: git@github.com:user/repo
+  const sshMatch = cleanUrl.match(/[:/]([^/]+)$/);
+  if (sshMatch && sshMatch[1]) {
+    return sshMatch[1];
+  }
+
+  // Handle HTTPS format: https://github.com/user/repo
+  const httpsMatch = cleanUrl.match(/\/([^/]+)$/);
+  if (httpsMatch && httpsMatch[1]) {
+    return httpsMatch[1];
+  }
+
+  // Fallback: return the last segment
+  return cleanUrl.split("/").pop() || "repository";
+}
 
 /**
  * GitService provides high-level git operations
@@ -16,6 +45,65 @@ export class GitService {
   constructor(repoPath: string) {
     this.repoPath = repoPath;
     this.git = simpleGit(repoPath);
+  }
+
+  /**
+   * Clone a repository from a URL to a destination path
+   * This is a static method since the repository doesn't exist yet
+   */
+  static async clone(
+    url: string,
+    destinationPath: string,
+    onProgress?: (progress: CloneProgress) => void
+  ): Promise<GitResult<CloneData>> {
+    try {
+      const git = simpleGit({
+        progress({ stage, progress, processed, total }) {
+          if (onProgress) {
+            onProgress({
+              stage: stage || "unknown",
+              progress: progress || 0,
+              processed: processed || 0,
+              total: total || 0,
+            });
+          }
+        },
+      });
+
+      await git.clone(url, destinationPath, ["--progress"]);
+
+      const repoName = extractRepoNameFromUrl(url);
+
+      // Create a GitService instance to get the default branch
+      const gitService = new GitService(destinationPath);
+      const branchResult = await gitService.getBranches();
+
+      let defaultBranch = "main";
+      if (branchResult.success) {
+        const mainBranch = branchResult.data.find((b) => b.name === "main" || b.name === "master");
+        if (mainBranch) {
+          defaultBranch = mainBranch.name;
+        } else if (branchResult.data.length > 0) {
+          const currentBranch = branchResult.data.find((b) => b.current);
+          if (currentBranch) {
+            defaultBranch = currentBranch.name;
+          } else {
+            const firstBranch = branchResult.data[0];
+            if (firstBranch) {
+              defaultBranch = firstBranch.name;
+            }
+          }
+        }
+      }
+
+      return ok({
+        path: destinationPath,
+        repoName,
+        defaultBranch,
+      });
+    } catch (error) {
+      return err(new GitError(`Failed to clone repository: ${error}`));
+    }
   }
 
   /**

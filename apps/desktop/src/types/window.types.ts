@@ -1,5 +1,6 @@
 import type { DialogAPI } from "./dialog.types";
 import type { ExternalAppsAPI } from "./external-apps.types";
+import type { GitAPI } from "./git.types";
 import type { RepositoryAPI } from "./repository.types";
 import type { RepositoryConfigAPI } from "./repository-config.types";
 import type { SetupScriptAPI } from "./setup-script.types";
@@ -20,5 +21,6 @@ declare global {
     repositoryConfig: RepositoryConfigAPI;
     setupScript: SetupScriptAPI;
     externalApps: ExternalAppsAPI;
+    git: GitAPI;
   }
 }

@@ -2,6 +2,7 @@ import { contextBridge } from "electron";
 
 import { createDialogAPI } from "./dialog-api";
 import { createExternalAppsAPI } from "./external-apps-api";
+import { createGitAPI } from "./git-api";
 import { createRepositoryAPI } from "./repository-api";
 import { createRepositoryConfigAPI } from "./repository-config-api";
 import { createSetupScriptAPI } from "./setup-script-api";
@@ -21,6 +22,7 @@ const repositoryAPI = createRepositoryAPI();
 const repositoryConfigAPI = createRepositoryConfigAPI();
 const setupScriptAPI = createSetupScriptAPI();
 const externalAppsAPI = createExternalAppsAPI();
+const gitAPI = createGitAPI();
 
 // Expose APIs to renderer process via context bridge
 contextBridge.exposeInMainWorld("terminal", terminalAPI);
@@ -31,3 +33,4 @@ contextBridge.exposeInMainWorld("repository", repositoryAPI);
 contextBridge.exposeInMainWorld("repositoryConfig", repositoryConfigAPI);
 contextBridge.exposeInMainWorld("setupScript", setupScriptAPI);
 contextBridge.exposeInMainWorld("externalApps", externalAppsAPI);
+contextBridge.exposeInMainWorld("git", gitAPI);

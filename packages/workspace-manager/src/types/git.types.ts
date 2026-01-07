@@ -2,6 +2,19 @@ import type { Result } from "@chaosfix/core";
 
 import type { WorktreeInfo } from "./worktree.types";
 
+export interface CloneProgress {
+  stage: string;
+  progress: number;
+  processed: number;
+  total: number;
+}
+
+export interface CloneData {
+  path: string;
+  repoName: string;
+  defaultBranch: string;
+}
+
 export interface BranchInfo {
   name: string;
   current: boolean;

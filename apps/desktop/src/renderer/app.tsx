@@ -28,6 +28,7 @@ import {
   Spinner,
   OpenInDropdown,
   getAppIcon,
+  CloneDialog,
 } from "@chaosfix/ui";
 import type { TerminalSession, ExternalAppId } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
@@ -42,6 +43,7 @@ import {
   useTheme,
   useSetupScript,
   useExternalApps,
+  useCloneRepository,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
 import { NotificationContainer } from "./components/NotificationContainer.component";
@@ -220,6 +222,7 @@ export const App: FC = () => {
 
   const { handleNewWorkspace, handleCloneFromUrl, handleQuickStart } = useAppHandlers({
     onNewWorkspace: openDialog,
+    onCloneFromUrl: () => setCloneDialogOpen(true),
   });
 
   // Repository settings dialog state
@@ -258,6 +261,33 @@ export const App: FC = () => {
     handleConfirm: handleRemoveConfirm,
   } = useRemoveWorkspace({
     removeWorkspace: workspacesActions.remove,
+  });
+
+  // Clone repository dialog state and handlers
+  const {
+    isOpen: isCloneDialogOpen,
+    setIsOpen: setCloneDialogOpen,
+    progress: cloneProgress,
+    isCloning,
+    handleClone,
+  } = useCloneRepository({
+    onSuccess: (result) => {
+      repositoriesActions.add({
+        id: crypto.randomUUID(),
+        name: result.repoName,
+        path: result.path,
+        defaultBranch: result.defaultBranch,
+        workspaces: [],
+        createdAt: new Date(),
+      });
+    },
+    onError: (error) => {
+      notifications.add({
+        type: "error",
+        title: "Clone Failed",
+        message: error,
+      });
+    },
   });
 
   return (
@@ -320,6 +350,15 @@ export const App: FC = () => {
           onRemove={handleRepositoryRemove}
         />
       )}
+
+      {/* Clone Repository Dialog */}
+      <CloneDialog
+        open={isCloneDialogOpen}
+        onOpenChange={setCloneDialogOpen}
+        onClone={handleClone}
+        progress={cloneProgress}
+        isCloning={isCloning}
+      />
 
       <div className="flex h-screen bg-surface-primary text-text-primary">
         {/* Sidebar */}
