@@ -21,7 +21,7 @@ export const FEATURES: FeatureItem[] = [
     id: "terminal-interface",
     title: "Terminal-First Interface",
     description:
-      "The terminal IS the interface. No abstraction layers over Claude Code CLI. You see exactly what Claude sees.",
+      "The terminal IS the interface. No abstraction layers - direct terminal access with full visibility.",
     iconName: "terminal",
   },
   {
@@ -35,7 +35,7 @@ export const FEATURES: FeatureItem[] = [
     id: "parallel-sessions",
     title: "Parallel Sessions",
     description:
-      "Run multiple Claude Code sessions simultaneously. Work on different features, bug fixes, or experiments at once.",
+      "Run multiple terminal sessions simultaneously. Work on different features, bug fixes, or experiments at once.",
     iconName: "parallel",
   },
   {

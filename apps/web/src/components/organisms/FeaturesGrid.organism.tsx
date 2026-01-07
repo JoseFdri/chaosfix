@@ -21,7 +21,7 @@ export function FeaturesGrid({ className }: FeaturesGridProps): React.JSX.Elemen
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           title="Everything You Need"
-          subtitle="Powerful features to supercharge your Claude Code workflow"
+          subtitle="Powerful features to supercharge your development workflow"
         />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

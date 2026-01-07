@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} - Run Multiple Claude Code Sessions in Parallel`,
+        alt: `${SITE_NAME} - Parallel Workspace Manager`,
       },
     ],
   },

@@ -10,7 +10,7 @@ export const HOMEPAGE_FEATURES: Feature[] = [
     id: "parallel-sessions",
     icon: <Squares2X2Icon className="w-6 h-6 sm:w-8 sm:h-8" />,
     title: "Run Multiple Sessions",
-    description: "Run several Claude Code instances in parallel",
+    description: "Run multiple terminal sessions in isolated workspaces",
   },
   {
     id: "isolated-workspaces",
@@ -22,7 +22,7 @@ export const HOMEPAGE_FEATURES: Feature[] = [
     id: "direct-cli",
     icon: <CommandLineIcon className="w-6 h-6 sm:w-8 sm:h-8" />,
     title: "Direct CLI Access",
-    description: "No abstraction - you see exactly what Claude sees",
+    description: "No abstraction - direct terminal access with full visibility",
   },
   {
     id: "smart-organization",

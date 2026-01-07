@@ -24,7 +24,7 @@ export function DemoShowcase({ className }: DemoShowcaseProps): React.JSX.Elemen
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           title="See It in Action"
-          subtitle="Manage multiple Claude Code sessions with an intuitive interface"
+          subtitle="Manage multiple workspaces with an intuitive interface"
         />
 
         {/* Screenshot container */}
@@ -62,9 +62,8 @@ export function DemoShowcase({ className }: DemoShowcaseProps): React.JSX.Elemen
         {/* Description */}
         <div className="mx-auto mt-8 max-w-2xl text-center">
           <p className="text-base text-text-secondary sm:text-lg">
-            Run multiple isolated workspaces side by side. Each terminal connects directly to Claude
-            Code CLI with full terminal emulation, giving you the exact same experience as running
-            in your native terminal.
+            Run multiple isolated workspaces side by side. Each terminal provides full terminal
+            emulation, giving you the exact same experience as running in your native terminal.
           </p>
         </div>
       </div>

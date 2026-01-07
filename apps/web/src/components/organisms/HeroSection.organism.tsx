@@ -30,9 +30,9 @@ export function HeroSection({ className }: HeroSectionProps): React.JSX.Element 
 
         {/* Main headline */}
         <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
-          Run Multiple Claude Code
+          Manage Multiple Workspaces
           <br />
-          <span className="text-accent-primary">Sessions in Parallel</span>
+          <span className="text-accent-primary">in Parallel</span>
         </h1>
 
         {/* Subtitle */}

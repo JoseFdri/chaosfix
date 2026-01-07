@@ -2,7 +2,7 @@
   "name": "@chaosfix/desktop",
   "version": "0.1.0",
   "private": true,
-  "description": "ChaosFix - Multi-Claude Terminal Manager",
+  "description": "ChaosFix - Parallel Workspace Manager",
   "main": "dist/main/index.js",
   "scripts": {
     "build": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
