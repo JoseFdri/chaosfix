@@ -16,7 +16,7 @@ export function setupDialogIPC(deps: DialogIPCDependencies): void {
     }
 
     const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ["openDirectory"],
+      properties: ["openDirectory", "createDirectory"],
       title: "Select Repository Directory",
     });
 
