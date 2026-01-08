@@ -120,7 +120,7 @@ const ResizeHandleWrapper: FC<{
 
   return (
     <div
-      className="absolute"
+      className="absolute pointer-events-auto"
       style={{
         top: `${handle.position.top}%`,
         left: `${handle.position.left}%`,
@@ -163,7 +163,7 @@ export const SplitResizeOverlay: FC<SplitResizeOverlayProps> = ({ paneNode, onRe
 
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none z-10">
-      <div className="relative w-full h-full pointer-events-auto">{renderedHandles}</div>
+      <div className="relative w-full h-full">{renderedHandles}</div>
     </div>
   );
 };
