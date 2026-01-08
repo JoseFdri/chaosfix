@@ -167,7 +167,7 @@ function removeTerminalFromTree(node: PaneNode, terminalId: string): PaneNode | 
 /**
  * Gets all terminal IDs from a pane tree.
  */
-function getAllTerminalIds(node: PaneNode): string[] {
+export function getAllTerminalIds(node: PaneNode): string[] {
   if (node.type === "terminal") {
     return [node.terminalId];
   }

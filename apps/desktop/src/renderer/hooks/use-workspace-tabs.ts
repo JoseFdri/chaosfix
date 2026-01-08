@@ -1,7 +1,10 @@
 import { useMemo, useCallback } from "react";
 import type { Tab } from "@chaosfix/ui";
 import type { TerminalSession } from "@chaosfix/core";
-import type { WorkspaceWithTerminals } from "../contexts/slices/workspaces.slice";
+import {
+  getAllTerminalIds,
+  type WorkspaceWithTerminals,
+} from "../contexts/slices/workspaces.slice";
 import {
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,
@@ -36,6 +39,26 @@ export function useWorkspaceTabs({
     if (!activeWorkspace) {
       return [];
     }
+
+    // When there's a split layout, show only one tab for all terminals in the split
+    // This prevents a new tab from appearing when splitting a terminal
+    if (activeWorkspace.splitLayout) {
+      const splitTerminalIds = getAllTerminalIds(activeWorkspace.splitLayout);
+      const tabRootId = splitTerminalIds[0];
+      const tabRootTerminal = activeWorkspace.terminals.find((t) => t.id === tabRootId);
+
+      if (tabRootTerminal) {
+        return [
+          {
+            id: tabRootTerminal.id,
+            label: tabRootTerminal.title || DEFAULT_TERMINAL_LABEL,
+            closable: true,
+          },
+        ];
+      }
+    }
+
+    // No split layout - show all terminals as tabs
     return activeWorkspace.terminals.map((t) => ({
       id: t.id,
       label: t.title || DEFAULT_TERMINAL_LABEL,
