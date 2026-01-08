@@ -539,8 +539,7 @@ export const App: FC = () => {
               onTabClose={handleTabClose}
               onTabRename={handleTabRename}
               onNewTab={handleNewTab}
-              onSplit={handleSplit}
-              canSplit={canSplit}
+              onTabSplit={canSplit ? (): void => handleSplit("horizontal") : undefined}
             />
           )}
 

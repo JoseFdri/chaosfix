@@ -1,8 +1,6 @@
 import { type FC } from "react";
-import { type SplitDirection } from "@chaosfix/core";
 import { cn } from "../../libs/cn.lib";
 import { TabItem, type Tab } from "../atoms/TabItem.atom";
-import { SplitButton } from "../atoms/SplitButton.atom";
 
 export interface TabBarProps {
   tabs: Tab[];
@@ -10,11 +8,8 @@ export interface TabBarProps {
   onTabSelect: (tabId: string) => void;
   onTabClose?: (tabId: string) => void;
   onTabRename?: (tabId: string, newLabel: string) => void;
+  onTabSplit?: (tabId: string) => void;
   onNewTab?: () => void;
-  /** Callback when a split direction is selected */
-  onSplit?: (direction: SplitDirection) => void;
-  /** Whether the split button should be enabled */
-  canSplit?: boolean;
   className?: string;
 }
 
@@ -24,9 +19,8 @@ export const TabBar: FC<TabBarProps> = ({
   onTabSelect,
   onTabClose,
   onTabRename,
+  onTabSplit,
   onNewTab,
-  onSplit,
-  canSplit = false,
   className,
 }) => {
   return (
@@ -46,11 +40,11 @@ export const TabBar: FC<TabBarProps> = ({
             onSelect={() => onTabSelect(tab.id)}
             onClose={onTabClose ? (): void => onTabClose(tab.id) : undefined}
             onRename={onTabRename ? (newLabel): void => onTabRename(tab.id, newLabel) : undefined}
+            onSplit={onTabSplit ? (): void => onTabSplit(tab.id) : undefined}
           />
         ))}
       </div>
       <div className="flex items-center">
-        {onSplit && <SplitButton onSplit={onSplit} disabled={!canSplit} className="ml-1" />}
         {onNewTab && (
           <button
             type="button"
