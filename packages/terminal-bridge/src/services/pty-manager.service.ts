@@ -111,11 +111,16 @@ export class PTYManager {
   }
 
   /**
-   * Destroy a PTY instance
+   * Destroy a PTY instance.
+   * Clears exit listeners before killing to prevent exit events from being emitted
+   * when the PTY is intentionally destroyed (e.g., component unmount).
    */
   destroy(id: string): boolean {
     const ptyInstance = this.ptys.get(id);
     if (ptyInstance) {
+      // Clear exit listeners before killing to prevent exit events
+      // from being emitted for intentional destroys
+      ptyInstance.exitListeners = [];
       ptyInstance.instance.kill();
       this.ptys.delete(id);
       return true;
