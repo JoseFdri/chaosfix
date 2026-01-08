@@ -52,6 +52,15 @@ export function useTerminal({ terminalId, cwd, onExit }: UseTerminalOptions): Us
       }
     });
 
+    // Sync PTY with terminal's initial dimensions after fit
+    // The terminal was already fit in createTerminal(), but the PTY was created
+    // with default 80x24. We need to explicitly sync the dimensions.
+    const cols = terminal.terminal.cols;
+    const rows = terminal.terminal.rows;
+    if (cols > 0 && rows > 0) {
+      window.terminal.resize(pty.id, cols, rows);
+    }
+
     const unsubscribeData = window.terminal.onData((event) => {
       if (event.id === ptyIdRef.current && terminalRef.current) {
         terminalRef.current.write(event.data);

@@ -30,9 +30,16 @@ export function useResizeObserver<T extends HTMLElement = HTMLElement>(): [
       observerRef.current.observe(node);
       elementRef.current = node;
 
-      // Set initial size
-      const { width, height } = node.getBoundingClientRect();
-      setSize({ width, height });
+      // Set initial size using contentRect calculation to match what ResizeObserver reports
+      // This ensures consistency between initial and subsequent size readings
+      const style = window.getComputedStyle(node);
+      const paddingX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      const paddingY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+      const rect = node.getBoundingClientRect();
+      setSize({
+        width: rect.width - paddingX,
+        height: rect.height - paddingY,
+      });
     } else {
       elementRef.current = null;
       setSize(null);
