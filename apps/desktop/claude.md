@@ -31,3 +31,14 @@ Read docs/terminal-architecture.md when the prompt includes:
 | Actions    | create terminal, write terminal, resize terminal, destroy terminal, terminal input, terminal output |
 | Concepts   | terminal architecture, terminal lifecycle, PTY lifecycle, terminal data flow, terminal factory      |
 | Libraries  | FitAddon, terminal addons, terminal factory                                                         |
+
+### Toolbar Documentation
+
+Read docs/toolbar-architecture.md when the prompt includes:
+
+| Category   | Keywords                                                                           |
+| ---------- | ---------------------------------------------------------------------------------- |
+| Components | TerminalContainer, terminal-container, toolbar, terminal toolbar, terminal wrapper |
+| Layout     | terminal box, terminal bounds, focus ring, split positioning, flex layout          |
+| Props      | isFocused, bounds, TerminalBounds, TOOLBAR_HEIGHT_PX                               |
+| Concepts   | toolbar architecture, terminal container, toolbar content, toolbar customization   |
