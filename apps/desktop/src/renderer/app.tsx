@@ -46,7 +46,7 @@ import {
   useSplitActions,
   useKeyboardShortcuts,
 } from "./hooks";
-import { TerminalView } from "./components/terminal-view";
+import { TerminalContainer } from "./components/terminal-container";
 import { SplitResizeOverlay } from "./components/split-resize-overlay";
 import { NotificationContainer } from "./components/NotificationContainer.component";
 import { calculateTerminalBounds } from "./libs";
@@ -575,7 +575,7 @@ export const App: FC = () => {
                   isActiveWorkspace && (isInSplit || terminal.id === workspace.activeTerminalId);
 
                 return (
-                  <TerminalView
+                  <TerminalContainer
                     key={terminal.id}
                     terminalId={terminal.id}
                     worktreePath={workspace.worktreePath}
