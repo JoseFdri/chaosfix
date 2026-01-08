@@ -1,4 +1,4 @@
-import { type FC, type ReactNode, useRef, useCallback } from "react";
+import { type FC, useRef, useCallback, useMemo } from "react";
 import type { PaneNode, SplitDirection } from "@chaosfix/core";
 import { SplitResizeHandle, useSplitResize } from "@chaosfix/ui";
 
@@ -143,22 +143,27 @@ const ResizeHandleWrapper: FC<{
  */
 export const SplitResizeOverlay: FC<SplitResizeOverlayProps> = ({ paneNode, onResizePanes }) => {
   const containerRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
-  const handles = collectResizeHandles(paneNode);
 
-  const renderHandles = useCallback((): ReactNode => {
-    return handles.map((handle, idx) => (
-      <ResizeHandleWrapper
-        key={`${handle.splitId}-${handle.index}-${idx}`}
-        handle={handle}
-        containerRef={containerRef}
-        onResizePanes={onResizePanes}
-      />
-    ));
-  }, [handles, onResizePanes]);
+  // Memoize handles computation to prevent re-renders when paneNode hasn't changed
+  const handles = useMemo(() => collectResizeHandles(paneNode), [paneNode]);
+
+  // Memoize the rendered handles to prevent re-renders when onResizePanes changes
+  const renderedHandles = useMemo(
+    () =>
+      handles.map((handle, idx) => (
+        <ResizeHandleWrapper
+          key={`${handle.splitId}-${handle.index}-${idx}`}
+          handle={handle}
+          containerRef={containerRef}
+          onResizePanes={onResizePanes}
+        />
+      )),
+    [handles, onResizePanes]
+  );
 
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none z-10">
-      <div className="relative w-full h-full pointer-events-auto">{renderHandles()}</div>
+      <div className="relative w-full h-full pointer-events-auto">{renderedHandles}</div>
     </div>
   );
 };

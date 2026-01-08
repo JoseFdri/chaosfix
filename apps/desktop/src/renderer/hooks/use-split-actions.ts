@@ -70,34 +70,36 @@ export function useSplitActions({
     [activeWorkspace, onSplitTerminal]
   );
 
+  const workspaceId = activeWorkspace?.id;
+
   const handleResizePanes = useCallback(
     (splitId: string, sizes: number[]): void => {
-      if (!activeWorkspace || !onResizePanes) {
+      if (!workspaceId || !onResizePanes) {
         return;
       }
-      onResizePanes(activeWorkspace.id, splitId, sizes);
+      onResizePanes(workspaceId, splitId, sizes);
     },
-    [activeWorkspace, onResizePanes]
+    [workspaceId, onResizePanes]
   );
 
   const handlePaneClick = useCallback(
     (terminalId: string): void => {
-      if (!activeWorkspace || !onSetFocusedPane) {
+      if (!workspaceId || !onSetFocusedPane) {
         return;
       }
-      onSetFocusedPane(activeWorkspace.id, terminalId);
+      onSetFocusedPane(workspaceId, terminalId);
     },
-    [activeWorkspace, onSetFocusedPane]
+    [workspaceId, onSetFocusedPane]
   );
 
   const handleClosePane = useCallback(
     (terminalId: string): void => {
-      if (!activeWorkspace || !onClosePane) {
+      if (!workspaceId || !onClosePane) {
         return;
       }
-      onClosePane(activeWorkspace.id, terminalId);
+      onClosePane(workspaceId, terminalId);
     },
-    [activeWorkspace, onClosePane]
+    [workspaceId, onClosePane]
   );
 
   return {
