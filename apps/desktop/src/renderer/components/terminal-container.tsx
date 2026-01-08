@@ -1,5 +1,6 @@
 import { type FC, type CSSProperties, useMemo } from "react";
 import { TerminalView } from "./terminal-view";
+import { TerminalToolbar } from "./terminal-toolbar";
 import type { TerminalBounds } from "../libs";
 
 const TOOLBAR_HEIGHT_PX = 32;
@@ -12,6 +13,8 @@ interface TerminalContainerProps {
   onExit?: (terminalId: string, exitCode: number) => void;
   bounds?: TerminalBounds | null;
   isFocused?: boolean;
+  onSplit?: () => void;
+  onClose?: () => void;
 }
 
 export const TerminalContainer: FC<TerminalContainerProps> = ({
@@ -22,6 +25,8 @@ export const TerminalContainer: FC<TerminalContainerProps> = ({
   onExit,
   bounds,
   isFocused,
+  onSplit,
+  onClose,
 }) => {
   const containerStyle = useMemo((): CSSProperties => {
     if (!isActive) {
@@ -63,7 +68,9 @@ export const TerminalContainer: FC<TerminalContainerProps> = ({
       <div
         className="w-full shrink-0 bg-surface-secondary"
         style={{ height: `${TOOLBAR_HEIGHT_PX}px` }}
-      />
+      >
+        <TerminalToolbar onSplit={onSplit} onClose={onClose} />
+      </div>
       <div className="flex-1 min-h-0">
         <TerminalView
           terminalId={terminalId}

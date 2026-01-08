@@ -14,17 +14,9 @@ export interface TabItemProps {
   onSelect: () => void;
   onClose?: () => void;
   onRename?: (newLabel: string) => void;
-  onSplit?: () => void;
 }
 
-export const TabItem: FC<TabItemProps> = ({
-  tab,
-  isActive,
-  onSelect,
-  onClose,
-  onRename,
-  onSplit,
-}) => {
+export const TabItem: FC<TabItemProps> = ({ tab, isActive, onSelect, onClose, onRename }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(tab.label);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -106,32 +98,6 @@ export const TabItem: FC<TabItemProps> = ({
         >
           {tab.label}
         </span>
-      )}
-      {onSplit && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSplit();
-          }}
-          className={cn(
-            "w-4 h-4 flex items-center justify-center rounded",
-            "text-text-muted hover:text-text-primary hover:bg-surface-hover",
-            "opacity-0 group-hover:opacity-100 transition-opacity"
-          )}
-          aria-label={`Split ${tab.label}`}
-        >
-          <svg
-            className="w-3 h-3"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <rect x="1" y="1" width="14" height="14" rx="2" />
-            <line x1="8" y1="1" x2="8" y2="15" />
-          </svg>
-        </button>
       )}
       {tab.closable !== false && onClose && (
         <button

@@ -8,7 +8,6 @@ export interface TabBarProps {
   onTabSelect: (tabId: string) => void;
   onTabClose?: (tabId: string) => void;
   onTabRename?: (tabId: string, newLabel: string) => void;
-  onTabSplit?: (tabId: string) => void;
   onNewTab?: () => void;
   className?: string;
 }
@@ -19,7 +18,6 @@ export const TabBar: FC<TabBarProps> = ({
   onTabSelect,
   onTabClose,
   onTabRename,
-  onTabSplit,
   onNewTab,
   className,
 }) => {
@@ -40,7 +38,6 @@ export const TabBar: FC<TabBarProps> = ({
             onSelect={() => onTabSelect(tab.id)}
             onClose={onTabClose ? (): void => onTabClose(tab.id) : undefined}
             onRename={onTabRename ? (newLabel): void => onTabRename(tab.id, newLabel) : undefined}
-            onSplit={onTabSplit ? (): void => onTabSplit(tab.id) : undefined}
           />
         ))}
       </div>

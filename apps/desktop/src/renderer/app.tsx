@@ -540,7 +540,6 @@ export const App: FC = () => {
               onTabClose={handleTabClose}
               onTabRename={handleTabRename}
               onNewTab={handleNewTab}
-              onTabSplit={canSplit ? (): void => handleSplit("horizontal") : undefined}
             />
           )}
 
@@ -584,6 +583,22 @@ export const App: FC = () => {
                     isFocused={isActiveWorkspace && terminal.id === workspace.focusedTerminalId}
                     onClick={isInSplit ? (): void => handlePaneClick(terminal.id) : undefined}
                     onExit={handleTerminalExit}
+                    onSplit={
+                      isActiveWorkspace && canSplit
+                        ? (): void => handleSplit("horizontal")
+                        : undefined
+                    }
+                    onClose={
+                      isActiveWorkspace
+                        ? (): void => {
+                            if (isInSplit) {
+                              handleClosePane(terminal.id);
+                            } else {
+                              handleTabClose(terminal.id);
+                            }
+                          }
+                        : undefined
+                    }
                   />
                 );
               });
