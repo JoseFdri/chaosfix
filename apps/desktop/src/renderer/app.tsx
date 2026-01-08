@@ -207,6 +207,26 @@ export const App: FC = () => {
     onCloseTab: handleTabClose,
   });
 
+  // Handle terminal process exit - close the tab or pane
+  const handleTerminalExit = useCallback(
+    (terminalId: string, _exitCode: number) => {
+      // Find the workspace containing this terminal
+      const workspace = allWorkspaces.find((w) => w.terminals.some((t) => t.id === terminalId));
+      if (!workspace) {
+        return;
+      }
+
+      // If workspace has split layout, close the pane (will collapse split if needed)
+      // Otherwise, remove the terminal (close tab)
+      if (workspace.splitLayout) {
+        workspacesActions.closePane(workspace.id, terminalId);
+      } else {
+        workspacesActions.removeTerminal(workspace.id, terminalId);
+      }
+    },
+    [allWorkspaces, workspacesActions]
+  );
+
   // Setup script hook for running workspace setup after creation
   const { runSetup } = useSetupScript({
     updateWorkspaceStatus: workspacesActions.updateStatus,
@@ -540,6 +560,7 @@ export const App: FC = () => {
                     focusedTerminalId={workspace.focusedTerminalId}
                     onResizePanes={handleResizePanes}
                     onPaneClick={handlePaneClick}
+                    onTerminalExit={handleTerminalExit}
                   />
                 );
               }
@@ -551,6 +572,7 @@ export const App: FC = () => {
                   terminalId={terminal.id}
                   worktreePath={workspace.worktreePath}
                   isActive={isActiveWorkspace && terminal.id === workspace.activeTerminalId}
+                  onExit={handleTerminalExit}
                 />
               ));
             })}

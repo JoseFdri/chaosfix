@@ -14,6 +14,8 @@ interface TerminalSplitContainerProps {
   onResizePanes: (splitId: string, sizes: number[]) => void;
   /** Callback when a terminal pane is clicked (to set focus) */
   onPaneClick: (terminalId: string) => void;
+  /** Callback when a terminal process exits */
+  onTerminalExit: (terminalId: string, exitCode: number) => void;
 }
 
 /**
@@ -42,6 +44,7 @@ export const TerminalSplitContainer: FC<TerminalSplitContainerProps> = ({
   focusedTerminalId,
   onResizePanes,
   onPaneClick,
+  onTerminalExit,
 }) => {
   const renderPane = useCallback(
     (node: PaneNode): ReactNode => {
@@ -63,6 +66,7 @@ export const TerminalSplitContainer: FC<TerminalSplitContainerProps> = ({
               terminalId={node.terminalId}
               worktreePath={worktreePath}
               isActive={true}
+              onExit={onTerminalExit}
             />
           </div>
         );
@@ -86,7 +90,7 @@ export const TerminalSplitContainer: FC<TerminalSplitContainerProps> = ({
 
       return null;
     },
-    [worktreePath, focusedTerminalId, onResizePanes, onPaneClick]
+    [worktreePath, focusedTerminalId, onResizePanes, onPaneClick, onTerminalExit]
   );
 
   return <div className="w-full h-full">{renderPane(paneNode)}</div>;

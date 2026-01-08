@@ -7,6 +7,8 @@ interface TerminalViewProps {
   isActive: boolean;
   /** Optional click handler for selecting this terminal pane */
   onClick?: () => void;
+  /** Called when the terminal process exits */
+  onExit?: (terminalId: string, exitCode: number) => void;
 }
 
 export const TerminalView: FC<TerminalViewProps> = ({
@@ -14,8 +16,9 @@ export const TerminalView: FC<TerminalViewProps> = ({
   worktreePath,
   isActive,
   onClick,
+  onExit,
 }) => {
-  const { containerRef } = useTerminal({ terminalId, cwd: worktreePath });
+  const { containerRef } = useTerminal({ terminalId, cwd: worktreePath, onExit });
 
   return (
     <div

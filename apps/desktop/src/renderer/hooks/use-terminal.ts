@@ -6,17 +6,25 @@ import { DEFAULT_CWD } from "../../constants";
 export interface UseTerminalOptions {
   terminalId: string;
   cwd?: string;
+  /** Called when the terminal process exits */
+  onExit?: (terminalId: string, exitCode: number) => void;
 }
 
 export interface UseTerminalReturn {
   containerRef: (node: HTMLDivElement | null) => void;
 }
 
-export function useTerminal({ terminalId, cwd }: UseTerminalOptions): UseTerminalReturn {
+export function useTerminal({ terminalId, cwd, onExit }: UseTerminalOptions): UseTerminalReturn {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const terminalRef = useRef<TerminalController | null>(null);
   const ptyIdRef = useRef<string | null>(null);
+  const onExitRef = useRef(onExit);
   const [resizeRef, size] = useResizeObserver<HTMLDivElement>();
+
+  // Keep onExit ref up to date
+  useEffect(() => {
+    onExitRef.current = onExit;
+  }, [onExit]);
 
   const initTerminal = useCallback(async () => {
     if (!containerRef.current || terminalRef.current) {
@@ -53,6 +61,8 @@ export function useTerminal({ terminalId, cwd }: UseTerminalOptions): UseTermina
     const unsubscribeExit = window.terminal.onExit((event) => {
       if (event.id === ptyIdRef.current) {
         terminalRef.current?.write(`\r\n[Process exited with code ${event.exitCode}]\r\n`);
+        // Notify parent that terminal process has exited
+        onExitRef.current?.(terminalId, event.exitCode);
       }
     });
 
