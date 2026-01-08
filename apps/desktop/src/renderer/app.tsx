@@ -47,8 +47,9 @@ import {
   useKeyboardShortcuts,
 } from "./hooks";
 import { TerminalView } from "./components/terminal-view";
-import { TerminalSplitContainer } from "./components/terminal-split-container";
+import { SplitResizeOverlay } from "./components/split-resize-overlay";
 import { NotificationContainer } from "./components/NotificationContainer.component";
+import { calculateTerminalBounds } from "./libs";
 import {
   WORKSPACE_DIALOG,
   REMOVE_WORKSPACE_DIALOG,
@@ -545,35 +546,47 @@ export const App: FC = () => {
 
           {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
           <div className="flex-1 bg-surface-primary relative">
-            {/* Render terminals for all workspaces (hidden when not active) */}
+            {/* Resize handles overlay for split layouts */}
+            {activeWorkspace?.splitLayout && (
+              <SplitResizeOverlay
+                paneNode={activeWorkspace.splitLayout}
+                onResizePanes={handleResizePanes}
+              />
+            )}
+
+            {/* Render all terminals flat - positioning is handled via bounds prop */}
             {allWorkspaces.flatMap((workspace) => {
               const isActiveWorkspace = workspace.id === activeWorkspaceId;
 
-              // If this workspace has a split layout and is active, render with split container
-              if (isActiveWorkspace && workspace.splitLayout) {
+              // Calculate bounds for all terminals if there's a split layout
+              const boundsMap =
+                isActiveWorkspace && workspace.splitLayout
+                  ? calculateTerminalBounds(workspace.splitLayout)
+                  : null;
+
+              return workspace.terminals.map((terminal) => {
+                const bounds = boundsMap?.get(terminal.id) ?? null;
+                const isInSplit = boundsMap !== null;
+
+                // Terminal is active if:
+                // - Workspace is active AND
+                // - Either: it's in a split (all visible), OR it's the active terminal
+                const isActive =
+                  isActiveWorkspace && (isInSplit || terminal.id === workspace.activeTerminalId);
+
                 return (
-                  <TerminalSplitContainer
-                    key={`split-${workspace.id}`}
-                    paneNode={workspace.splitLayout}
+                  <TerminalView
+                    key={terminal.id}
+                    terminalId={terminal.id}
                     worktreePath={workspace.worktreePath}
-                    focusedTerminalId={workspace.focusedTerminalId}
-                    onResizePanes={handleResizePanes}
-                    onPaneClick={handlePaneClick}
-                    onTerminalExit={handleTerminalExit}
+                    isActive={isActive}
+                    bounds={bounds}
+                    isFocused={isActiveWorkspace && terminal.id === workspace.focusedTerminalId}
+                    onClick={isInSplit ? (): void => handlePaneClick(terminal.id) : undefined}
+                    onExit={handleTerminalExit}
                   />
                 );
-              }
-
-              // For non-split workspaces or hidden workspaces, render flat terminals
-              return workspace.terminals.map((terminal) => (
-                <TerminalView
-                  key={terminal.id}
-                  terminalId={terminal.id}
-                  worktreePath={workspace.worktreePath}
-                  isActive={isActiveWorkspace && terminal.id === workspace.activeTerminalId}
-                  onExit={handleTerminalExit}
-                />
-              ));
+              });
             })}
             {!activeWorkspace?.activeTerminalId && (
               <WelcomeScreen
