@@ -40,11 +40,12 @@ export const TerminalContainer: FC<TerminalContainerProps> = ({
         left: `${bounds.left}%`,
         width: `${bounds.width}%`,
         height: `${bounds.height}%`,
+        zIndex: isFocused ? 10 : 0,
       };
     }
 
     return {};
-  }, [isActive, bounds]);
+  }, [isActive, bounds, isFocused]);
 
   const focusRingClass = isFocused ? "ring-1 ring-accent-primary ring-inset" : "";
 

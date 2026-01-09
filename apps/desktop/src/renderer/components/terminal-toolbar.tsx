@@ -11,7 +11,10 @@ export const TerminalToolbar: FC<TerminalToolbarProps> = ({ onSplit, onClose }) 
       {onSplit && (
         <button
           type="button"
-          onClick={onSplit}
+          onClick={(e): void => {
+            e.stopPropagation();
+            onSplit();
+          }}
           className="w-6 h-6 flex items-center justify-center rounded text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
           aria-label="Split terminal"
         >
@@ -30,7 +33,10 @@ export const TerminalToolbar: FC<TerminalToolbarProps> = ({ onSplit, onClose }) 
       {onClose && (
         <button
           type="button"
-          onClick={onClose}
+          onClick={(e): void => {
+            e.stopPropagation();
+            onClose();
+          }}
           className="w-6 h-6 flex items-center justify-center rounded text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
           aria-label="Close terminal"
         >
