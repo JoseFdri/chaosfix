@@ -565,11 +565,12 @@ export const App: FC = () => {
 
               return workspace.terminals.map((terminal) => {
                 const bounds = boundsMap?.get(terminal.id) ?? null;
-                const isInSplit = boundsMap !== null;
+                // Terminal is in split only if it has bounds (is part of the split layout)
+                const isInSplit = bounds !== null;
 
                 // Terminal is active if:
                 // - Workspace is active AND
-                // - Either: it's in a split (all visible), OR it's the active terminal
+                // - Either: it's in a split (has bounds), OR it's the active terminal (no split)
                 const isActive =
                   isActiveWorkspace && (isInSplit || terminal.id === workspace.activeTerminalId);
 

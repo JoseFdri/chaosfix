@@ -244,6 +244,9 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
                 ...w,
                 terminals: [...w.terminals, action.payload.terminal],
                 activeTerminalId: action.payload.terminal.id,
+                // Clear split layout when adding a new tab - switch to single terminal view
+                splitLayout: null,
+                focusedTerminalId: null,
               }
             : w
         ),
@@ -258,9 +261,15 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
             return w;
           }
           const newTerminals = w.terminals.filter((t) => t.id !== action.payload.terminalId);
-          const updatedLayout = w.splitLayout
+          let updatedLayout = w.splitLayout
             ? removeTerminalFromTree(w.splitLayout, action.payload.terminalId)
             : null;
+
+          // If the layout collapsed to a single terminal, clear it entirely
+          if (updatedLayout?.type === "terminal") {
+            updatedLayout = null;
+          }
+
           return {
             ...w,
             terminals: newTerminals,
@@ -385,9 +394,15 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
           }
 
           const newTerminals = w.terminals.filter((t) => t.id !== terminalId);
-          const updatedLayout = w.splitLayout
+          let updatedLayout = w.splitLayout
             ? removeTerminalFromTree(w.splitLayout, terminalId)
             : null;
+
+          // If the layout collapsed to a single terminal, clear it entirely
+          // (a TerminalPane means only one terminal remains, no need for split)
+          if (updatedLayout?.type === "terminal") {
+            updatedLayout = null;
+          }
 
           // Determine new focused terminal
           let newFocusedId: string | null = null;
