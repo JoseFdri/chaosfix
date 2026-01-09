@@ -238,18 +238,32 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
     case "workspaces/addTerminal": {
       return {
         ...state,
-        workspaces: state.workspaces.map((w) =>
-          w.id === action.payload.workspaceId
-            ? {
-                ...w,
-                terminals: [...w.terminals, action.payload.terminal],
-                activeTerminalId: action.payload.terminal.id,
-                // Clear split layout when adding a new tab - switch to single terminal view
-                splitLayout: null,
-                focusedTerminalId: null,
-              }
-            : w
-        ),
+        workspaces: state.workspaces.map((w) => {
+          if (w.id !== action.payload.workspaceId) {
+            return w;
+          }
+
+          // If there's a split layout, collapse it to just the first terminal
+          // (removing terminals that were created for the split panes)
+          let terminalsToKeep = w.terminals;
+          if (w.splitLayout) {
+            const splitTerminalIds = getAllTerminalIds(w.splitLayout);
+            const firstSplitTerminalId = splitTerminalIds[0];
+            // Keep only the first terminal from the split (the original)
+            terminalsToKeep = w.terminals.filter(
+              (t) => t.id === firstSplitTerminalId || !splitTerminalIds.includes(t.id)
+            );
+          }
+
+          return {
+            ...w,
+            terminals: [...terminalsToKeep, action.payload.terminal],
+            activeTerminalId: action.payload.terminal.id,
+            // Clear split layout when adding a new tab
+            splitLayout: null,
+            focusedTerminalId: null,
+          };
+        }),
       };
     }
 
