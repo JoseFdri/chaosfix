@@ -40,22 +40,40 @@ export function useWorkspaceTabs({
       return [];
     }
 
-    // When there's a split layout, show only one tab for all terminals in the split
-    // This prevents a new tab from appearing when splitting a terminal
+    // When there's a split layout, show:
+    // 1. One combined tab for all terminals in the split (using first terminal's ID)
+    // 2. Separate tabs for terminals NOT in the split
     if (activeWorkspace.splitLayout) {
       const splitTerminalIds = getAllTerminalIds(activeWorkspace.splitLayout);
       const tabRootId = splitTerminalIds[0];
       const tabRootTerminal = activeWorkspace.terminals.find((t) => t.id === tabRootId);
 
+      // Get terminals that are NOT part of the split
+      const nonSplitTerminals = activeWorkspace.terminals.filter(
+        (t) => !splitTerminalIds.includes(t.id)
+      );
+
+      const result: Tab[] = [];
+
+      // Add the combined split tab first
       if (tabRootTerminal) {
-        return [
-          {
-            id: tabRootTerminal.id,
-            label: tabRootTerminal.title || DEFAULT_TERMINAL_LABEL,
-            closable: true,
-          },
-        ];
+        result.push({
+          id: tabRootTerminal.id,
+          label: tabRootTerminal.title || DEFAULT_TERMINAL_LABEL,
+          closable: true,
+        });
       }
+
+      // Add non-split terminals as separate tabs
+      for (const terminal of nonSplitTerminals) {
+        result.push({
+          id: terminal.id,
+          label: terminal.title || DEFAULT_TERMINAL_LABEL,
+          closable: true,
+        });
+      }
+
+      return result;
     }
 
     // No split layout - show all terminals as tabs

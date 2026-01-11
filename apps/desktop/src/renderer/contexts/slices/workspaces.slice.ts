@@ -243,21 +243,13 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
             return w;
           }
 
-          // If there's a split layout, collapse it to just the first terminal
-          // (removing terminals that were created for the split panes)
-          let terminalsToKeep = w.terminals;
-          if (w.splitLayout) {
-            const splitTerminalIds = getAllTerminalIds(w.splitLayout);
-            const firstSplitTerminalId = splitTerminalIds[0];
-            // Keep only the first terminal from the split (the original)
-            terminalsToKeep = w.terminals.filter(
-              (t) => t.id === firstSplitTerminalId || !splitTerminalIds.includes(t.id)
-            );
-          }
-
+          // When adding a new tab:
+          // - Keep ALL existing terminals (including those from splits)
+          // - Clear the split layout (split terminals become separate tabs)
+          // - Add the new terminal
           return {
             ...w,
-            terminals: [...terminalsToKeep, action.payload.terminal],
+            terminals: [...w.terminals, action.payload.terminal],
             activeTerminalId: action.payload.terminal.id,
             // Clear split layout when adding a new tab
             splitLayout: null,
@@ -304,11 +296,31 @@ function reducer(state: WorkspacesState, action: WorkspacesAction): WorkspacesSt
     case "workspaces/setActiveTerminal": {
       return {
         ...state,
-        workspaces: state.workspaces.map((w) =>
-          w.id === action.payload.workspaceId
-            ? { ...w, activeTerminalId: action.payload.terminalId }
-            : w
-        ),
+        workspaces: state.workspaces.map((w) => {
+          if (w.id !== action.payload.workspaceId) {
+            return w;
+          }
+
+          const terminalId = action.payload.terminalId;
+
+          // If switching to a terminal that's NOT part of the current split,
+          // clear the split layout (the split terminals become separate tabs)
+          let shouldClearSplit = false;
+          if (w.splitLayout && terminalId) {
+            const splitTerminalIds = getAllTerminalIds(w.splitLayout);
+            // If the selected terminal is not in the split, clear the layout
+            if (!splitTerminalIds.includes(terminalId)) {
+              shouldClearSplit = true;
+            }
+          }
+
+          return {
+            ...w,
+            activeTerminalId: terminalId,
+            splitLayout: shouldClearSplit ? null : w.splitLayout,
+            focusedTerminalId: shouldClearSplit ? null : w.focusedTerminalId,
+          };
+        }),
       };
     }
 

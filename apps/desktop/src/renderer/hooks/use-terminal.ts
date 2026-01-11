@@ -21,6 +21,11 @@ export function useTerminal({ terminalId, cwd, onExit }: UseTerminalOptions): Us
   const onExitRef = useRef(onExit);
   const [resizeRef, size] = useResizeObserver<HTMLDivElement>();
 
+  // Store terminalId and cwd in refs to prevent effect re-runs on prop changes
+  // These values should be stable for the lifetime of the terminal
+  const terminalIdRef = useRef(terminalId);
+  const cwdRef = useRef(cwd);
+
   // Keep onExit ref up to date
   useEffect(() => {
     onExitRef.current = onExit;
@@ -35,8 +40,8 @@ export function useTerminal({ terminalId, cwd, onExit }: UseTerminalOptions): Us
     terminalRef.current = terminal;
 
     const pty = await window.terminal.create({
-      id: terminalId,
-      cwd: cwd || DEFAULT_CWD,
+      id: terminalIdRef.current,
+      cwd: cwdRef.current || DEFAULT_CWD,
     });
     ptyIdRef.current = pty.id;
 
@@ -71,7 +76,7 @@ export function useTerminal({ terminalId, cwd, onExit }: UseTerminalOptions): Us
       if (event.id === ptyIdRef.current) {
         terminalRef.current?.write(`\r\n[Process exited with code ${event.exitCode}]\r\n`);
         // Notify parent that terminal process has exited
-        onExitRef.current?.(terminalId, event.exitCode);
+        onExitRef.current?.(terminalIdRef.current, event.exitCode);
       }
     });
 
@@ -85,7 +90,10 @@ export function useTerminal({ terminalId, cwd, onExit }: UseTerminalOptions): Us
       }
       terminal.dispose();
     };
-  }, [terminalId, cwd]);
+    // Empty deps: Using refs for terminalId and cwd so this callback is stable
+    // across re-renders. This prevents the effect from re-running and
+    // destroying/recreating terminals when parent components re-render.
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
