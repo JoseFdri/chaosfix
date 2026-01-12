@@ -2,6 +2,7 @@ import type { Repository, TerminalSession, ExternalAppId, PaneNode, Tab } from "
 import type { AppState } from "@chaosfix/config";
 import type { WorkspaceWithTabs, WorkspacesState } from "./workspaces.slice";
 import type { RepositoriesState } from "./repositories.slice";
+import { DEFAULT_TERMINAL_LABEL } from "../../../constants";
 
 // Default PID value for terminals that need to be reconnected
 const DEFAULT_TERMINAL_PID = -1;
@@ -261,7 +262,7 @@ function migrateOldWorkspaceToTabs(
   // Create a single tab containing all terminals
   const tab: Tab = {
     id: `${workspaceId}-migrated-tab`,
-    label: terminals[0]?.title || "Terminal",
+    label: terminals[0]?.title || DEFAULT_TERMINAL_LABEL,
     terminals: terminals.map((t) => deserializeTerminal(t, workspaceId)),
     splitLayout: validatedSplitLayout,
     focusedTerminalId: validatedFocusedTerminalId,

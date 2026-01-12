@@ -3,7 +3,7 @@
  */
 
 export const DEFAULT_CWD = "/";
-export const DEFAULT_TERMINAL_LABEL = "Terminal";
+export const DEFAULT_TERMINAL_LABEL = "New Tab";
 
 /**
  * Initial PID value for terminal sessions before they are connected to a PTY.
