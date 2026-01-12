@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import type { Repository } from "@chaosfix/core";
-import type { WorkspaceWithTerminals } from "../contexts/slices/workspaces.slice";
+import type { WorkspaceWithTabs } from "../contexts/slices/workspaces.slice";
 
 export interface UseFilteredRepositoriesOptions {
   repositories: Repository[];
   searchQuery: string;
-  workspaces?: WorkspaceWithTerminals[];
+  workspaces?: WorkspaceWithTabs[];
 }
 
 export function useFilteredRepositories({

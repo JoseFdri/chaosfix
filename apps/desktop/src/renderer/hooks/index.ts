@@ -48,3 +48,6 @@ export type { UseSplitActionsOptions, UseSplitActionsReturn } from "./use-split-
 
 export { useKeyboardShortcuts } from "./use-keyboard-shortcuts";
 export type { UseKeyboardShortcutsOptions } from "./use-keyboard-shortcuts";
+
+export { useTabLifecycle } from "./use-tab-lifecycle";
+export type { UseTabLifecycleOptions } from "./use-tab-lifecycle";

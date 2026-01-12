@@ -36,26 +36,46 @@ const paneNodeSchema: PaneNodeSchema = z.lazy(() =>
   ])
 );
 
+// Terminal schema for persistence
+const terminalStateSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  scrollbackHistory: z.string().optional(),
+});
+
+// Tab schema for the new tab-centric model
+const tabStateSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  terminals: z.array(terminalStateSchema),
+  splitLayout: paneNodeSchema.nullable(),
+  focusedTerminalId: z.string().nullable(),
+  createdAt: z.number(),
+});
+
+/**
+ * Workspace state schema supporting both old and new format.
+ * - Old format: has terminals array, activeTerminalId, splitLayout, focusedTerminalId
+ * - New format: has tabs array, activeTabId
+ *
+ * The hydration layer handles migration from old to new format.
+ */
 export const workspaceStateSchema = z.object({
   id: z.string(),
   name: z.string(),
   repositoryId: z.string(),
   worktreePath: z.string(),
   branchName: z.string(),
-  terminals: z.array(
-    z.object({
-      id: z.string(),
-      title: z.string(),
-      scrollbackHistory: z.string().optional(),
-    })
-  ),
-  activeTerminalId: z.string().nullable(),
+  // Old format fields (optional for backward compatibility)
+  terminals: z.array(terminalStateSchema).optional(),
+  activeTerminalId: z.string().nullable().optional(),
+  splitLayout: paneNodeSchema.nullable().optional(),
+  focusedTerminalId: z.string().nullable().optional(),
+  // New tab-centric format fields
+  tabs: z.array(tabStateSchema).optional(),
+  activeTabId: z.string().nullable().optional(),
   /** The selected external app for quick-open (e.g., "vscode", "cursor") */
   selectedAppId: z.string().nullable().optional(),
-  /** Split pane layout tree (null means no splits, single terminal) */
-  splitLayout: paneNodeSchema.nullable().optional(),
-  /** The terminal pane that currently has keyboard focus */
-  focusedTerminalId: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

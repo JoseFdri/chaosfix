@@ -1,10 +1,7 @@
 import { useMemo, useCallback } from "react";
-import type { Tab } from "@chaosfix/ui";
-import type { TerminalSession } from "@chaosfix/core";
-import {
-  getAllTerminalIds,
-  type WorkspaceWithTerminals,
-} from "../contexts/slices/workspaces.slice";
+import type { Tab as UITab } from "@chaosfix/ui";
+import type { Tab, TerminalSession } from "@chaosfix/core";
+import type { WorkspaceWithTabs } from "../contexts/slices/workspaces.slice";
 import {
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,
@@ -12,15 +9,19 @@ import {
 } from "../../constants";
 
 export interface UseWorkspaceTabsOptions {
-  activeWorkspace: WorkspaceWithTerminals | undefined;
-  onAddTerminal?: (workspaceId: string, terminal: TerminalSession) => void;
-  onRemoveTerminal?: (workspaceId: string, terminalId: string) => void;
-  onSetActiveTerminal?: (workspaceId: string, terminalId: string | null) => void;
-  onRenameTerminal?: (workspaceId: string, terminalId: string, title: string) => void;
+  activeWorkspace: WorkspaceWithTabs | undefined;
+  /** Callback to add a new tab to the workspace */
+  onAddTab?: (workspaceId: string, tab: Tab) => void;
+  /** Callback to remove a tab from the workspace */
+  onRemoveTab?: (workspaceId: string, tabId: string) => void;
+  /** Callback to set the active tab */
+  onSetActiveTab?: (workspaceId: string, tabId: string) => void;
+  /** Callback to update a tab's label */
+  onUpdateTabLabel?: (workspaceId: string, tabId: string, label: string) => void;
 }
 
 export interface UseWorkspaceTabsReturn {
-  tabs: Tab[];
+  tabs: UITab[];
   activeTabId: string | null;
   handleTabSelect: (tabId: string) => void;
   handleTabClose: (tabId: string) => void;
@@ -28,99 +29,72 @@ export interface UseWorkspaceTabsReturn {
   handleNewTab: () => void;
 }
 
+/**
+ * Hook for managing workspace tabs.
+ * In the tab-centric model, tabs come directly from workspace.tabs.
+ * Each tab owns its terminals and split layout independently.
+ */
 export function useWorkspaceTabs({
   activeWorkspace,
-  onAddTerminal,
-  onRemoveTerminal,
-  onSetActiveTerminal,
-  onRenameTerminal,
+  onAddTab,
+  onRemoveTab,
+  onSetActiveTab,
+  onUpdateTabLabel,
 }: UseWorkspaceTabsOptions): UseWorkspaceTabsReturn {
-  const tabs = useMemo<Tab[]>(() => {
+  // Convert workspace tabs to UI tabs
+  const tabs = useMemo<UITab[]>(() => {
     if (!activeWorkspace) {
       return [];
     }
 
-    // When there's a split layout, show:
-    // 1. One combined tab for all terminals in the split (using first terminal's ID)
-    // 2. Separate tabs for terminals NOT in the split
-    if (activeWorkspace.splitLayout) {
-      const splitTerminalIds = getAllTerminalIds(activeWorkspace.splitLayout);
-      const tabRootId = splitTerminalIds[0];
-      const tabRootTerminal = activeWorkspace.terminals.find((t) => t.id === tabRootId);
-
-      // Get terminals that are NOT part of the split
-      const nonSplitTerminals = activeWorkspace.terminals.filter(
-        (t) => !splitTerminalIds.includes(t.id)
-      );
-
-      const result: Tab[] = [];
-
-      // Add the combined split tab first
-      if (tabRootTerminal) {
-        result.push({
-          id: tabRootTerminal.id,
-          label: tabRootTerminal.title || DEFAULT_TERMINAL_LABEL,
-          closable: true,
-        });
-      }
-
-      // Add non-split terminals as separate tabs
-      for (const terminal of nonSplitTerminals) {
-        result.push({
-          id: terminal.id,
-          label: terminal.title || DEFAULT_TERMINAL_LABEL,
-          closable: true,
-        });
-      }
-
-      return result;
-    }
-
-    // No split layout - show all terminals as tabs
-    return activeWorkspace.terminals.map((t) => ({
-      id: t.id,
-      label: t.title || DEFAULT_TERMINAL_LABEL,
+    // Tabs come directly from workspace.tabs - no complex derivation needed
+    return activeWorkspace.tabs.map((tab) => ({
+      id: tab.id,
+      label: tab.label || DEFAULT_TERMINAL_LABEL,
       closable: true,
+      // Optional: show split indicator if tab has split layout
+      // icon: tab.splitLayout ? "split-icon" : undefined,
     }));
   }, [activeWorkspace]);
 
-  const activeTabId = activeWorkspace?.activeTerminalId ?? null;
+  const activeTabId = activeWorkspace?.activeTabId ?? null;
 
   const handleTabSelect = useCallback(
     (tabId: string): void => {
-      if (!activeWorkspace || !onSetActiveTerminal) {
+      if (!activeWorkspace || !onSetActiveTab) {
         return;
       }
-      onSetActiveTerminal(activeWorkspace.id, tabId);
+      onSetActiveTab(activeWorkspace.id, tabId);
     },
-    [activeWorkspace, onSetActiveTerminal]
+    [activeWorkspace, onSetActiveTab]
   );
 
   const handleTabClose = useCallback(
     (tabId: string): void => {
-      if (!activeWorkspace || !onRemoveTerminal) {
+      if (!activeWorkspace || !onRemoveTab) {
         return;
       }
-      onRemoveTerminal(activeWorkspace.id, tabId);
+      onRemoveTab(activeWorkspace.id, tabId);
     },
-    [activeWorkspace, onRemoveTerminal]
+    [activeWorkspace, onRemoveTab]
   );
 
   const handleTabRename = useCallback(
     (tabId: string, newLabel: string): void => {
-      if (!activeWorkspace || !onRenameTerminal) {
+      if (!activeWorkspace || !onUpdateTabLabel) {
         return;
       }
-      onRenameTerminal(activeWorkspace.id, tabId, newLabel);
+      onUpdateTabLabel(activeWorkspace.id, tabId, newLabel);
     },
-    [activeWorkspace, onRenameTerminal]
+    [activeWorkspace, onUpdateTabLabel]
   );
 
   const handleNewTab = useCallback((): void => {
-    if (!activeWorkspace || !onAddTerminal) {
+    if (!activeWorkspace || !onAddTab) {
       return;
     }
 
+    // Create a new terminal for the new tab
     const terminal: TerminalSession = {
       id: `${activeWorkspace.id}-${Date.now()}`,
       workspaceId: activeWorkspace.id,
@@ -130,8 +104,18 @@ export function useWorkspaceTabs({
       createdAt: new Date(),
     };
 
-    onAddTerminal(activeWorkspace.id, terminal);
-  }, [activeWorkspace, onAddTerminal]);
+    // Create a new tab containing the terminal
+    const newTab: Tab = {
+      id: `${activeWorkspace.id}-tab-${Date.now()}`,
+      label: DEFAULT_TERMINAL_LABEL,
+      terminals: [terminal],
+      splitLayout: null,
+      focusedTerminalId: terminal.id,
+      createdAt: Date.now(),
+    };
+
+    onAddTab(activeWorkspace.id, newTab);
+  }, [activeWorkspace, onAddTab]);
 
   return {
     tabs,

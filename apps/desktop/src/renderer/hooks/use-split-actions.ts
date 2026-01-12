@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import type { TerminalSession, SplitDirection } from "@chaosfix/core";
-import type { WorkspaceWithTerminals } from "../contexts/slices/workspaces.slice";
+import type { TerminalSession, SplitDirection, Tab } from "@chaosfix/core";
+import type { WorkspaceWithTabs } from "../contexts/slices/workspaces.slice";
 import {
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,
@@ -9,19 +9,29 @@ import {
 
 export interface UseSplitActionsOptions {
   /** The active workspace to operate on */
-  activeWorkspace: WorkspaceWithTerminals | undefined;
-  /** Callback to split the current terminal */
-  onSplitTerminal?: (
+  activeWorkspace: WorkspaceWithTabs | undefined;
+  /** Callback to split the current terminal within a tab */
+  onSplitTerminalInTab?: (
     workspaceId: string,
+    tabId: string,
     direction: SplitDirection,
     newTerminal: TerminalSession
   ) => void;
-  /** Callback to resize panes */
-  onResizePanes?: (workspaceId: string, splitId: string, sizes: number[]) => void;
-  /** Callback to set focused pane */
-  onSetFocusedPane?: (workspaceId: string, terminalId: string | null) => void;
-  /** Callback to close a pane */
-  onClosePane?: (workspaceId: string, terminalId: string) => void;
+  /** Callback to resize panes within a tab */
+  onResizePanesInTab?: (
+    workspaceId: string,
+    tabId: string,
+    splitId: string,
+    sizes: number[]
+  ) => void;
+  /** Callback to set focused pane within a tab */
+  onSetFocusedTerminalInTab?: (
+    workspaceId: string,
+    tabId: string,
+    terminalId: string | null
+  ) => void;
+  /** Callback to remove a terminal from a tab (closes pane in split) */
+  onRemoveTerminalFromTab?: (workspaceId: string, tabId: string, terminalId: string) => void;
 }
 
 export interface UseSplitActionsReturn {
@@ -33,26 +43,32 @@ export interface UseSplitActionsReturn {
   handlePaneClick: (terminalId: string) => void;
   /** Handler for closing a pane */
   handleClosePane: (terminalId: string) => void;
-  /** Whether split is available (has an active terminal) */
+  /** Whether split is available (has an active tab with terminals) */
   canSplit: boolean;
+  /** The currently active tab (if any) */
+  activeTab: Tab | undefined;
 }
 
 /**
  * Hook providing split-related action handlers for the active workspace.
- * Encapsulates split terminal operations and pane management.
+ * All split operations are now tab-scoped in the tab-centric model.
  */
 export function useSplitActions({
   activeWorkspace,
-  onSplitTerminal,
-  onResizePanes,
-  onSetFocusedPane,
-  onClosePane,
+  onSplitTerminalInTab,
+  onResizePanesInTab,
+  onSetFocusedTerminalInTab,
+  onRemoveTerminalFromTab,
 }: UseSplitActionsOptions): UseSplitActionsReturn {
-  const canSplit = Boolean(activeWorkspace?.activeTerminalId);
+  // Get the active tab from the workspace
+  const activeTab = activeWorkspace?.tabs.find((t) => t.id === activeWorkspace.activeTabId);
+
+  // Can split if there's an active tab with at least one terminal
+  const canSplit = Boolean(activeTab && activeTab.terminals.length > 0);
 
   const handleSplit = useCallback(
     (direction: SplitDirection): void => {
-      if (!activeWorkspace || !onSplitTerminal) {
+      if (!activeWorkspace || !activeTab || !onSplitTerminalInTab) {
         return;
       }
 
@@ -65,41 +81,42 @@ export function useSplitActions({
         createdAt: new Date(),
       };
 
-      onSplitTerminal(activeWorkspace.id, direction, newTerminal);
+      onSplitTerminalInTab(activeWorkspace.id, activeTab.id, direction, newTerminal);
     },
-    [activeWorkspace, onSplitTerminal]
+    [activeWorkspace, activeTab, onSplitTerminalInTab]
   );
 
   const workspaceId = activeWorkspace?.id;
+  const tabId = activeTab?.id;
 
   const handleResizePanes = useCallback(
     (splitId: string, sizes: number[]): void => {
-      if (!workspaceId || !onResizePanes) {
+      if (!workspaceId || !tabId || !onResizePanesInTab) {
         return;
       }
-      onResizePanes(workspaceId, splitId, sizes);
+      onResizePanesInTab(workspaceId, tabId, splitId, sizes);
     },
-    [workspaceId, onResizePanes]
+    [workspaceId, tabId, onResizePanesInTab]
   );
 
   const handlePaneClick = useCallback(
     (terminalId: string): void => {
-      if (!workspaceId || !onSetFocusedPane) {
+      if (!workspaceId || !tabId || !onSetFocusedTerminalInTab) {
         return;
       }
-      onSetFocusedPane(workspaceId, terminalId);
+      onSetFocusedTerminalInTab(workspaceId, tabId, terminalId);
     },
-    [workspaceId, onSetFocusedPane]
+    [workspaceId, tabId, onSetFocusedTerminalInTab]
   );
 
   const handleClosePane = useCallback(
     (terminalId: string): void => {
-      if (!workspaceId || !onClosePane) {
+      if (!workspaceId || !tabId || !onRemoveTerminalFromTab) {
         return;
       }
-      onClosePane(workspaceId, terminalId);
+      onRemoveTerminalFromTab(workspaceId, tabId, terminalId);
     },
-    [workspaceId, onClosePane]
+    [workspaceId, tabId, onRemoveTerminalFromTab]
   );
 
   return {
@@ -108,5 +125,6 @@ export function useSplitActions({
     handlePaneClick,
     handleClosePane,
     canSplit,
+    activeTab,
   };
 }

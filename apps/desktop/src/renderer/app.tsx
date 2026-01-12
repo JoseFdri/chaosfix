@@ -29,8 +29,8 @@ import {
   getAppIcon,
   CloneDialog,
 } from "@chaosfix/ui";
-import type { TerminalSession, ExternalAppId } from "@chaosfix/core";
-import { useApp, type WorkspaceWithTerminals } from "./contexts/app-context";
+import type { TerminalSession, ExternalAppId, Tab } from "@chaosfix/core";
+import { useApp, type WorkspaceWithTabs } from "./contexts/app-context";
 import {
   useFilteredRepositories,
   useRepositoryActions,
@@ -45,6 +45,7 @@ import {
   useCloneRepository,
   useSplitActions,
   useKeyboardShortcuts,
+  useTabLifecycle,
 } from "./hooks";
 import { TerminalContainer } from "./components/terminal-container";
 import { SplitResizeOverlay } from "./components/split-resize-overlay";
@@ -63,11 +64,10 @@ import {
 import logoSrc from "./assets/logo.svg";
 
 /**
- * Creates an initial terminal session for a workspace.
- * The terminal ID is generated to match the pattern used by useTerminal hook.
+ * Creates an initial tab with a terminal session for a workspace.
  */
-function createInitialTerminalSession(workspaceId: string): TerminalSession {
-  return {
+function createInitialTab(workspaceId: string): Tab {
+  const terminal: TerminalSession = {
     id: `${workspaceId}-${Date.now()}`,
     workspaceId,
     pid: INITIAL_TERMINAL_PID,
@@ -75,21 +75,31 @@ function createInitialTerminalSession(workspaceId: string): TerminalSession {
     status: DEFAULT_TERMINAL_STATUS,
     createdAt: new Date(),
   };
+
+  return {
+    id: `${workspaceId}-tab-${Date.now()}`,
+    label: DEFAULT_TERMINAL_LABEL,
+    terminals: [terminal],
+    splitLayout: null,
+    focusedTerminalId: terminal.id,
+    createdAt: Date.now(),
+  };
 }
 
 /**
- * Handles workspace click by setting it active and auto-creating a terminal if needed.
+ * Handles workspace click by setting it active and auto-creating a tab if needed.
  */
 function handleWorkspaceClick(
-  workspace: WorkspaceWithTerminals,
+  workspace: WorkspaceWithTabs,
   setActive: (workspaceId: string | null) => void,
-  addTerminal: (workspaceId: string, terminal: TerminalSession) => void
+  addTab: (workspaceId: string, tab: Tab) => void
 ): void {
   setActive(workspace.id);
 
-  if (workspace.terminals.length === 0) {
-    const terminal = createInitialTerminalSession(workspace.id);
-    addTerminal(workspace.id, terminal);
+  // If workspace has no tabs, create an initial tab with a terminal
+  if (workspace.tabs.length === 0) {
+    const tab = createInitialTab(workspace.id);
+    addTab(workspace.id, tab);
   }
 }
 
@@ -180,49 +190,54 @@ export const App: FC = () => {
   const { tabs, handleTabSelect, handleTabClose, handleTabRename, handleNewTab } = useWorkspaceTabs(
     {
       activeWorkspace,
-      onAddTerminal: workspacesActions.addTerminal,
-      onRemoveTerminal: workspacesActions.removeTerminal,
-      onSetActiveTerminal: workspacesActions.setActiveTerminal,
-      onRenameTerminal: workspacesActions.renameTerminal,
+      onAddTab: workspacesActions.addTab,
+      onRemoveTab: workspacesActions.removeTab,
+      onSetActiveTab: workspacesActions.setActiveTab,
+      onUpdateTabLabel: workspacesActions.updateTabLabel,
     }
   );
 
-  // Split pane actions hook
-  const { handleSplit, handleResizePanes, handlePaneClick, handleClosePane, canSplit } =
+  // Split pane actions hook - all split operations are now tab-scoped
+  const { handleSplit, handleResizePanes, handlePaneClick, handleClosePane, canSplit, activeTab } =
     useSplitActions({
       activeWorkspace,
-      onSplitTerminal: workspacesActions.splitTerminal,
-      onResizePanes: workspacesActions.resizePanes,
-      onSetFocusedPane: workspacesActions.setFocusedPane,
-      onClosePane: workspacesActions.closePane,
+      onSplitTerminalInTab: workspacesActions.splitTerminalInTab,
+      onResizePanesInTab: workspacesActions.resizePanesInTab,
+      onSetFocusedTerminalInTab: workspacesActions.setFocusedTerminalInTab,
+      onRemoveTerminalFromTab: workspacesActions.removeTerminalFromTab,
     });
 
-  // Keyboard shortcuts for split operations
+  // Keyboard shortcuts for split operations - now use activeTab
   useKeyboardShortcuts({
     canSplit,
-    hasSplitLayout: Boolean(activeWorkspace?.splitLayout),
-    focusedTerminalId:
-      activeWorkspace?.focusedTerminalId ?? activeWorkspace?.activeTerminalId ?? null,
+    hasSplitLayout: Boolean(activeTab?.splitLayout),
+    focusedTerminalId: activeTab?.focusedTerminalId ?? activeTab?.terminals[0]?.id ?? null,
     onSplit: handleSplit,
     onClosePane: handleClosePane,
     onCloseTab: handleTabClose,
   });
 
-  // Handle terminal process exit - close the tab or pane
+  // Tab lifecycle hook - handles PTY cleanup when tabs are removed
+  useTabLifecycle({ workspaces: allWorkspaces });
+
+  // Handle terminal process exit - close the pane or the entire tab
   const handleTerminalExit = useCallback(
     (terminalId: string, _exitCode: number) => {
-      // Find the workspace containing this terminal
-      const workspace = allWorkspaces.find((w) => w.terminals.some((t) => t.id === terminalId));
-      if (!workspace) {
-        return;
-      }
-
-      // If workspace has split layout, close the pane (will collapse split if needed)
-      // Otherwise, remove the terminal (close tab)
-      if (workspace.splitLayout) {
-        workspacesActions.closePane(workspace.id, terminalId);
-      } else {
-        workspacesActions.removeTerminal(workspace.id, terminalId);
+      // Find the workspace and tab containing this terminal
+      for (const workspace of allWorkspaces) {
+        for (const tab of workspace.tabs) {
+          const terminal = tab.terminals.find((t) => t.id === terminalId);
+          if (terminal) {
+            // If tab has split layout (multiple terminals), remove just this terminal
+            // If tab has only one terminal, remove the entire tab
+            if (tab.terminals.length > 1) {
+              workspacesActions.removeTerminalFromTab(workspace.id, tab.id, terminalId);
+            } else {
+              workspacesActions.removeTab(workspace.id, tab.id);
+            }
+            return;
+          }
+        }
       }
     },
     [allWorkspaces, workspacesActions]
@@ -252,9 +267,9 @@ export const App: FC = () => {
   } = useCreateWorkspace({
     addWorkspace: workspacesActions.add,
     onSuccess: (workspace) => {
-      // Auto-create initial terminal for the new workspace
-      const terminal = createInitialTerminalSession(workspace.id);
-      workspacesActions.addTerminal(workspace.id, terminal);
+      // Auto-create initial tab with terminal for the new workspace
+      const tab = createInitialTab(workspace.id);
+      workspacesActions.addTab(workspace.id, tab);
 
       // Run setup script in the background (after workspace is in state)
       // Config can be stored in repo (chaosfix.json) or app storage (~/.chaosfix/configs/{repoId}.json)
@@ -452,7 +467,7 @@ export const App: FC = () => {
                         handleWorkspaceClick(
                           workspace,
                           workspacesActions.setActive,
-                          workspacesActions.addTerminal
+                          workspacesActions.addTab
                         )
                       }
                       trailing={
@@ -491,7 +506,7 @@ export const App: FC = () => {
           )}
 
           {/* Workspace Status Bar */}
-          {activeWorkspace?.activeTerminalId && (
+          {activeWorkspace?.activeTabId && (
             <WorkspaceStatusBar>
               {activeWorkspace.status === "setting_up" && (
                 <StatusBarItem icon={<Spinner size="xs" />} label="Setting up..." />
@@ -532,10 +547,10 @@ export const App: FC = () => {
           )}
 
           {/* Tab Bar */}
-          {activeWorkspace?.activeTerminalId && (
+          {activeWorkspace?.activeTabId && (
             <TabBar
               tabs={tabs}
-              activeTabId={activeWorkspace.activeTerminalId}
+              activeTabId={activeWorkspace.activeTabId}
               onTabSelect={handleTabSelect}
               onTabClose={handleTabClose}
               onTabRename={handleTabRename}
@@ -545,66 +560,68 @@ export const App: FC = () => {
 
           {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
           <div className="flex-1 bg-surface-primary relative">
-            {/* Resize handles overlay for split layouts */}
-            {activeWorkspace?.splitLayout && (
+            {/* Resize handles overlay for split layouts - now from active tab */}
+            {activeTab?.splitLayout && (
               <SplitResizeOverlay
-                paneNode={activeWorkspace.splitLayout}
+                paneNode={activeTab.splitLayout}
                 onResizePanes={handleResizePanes}
               />
             )}
 
-            {/* Render all terminals flat - positioning is handled via bounds prop */}
+            {/* Render all terminals from all tabs across all workspaces */}
             {allWorkspaces.flatMap((workspace) => {
               const isActiveWorkspace = workspace.id === activeWorkspaceId;
 
-              // Calculate bounds for all terminals if there's a split layout
-              const boundsMap =
-                isActiveWorkspace && workspace.splitLayout
-                  ? calculateTerminalBounds(workspace.splitLayout)
-                  : null;
+              return workspace.tabs.flatMap((tab) => {
+                const isActiveTab = isActiveWorkspace && tab.id === workspace.activeTabId;
 
-              return workspace.terminals.map((terminal) => {
-                const bounds = boundsMap?.get(terminal.id) ?? null;
-                // Terminal is in split only if it has bounds (is part of the split layout)
-                const isInSplit = bounds !== null;
+                // Calculate bounds for terminals in split layout (only for active tab)
+                const boundsMap =
+                  isActiveTab && tab.splitLayout ? calculateTerminalBounds(tab.splitLayout) : null;
 
-                // Terminal is active if:
-                // - Workspace is active AND
-                // - Either: it's in a split (has bounds), OR it's the active terminal (no split)
-                const isActive =
-                  isActiveWorkspace && (isInSplit || terminal.id === workspace.activeTerminalId);
+                return tab.terminals.map((terminal) => {
+                  const bounds = boundsMap?.get(terminal.id) ?? null;
+                  // Terminal is in split only if it has bounds (is part of the split layout)
+                  const isInSplit = bounds !== null;
 
-                return (
-                  <TerminalContainer
-                    key={terminal.id}
-                    terminalId={terminal.id}
-                    worktreePath={workspace.worktreePath}
-                    isActive={isActive}
-                    bounds={bounds}
-                    isFocused={isActiveWorkspace && terminal.id === workspace.focusedTerminalId}
-                    onClick={isInSplit ? (): void => handlePaneClick(terminal.id) : undefined}
-                    onExit={handleTerminalExit}
-                    onSplit={
-                      isActiveWorkspace && canSplit
-                        ? (): void => handleSplit("horizontal")
-                        : undefined
-                    }
-                    onClose={
-                      isActiveWorkspace
-                        ? (): void => {
-                            if (isInSplit) {
-                              handleClosePane(terminal.id);
-                            } else {
-                              handleTabClose(terminal.id);
+                  // Terminal is active (visible) if:
+                  // - Workspace is active AND
+                  // - Tab is active AND
+                  // - Either: it's in a split (has bounds), OR it's the only terminal
+                  const isActive = isActiveTab && (isInSplit || tab.terminals.length === 1);
+
+                  return (
+                    <TerminalContainer
+                      key={terminal.id}
+                      terminalId={terminal.id}
+                      worktreePath={workspace.worktreePath}
+                      isActive={isActive}
+                      bounds={bounds}
+                      isFocused={isActiveTab && terminal.id === tab.focusedTerminalId}
+                      onClick={isInSplit ? (): void => handlePaneClick(terminal.id) : undefined}
+                      onExit={handleTerminalExit}
+                      onSplit={
+                        isActiveTab && canSplit ? (): void => handleSplit("horizontal") : undefined
+                      }
+                      onClose={
+                        isActiveTab
+                          ? (): void => {
+                              if (tab.terminals.length > 1) {
+                                // If tab has multiple terminals (split), close just this pane
+                                handleClosePane(terminal.id);
+                              } else {
+                                // If tab has only one terminal, close the entire tab
+                                handleTabClose(tab.id);
+                              }
                             }
-                          }
-                        : undefined
-                    }
-                  />
-                );
+                          : undefined
+                      }
+                    />
+                  );
+                });
               });
             })}
-            {!activeWorkspace?.activeTerminalId && (
+            {!activeWorkspace?.activeTabId && (
               <WelcomeScreen
                 logo={<AnimatedLogo src={logoSrc} alt="ChaosFix Logo" size={180} />}
                 features={HOMEPAGE_FEATURES}

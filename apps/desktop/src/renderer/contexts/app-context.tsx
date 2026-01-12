@@ -7,6 +7,7 @@ import type {
   ExternalAppId,
   SplitDirection,
   PaneNode,
+  Tab,
 } from "@chaosfix/core";
 import {
   createAppContext,
@@ -24,7 +25,7 @@ import {
   type NotificationsState,
   type Theme,
   type Notification,
-  type WorkspaceWithTerminals,
+  type WorkspaceWithTabs,
   type SerializableState,
   type BaseAction,
 } from "./slices";
@@ -109,25 +110,28 @@ interface RepositoriesActions {
  * Bound actions for workspace operations.
  */
 interface WorkspacesActions {
-  add: (workspace: WorkspaceWithTerminals) => void;
+  add: (workspace: WorkspaceWithTabs) => void;
   remove: (workspaceId: string) => void;
   setActive: (workspaceId: string | null) => void;
   updateStatus: (workspaceId: string, status: WorkspaceStatus) => void;
-  addTerminal: (workspaceId: string, terminal: TerminalSession) => void;
-  removeTerminal: (workspaceId: string, terminalId: string) => void;
-  setActiveTerminal: (workspaceId: string, terminalId: string | null) => void;
-  renameTerminal: (workspaceId: string, terminalId: string, title: string) => void;
   removeByRepository: (repositoryId: string) => void;
   setSelectedApp: (workspaceId: string, appId: ExternalAppId | null) => void;
-  splitTerminal: (
+  // Tab-focused actions
+  addTab: (workspaceId: string, tab: Tab) => void;
+  removeTab: (workspaceId: string, tabId: string) => void;
+  setActiveTab: (workspaceId: string, tabId: string) => void;
+  updateTabLabel: (workspaceId: string, tabId: string, label: string) => void;
+  addTerminalToTab: (workspaceId: string, tabId: string, terminal: TerminalSession) => void;
+  removeTerminalFromTab: (workspaceId: string, tabId: string, terminalId: string) => void;
+  splitTerminalInTab: (
     workspaceId: string,
+    tabId: string,
     direction: SplitDirection,
     newTerminal: TerminalSession
   ) => void;
-  closePane: (workspaceId: string, terminalId: string) => void;
-  resizePanes: (workspaceId: string, splitId: string, sizes: number[]) => void;
-  setFocusedPane: (workspaceId: string, terminalId: string | null) => void;
-  setSplitLayout: (workspaceId: string, layout: PaneNode | null) => void;
+  setFocusedTerminalInTab: (workspaceId: string, tabId: string, terminalId: string | null) => void;
+  resizePanesInTab: (workspaceId: string, tabId: string, splitId: string, sizes: number[]) => void;
+  setTabSplitLayout: (workspaceId: string, tabId: string, layout: PaneNode | null) => void;
 }
 
 /**
@@ -241,4 +245,4 @@ export function useApp(): UseAppReturn {
 }
 
 // Re-export types for convenience
-export type { WorkspaceWithTerminals };
+export type { WorkspaceWithTabs };

@@ -21,9 +21,10 @@ export {
 export {
   workspacesSlice,
   workspacesActions,
+  getActiveTerminalId,
   type WorkspacesState,
   type WorkspacesAction,
-  type WorkspaceWithTerminals,
+  type WorkspaceWithTabs,
 } from "./workspaces.slice";
 
 export { uiSlice, uiActions, type UIState, type UIAction } from "./ui.slice";

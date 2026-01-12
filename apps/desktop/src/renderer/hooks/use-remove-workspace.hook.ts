@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
 
-import type { WorkspaceWithTerminals } from "../contexts/app-context";
+import type { WorkspaceWithTabs } from "../contexts/app-context";
 
 /**
  * Pending workspace information stored when dialog is opened.
  */
 interface PendingWorkspaceInfo {
-  workspace: WorkspaceWithTerminals;
+  workspace: WorkspaceWithTabs;
   repositoryPath: string;
 }
 
@@ -29,7 +29,7 @@ export interface UseRemoveWorkspaceReturn {
   /** Whether the dialog is currently open */
   isDialogOpen: boolean;
   /** Opens the dialog with workspace context */
-  openDialog: (workspace: WorkspaceWithTerminals, repositoryPath: string) => void;
+  openDialog: (workspace: WorkspaceWithTabs, repositoryPath: string) => void;
   /** Closes the dialog and resets state */
   closeDialog: () => void;
   /** Whether a workspace removal is in progress */
@@ -37,7 +37,7 @@ export interface UseRemoveWorkspaceReturn {
   /** Handles confirmation of workspace removal */
   handleConfirm: () => Promise<void>;
   /** Current pending workspace info */
-  pendingWorkspace: WorkspaceWithTerminals | null;
+  pendingWorkspace: WorkspaceWithTabs | null;
   /** Current error message, if any */
   error: string | null;
 }
@@ -64,14 +64,11 @@ export function useRemoveWorkspace({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const openDialog = useCallback(
-    (workspace: WorkspaceWithTerminals, repositoryPath: string): void => {
-      setPendingInfo({ workspace, repositoryPath });
-      setError(null);
-      setIsDialogOpen(true);
-    },
-    []
-  );
+  const openDialog = useCallback((workspace: WorkspaceWithTabs, repositoryPath: string): void => {
+    setPendingInfo({ workspace, repositoryPath });
+    setError(null);
+    setIsDialogOpen(true);
+  }, []);
 
   const closeDialog = useCallback((): void => {
     setIsDialogOpen(false);
@@ -90,10 +87,10 @@ export function useRemoveWorkspace({
     setError(null);
 
     try {
-      // First destroy all terminals for the workspace
+      // First destroy all terminals for the workspace (from all tabs)
       const { workspace, repositoryPath } = pendingInfo;
-      const terminalDestroyPromises = workspace.terminals.map((terminal) =>
-        window.terminal.destroy(terminal.id)
+      const terminalDestroyPromises = workspace.tabs.flatMap((tab) =>
+        tab.terminals.map((terminal) => window.terminal.destroy(terminal.id))
       );
       await Promise.all(terminalDestroyPromises);
 
