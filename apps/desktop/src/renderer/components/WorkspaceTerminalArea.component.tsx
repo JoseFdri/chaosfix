@@ -60,7 +60,7 @@ function WelcomeScreenContent({
   onCloneFromUrl,
 }: WelcomeScreenHandlers): ReactNode {
   return (
-    <WelcomeScreen title="Chaosfix" features={HOMEPAGE_FEATURES}>
+    <WelcomeScreen title="CHAOSFIX" features={HOMEPAGE_FEATURES}>
       <ActionCardGroup>
         <ActionCard
           icon={<DocumentTextIcon className="w-8 h-8" />}

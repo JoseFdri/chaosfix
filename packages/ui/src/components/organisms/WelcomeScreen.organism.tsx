@@ -56,8 +56,14 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = ({
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
             {logo}
             {title && (
-              <h1 className="text-4xl md:text-5xl font-bold text-content-primary tracking-tight">
+              <h1 className="text-5xl md:text-7xl font-bold text-content-primary tracking-tighter font-mono">
+                <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-500 bg-clip-text text-transparent">
+                  {"<"}
+                </span>
                 {title}
+                <span className="bg-gradient-to-r from-violet-500 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                  {"/>"}
+                </span>
               </h1>
             )}
           </div>
