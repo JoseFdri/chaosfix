@@ -13,3 +13,11 @@ export interface ExternalApp {
   name: string;
   installed: boolean;
 }
+
+export interface AppDefinition {
+  id: ExternalAppId;
+  name: string;
+  bundlePath: string | null;
+  cliCommand?: string;
+  openCommand: string;
+}

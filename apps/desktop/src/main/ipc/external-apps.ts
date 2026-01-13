@@ -1,7 +1,10 @@
 import { spawn } from "child_process";
 import { ipcMain, type BrowserWindow } from "electron";
-import { EXTERNAL_APPS_IPC_CHANNELS, type ExternalAppId } from "@chaosfix/core";
-import { externalAppDetector } from "../services/external-app-detector.service";
+import {
+  EXTERNAL_APPS_IPC_CHANNELS,
+  externalAppDetector,
+  type ExternalAppId,
+} from "@chaosfix/core";
 
 export interface ExternalAppsIPCDependencies {
   getMainWindow: () => BrowserWindow | null;

@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import type { ExternalApp, ExternalAppId } from "@chaosfix/core";
+import type { ExternalApp, ExternalAppId, AppDefinition } from "../types";
 
 class ExternalAppDetectorNotInitializedError extends Error {
   constructor() {
@@ -16,14 +16,6 @@ function escapeShellArg(path: string): string {
     .replace(/"/g, '\\"')
     .replace(/\$/g, "\\$")
     .replace(/`/g, "\\`");
-}
-
-interface AppDefinition {
-  id: ExternalAppId;
-  name: string;
-  bundlePath: string | null;
-  cliCommand?: string;
-  openCommand: string;
 }
 
 const APP_DEFINITIONS: AppDefinition[] = [

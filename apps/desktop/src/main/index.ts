@@ -1,9 +1,9 @@
 import { app, type BrowserWindow } from "electron";
 import { PTYManager } from "@chaosfix/terminal-bridge";
+import { externalAppDetector } from "@chaosfix/core";
 import { createMainWindow } from "./window";
 import { setupAllIPC } from "./ipc";
 import { setupAppLifecycle } from "./app-lifecycle";
-import { externalAppDetector } from "./services/external-app-detector.service";
 
 let mainWindow: BrowserWindow | null = null;
 const ptyManager = new PTYManager();
