@@ -1,69 +1,72 @@
-export { useTerminal } from "./use-terminal";
-export type { UseTerminalOptions, UseTerminalReturn } from "./use-terminal";
+export { useTerminal } from "./useTerminal.hook";
+export type { UseTerminalOptions, UseTerminalReturn } from "./useTerminal.hook";
 
-export { useFilteredRepositories } from "./use-filtered-repositories";
-export type { UseFilteredRepositoriesOptions } from "./use-filtered-repositories";
+export { useFilteredRepositories } from "./useFilteredRepositories.hook";
+export type { UseFilteredRepositoriesOptions } from "./useFilteredRepositories.hook";
 
-export { useRepositoryActions } from "./use-repository-actions";
+export { useRepositoryActions } from "./useRepositoryActions.hook";
 export type {
   UseRepositoryActionsOptions,
   UseRepositoryActionsReturn,
-} from "./use-repository-actions";
+} from "./useRepositoryActions.hook";
 
-export { useWorkspaceTabs } from "./use-workspace-tabs";
-export type { UseWorkspaceTabsOptions, UseWorkspaceTabsReturn } from "./use-workspace-tabs";
+export { useWorkspaceTabs } from "./useWorkspaceTabs.hook";
+export type { UseWorkspaceTabsOptions, UseWorkspaceTabsReturn } from "./useWorkspaceTabs.hook";
 
-export { useAppHandlers } from "./use-app-handlers";
-export type { UseAppHandlersOptions, UseAppHandlersReturn } from "./use-app-handlers";
+export { useAppHandlers } from "./useAppHandlers.hook";
+export type { UseAppHandlersOptions, UseAppHandlersReturn } from "./useAppHandlers.hook";
 
-export { usePersistence } from "./use-persistence";
-export type { UsePersistenceOptions } from "./use-persistence";
+export { usePersistence } from "./usePersistence.hook";
+export type { UsePersistenceOptions } from "./usePersistence.hook";
 
-export { useCreateWorkspace } from "./use-create-workspace.hook";
+export { useCreateWorkspace } from "./useCreateWorkspace.hook";
 export type {
   UseCreateWorkspaceOptions,
   UseCreateWorkspaceReturn,
-} from "./use-create-workspace.hook";
+} from "./useCreateWorkspace.hook";
 
-export { useRemoveWorkspace } from "./use-remove-workspace.hook";
+export { useRemoveWorkspace } from "./useRemoveWorkspace.hook";
 export type {
   UseRemoveWorkspaceOptions,
   UseRemoveWorkspaceReturn,
-} from "./use-remove-workspace.hook";
+} from "./useRemoveWorkspace.hook";
 
-export { useTheme } from "./use-theme.hook";
-export type { UseThemeReturn } from "./use-theme.hook";
+export { useTheme } from "./useTheme.hook";
+export type { UseThemeReturn } from "./useTheme.hook";
 
-export { useSetupScript } from "./use-setup-script.hook";
-export type { UseSetupScriptOptions, UseSetupScriptReturn } from "./use-setup-script.hook";
+export { useSetupScript } from "./useSetupScript.hook";
+export type { UseSetupScriptOptions, UseSetupScriptReturn } from "./useSetupScript.hook";
 
-export { useExternalApps } from "./use-external-apps.hook";
-export type { UseExternalAppsReturn } from "./use-external-apps.hook";
+export { useExternalApps } from "./useExternalApps.hook";
+export type { UseExternalAppsReturn } from "./useExternalApps.hook";
 
-export { useCloneRepository } from "./use-clone-repository";
-export type { UseCloneRepositoryOptions, UseCloneRepositoryReturn } from "./use-clone-repository";
+export { useCloneRepository } from "./useCloneRepository.hook";
+export type {
+  UseCloneRepositoryOptions,
+  UseCloneRepositoryReturn,
+} from "./useCloneRepository.hook";
 
-export { useSplitActions } from "./use-split-actions";
-export type { UseSplitActionsOptions, UseSplitActionsReturn } from "./use-split-actions";
+export { useSplitActions } from "./useSplitActions.hook";
+export type { UseSplitActionsOptions, UseSplitActionsReturn } from "./useSplitActions.hook";
 
-export { useKeyboardShortcuts } from "./use-keyboard-shortcuts";
-export type { UseKeyboardShortcutsOptions } from "./use-keyboard-shortcuts";
+export { useKeyboardShortcuts } from "./useKeyboardShortcuts.hook";
+export type { UseKeyboardShortcutsOptions } from "./useKeyboardShortcuts.hook";
 
-export { useTabLifecycle } from "./use-tab-lifecycle";
-export type { UseTabLifecycleOptions } from "./use-tab-lifecycle";
+export { useTabLifecycle } from "./useTabLifecycle.hook";
+export type { UseTabLifecycleOptions } from "./useTabLifecycle.hook";
 
-export { useTerminalExit } from "./use-terminal-exit";
-export type { UseTerminalExitOptions, UseTerminalExitReturn } from "./use-terminal-exit";
+export { useTerminalExit } from "./useTerminalExit.hook";
+export type { UseTerminalExitOptions, UseTerminalExitReturn } from "./useTerminalExit.hook";
 
-export { useSelectedAppDropdown } from "./use-selected-app-dropdown";
+export { useSelectedAppDropdown } from "./useSelectedAppDropdown.hook";
 export type {
   SelectedAppDropdownItem,
   UseSelectedAppDropdownOptions,
   UseSelectedAppDropdownReturn,
-} from "./use-selected-app-dropdown";
+} from "./useSelectedAppDropdown.hook";
 
-export { useRepositorySettingsDialog } from "./use-repository-settings-dialog";
+export { useRepositorySettingsDialog } from "./useRepositorySettingsDialog.hook";
 export type {
   UseRepositorySettingsDialogOptions,
   UseRepositorySettingsDialogReturn,
-} from "./use-repository-settings-dialog";
+} from "./useRepositorySettingsDialog.hook";

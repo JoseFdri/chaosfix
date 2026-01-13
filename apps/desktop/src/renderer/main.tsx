@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastProvider } from "@chaosfix/ui";
 import { AppProvider } from "./contexts/app-context";
-import { ErrorBoundary } from "./components/error-boundary";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { App } from "./app";
 import "./styles/index.css";
 

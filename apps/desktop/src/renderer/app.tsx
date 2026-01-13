@@ -22,10 +22,10 @@ import {
   useRepositorySettingsDialog,
 } from "./hooks";
 import { NotificationContainer } from "./components/NotificationContainer.component";
-import { AppDialogs } from "./components/app-dialogs.component";
-import { AppSidebar } from "./components/app-sidebar.component";
-import { WorkspaceHeader } from "./components/workspace-header.component";
-import { WorkspaceTerminalArea } from "./components/workspace-terminal-area.component";
+import { AppDialogs } from "./components/AppDialogs.component";
+import { AppSidebar } from "./components/AppSidebar.component";
+import { WorkspaceHeader } from "./components/WorkspaceHeader.component";
+import { WorkspaceTerminalArea } from "./components/WorkspaceTerminalArea.component";
 import {
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,

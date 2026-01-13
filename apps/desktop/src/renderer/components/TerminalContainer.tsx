@@ -1,6 +1,6 @@
 import { type FC, type CSSProperties, useMemo } from "react";
-import { TerminalView } from "./terminal-view";
-import { TerminalToolbar } from "./terminal-toolbar";
+import { TerminalView } from "./TerminalView";
+import { TerminalToolbar } from "./TerminalToolbar";
 import type { TerminalBounds } from "../libs";
 
 const TOOLBAR_HEIGHT_PX = 32;

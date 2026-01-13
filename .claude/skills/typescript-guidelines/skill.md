@@ -63,7 +63,6 @@ description: Coding guidelines and best practices for TypeScript projects.
 
 ### File Structure
 
-- File names MUST be kebab-case
 - Use named exports for clarity, avoid use of default exports
 - Group related functionality together
 - Use barrel exports (`index.ts`) appropriately
@@ -179,7 +178,7 @@ description: Coding guidelines and best practices for TypeScript projects.
 ### Inconsistent Naming
 
 - Mix of camelCase, PascalCase, kebab-case in file/folder names
-- Standardize on kebab-case for folders, PascalCase for components
+- Standardize on kebab-case for folders, PascalCase for components/Services, camelCase for react hooks.
 - Examples: cost-analysis vs cloudAccounts
 
 ### God Components and Hooks

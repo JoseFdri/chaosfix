@@ -9,8 +9,8 @@ import {
 } from "@chaosfix/ui";
 import type { Tab } from "@chaosfix/core";
 import type { WorkspaceWithTabs } from "../contexts/app-context";
-import { TerminalContainer } from "./terminal-container";
-import { SplitResizeOverlay } from "./split-resize-overlay";
+import { TerminalContainer } from "./TerminalContainer";
+import { SplitResizeOverlay } from "./SplitResizeOverlay";
 import { calculateTerminalBounds } from "../libs";
 import { HOMEPAGE_FEATURES } from "../../constants";
 import logoSrc from "../assets/logo.svg";

@@ -2,7 +2,7 @@ import { type FC, type ReactNode } from "react";
 import { InputDialog, ConfirmDialog, RepositorySettingsDialog, CloneDialog } from "@chaosfix/ui";
 import type { Repository } from "@chaosfix/core";
 import type { CloneProgress } from "../../types";
-import type { CloneData } from "../hooks/use-clone-repository";
+import type { CloneData } from "../hooks/useCloneRepository.hook";
 import { WORKSPACE_DIALOG, REMOVE_WORKSPACE_DIALOG } from "../../constants";
 
 /**
