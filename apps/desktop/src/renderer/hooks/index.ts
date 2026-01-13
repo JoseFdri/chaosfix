@@ -51,3 +51,19 @@ export type { UseKeyboardShortcutsOptions } from "./use-keyboard-shortcuts";
 
 export { useTabLifecycle } from "./use-tab-lifecycle";
 export type { UseTabLifecycleOptions } from "./use-tab-lifecycle";
+
+export { useTerminalExit } from "./use-terminal-exit";
+export type { UseTerminalExitOptions, UseTerminalExitReturn } from "./use-terminal-exit";
+
+export { useSelectedAppDropdown } from "./use-selected-app-dropdown";
+export type {
+  SelectedAppDropdownItem,
+  UseSelectedAppDropdownOptions,
+  UseSelectedAppDropdownReturn,
+} from "./use-selected-app-dropdown";
+
+export { useRepositorySettingsDialog } from "./use-repository-settings-dialog";
+export type {
+  UseRepositorySettingsDialogOptions,
+  UseRepositorySettingsDialogReturn,
+} from "./use-repository-settings-dialog";

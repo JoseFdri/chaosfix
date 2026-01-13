@@ -1,4 +1,4 @@
-import { type FC, useState, useCallback } from "react";
+import { type FC, useState, useCallback, useRef, useLayoutEffect } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { cn } from "../../libs/cn.lib";
 
@@ -7,6 +7,8 @@ export interface CollapsiblePathProps {
   label: string;
   /** The full path to display */
   path: string;
+  /** Max width in pixels before auto-collapsing. If undefined, always starts collapsed. */
+  maxWidth?: number;
   /** Optional additional styling */
   className?: string;
 }
@@ -31,40 +33,69 @@ const truncatePath = (path: string): string => {
 /**
  * A collapsible path display component that shows a truncated path
  * with the ability to expand to show the full path.
+ * When maxWidth is provided, the path auto-collapses if it exceeds that width.
  */
-export const CollapsiblePath: FC<CollapsiblePathProps> = ({ label, path, className }) => {
+export const CollapsiblePath: FC<CollapsiblePathProps> = ({ label, path, maxWidth, className }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [shouldCollapse, setShouldCollapse] = useState(true);
+  const measureRef = useRef<HTMLSpanElement>(null);
+
+  // Measure the full path width and determine if it should be collapsed
+  useLayoutEffect(() => {
+    if (maxWidth === undefined) {
+      setShouldCollapse(true);
+      return;
+    }
+
+    if (measureRef.current) {
+      const fullWidth = measureRef.current.scrollWidth;
+      setShouldCollapse(fullWidth > maxWidth);
+    }
+  }, [path, maxWidth]);
 
   const toggleExpanded = useCallback(() => {
     setIsExpanded((prev) => !prev);
   }, []);
 
-  const displayPath = isExpanded ? path : truncatePath(path);
+  const displayPath = isExpanded || !shouldCollapse ? path : truncatePath(path);
+  const canToggle = shouldCollapse;
 
   return (
     <div className={cn("flex flex-col gap-0.5", className)}>
       <span className="text-sm text-text-secondary">{label}</span>
+      {/* Hidden span for measuring full path width */}
+      <span
+        ref={measureRef}
+        className="text-sm absolute invisible whitespace-nowrap"
+        aria-hidden="true"
+      >
+        {path}
+      </span>
       <button
         type="button"
         role="button"
         aria-expanded={isExpanded}
         aria-label={isExpanded ? `Collapse path: ${path}` : `Expand path: ${truncatePath(path)}`}
-        onClick={toggleExpanded}
+        onClick={canToggle ? toggleExpanded : undefined}
         className={cn(
           "flex items-center gap-1 text-sm text-text-primary",
-          "text-left cursor-pointer",
-          "hover:text-text-secondary transition-colors duration-150",
+          "text-left",
+          canToggle && "cursor-pointer hover:text-text-secondary",
+          !canToggle && "cursor-default",
+          "transition-colors duration-150",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-focus focus-visible:rounded"
         )}
       >
         <span className="break-all">{displayPath}</span>
-        <ChevronDownIcon
-          className={cn(
-            "w-4 h-4 flex-shrink-0 transition-transform duration-150",
-            isExpanded && "rotate-180"
-          )}
-          aria-hidden="true"
-        />
+        {canToggle && (
+          <ChevronDownIcon
+            className={cn(
+              "w-4 h-4 flex-shrink-0 transition-transform duration-150",
+              isExpanded && "rotate-180"
+            )}
+            aria-hidden="true"
+          />
+        )}
       </button>
     </div>
   );

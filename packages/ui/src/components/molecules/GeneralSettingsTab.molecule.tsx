@@ -41,9 +41,9 @@ export function GeneralSettingsTab({
 
   return (
     <div className="flex flex-col gap-4">
-      <CollapsiblePath label="Root path:" path={repositoryPath} />
+      <CollapsiblePath label="Root path:" path={repositoryPath} maxWidth={300} />
 
-      <CollapsiblePath label="Workspaces:" path={workspacesPath} />
+      <CollapsiblePath label="Workspaces:" path={workspacesPath} maxWidth={300} />
 
       <div className="border-t border-border-subtle my-2" />
 

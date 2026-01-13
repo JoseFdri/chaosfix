@@ -119,7 +119,7 @@ export const RepositorySettingsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...props}>
-      <DialogContent className={cn("max-w-2xl h-[520px] flex flex-col", className)} showCloseButton>
+      <DialogContent className={cn("max-w-3xl h-[600px] flex flex-col", className)} showCloseButton>
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{repository.name}</DialogTitle>
         </DialogHeader>

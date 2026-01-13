@@ -1,35 +1,6 @@
-import { type FC, type ReactNode, useState, useCallback } from "react";
-import {
-  Sidebar,
-  SidebarItem,
-  TabBar,
-  TitleBar,
-  SearchInput,
-  SidebarFooter,
-  RepositorySection,
-  WelcomeScreen,
-  ActionCard,
-  ActionCardGroup,
-  AnimatedLogo,
-  DocumentTextIcon,
-  GlobeAltIcon,
-  PlusIcon,
-  InputDialog,
-  ConfirmDialog,
-  RepositorySettingsDialog,
-  IconButton,
-  ArchiveBoxXMarkIcon,
-  ResizeHandle,
-  useDragResize,
-  ThemeToggle,
-  WorkspaceStatusBar,
-  StatusBarItem,
-  Spinner,
-  OpenInDropdown,
-  getAppIcon,
-  CloneDialog,
-} from "@chaosfix/ui";
-import type { TerminalSession, ExternalAppId, Tab } from "@chaosfix/core";
+import { type FC, useCallback } from "react";
+import { useDragResize } from "@chaosfix/ui";
+import type { TerminalSession, Tab } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTabs } from "./contexts/app-context";
 import {
   useFilteredRepositories,
@@ -46,22 +17,22 @@ import {
   useSplitActions,
   useKeyboardShortcuts,
   useTabLifecycle,
+  useTerminalExit,
+  useSelectedAppDropdown,
+  useRepositorySettingsDialog,
 } from "./hooks";
-import { TerminalContainer } from "./components/terminal-container";
-import { SplitResizeOverlay } from "./components/split-resize-overlay";
 import { NotificationContainer } from "./components/NotificationContainer.component";
-import { calculateTerminalBounds } from "./libs";
+import { AppDialogs } from "./components/app-dialogs.component";
+import { AppSidebar } from "./components/app-sidebar.component";
+import { WorkspaceHeader } from "./components/workspace-header.component";
+import { WorkspaceTerminalArea } from "./components/workspace-terminal-area.component";
 import {
-  WORKSPACE_DIALOG,
-  REMOVE_WORKSPACE_DIALOG,
   DEFAULT_TERMINAL_LABEL,
   INITIAL_TERMINAL_PID,
   DEFAULT_TERMINAL_STATUS,
   MIN_SIDEBAR_WIDTH,
   MAX_SIDEBAR_WIDTH,
-  HOMEPAGE_FEATURES,
 } from "../constants";
-import logoSrc from "./assets/logo.svg";
 
 /**
  * Creates an initial tab with a terminal session for a workspace.
@@ -167,25 +138,10 @@ export const App: FC = () => {
     : null;
 
   // Compute selected app with icon for the OpenInDropdown
-  const getSelectedAppForDropdown = (): {
-    id: string;
-    name: string;
-    icon?: ReactNode;
-  } | null => {
-    if (!activeWorkspace?.selectedAppId) {
-      return null;
-    }
-    const app = apps.find((a) => a.id === activeWorkspace.selectedAppId);
-    if (!app) {
-      return null;
-    }
-    const IconComponent = getAppIcon(app.id);
-    return {
-      ...app,
-      icon: IconComponent ? <IconComponent className="w-4 h-4" /> : undefined,
-    };
-  };
-  const selectedAppForDropdown = getSelectedAppForDropdown();
+  const { selectedApp: selectedAppForDropdown } = useSelectedAppDropdown({
+    activeWorkspace,
+    apps,
+  });
 
   const { tabs, handleTabSelect, handleTabClose, handleTabRename, handleNewTab } = useWorkspaceTabs(
     {
@@ -221,27 +177,11 @@ export const App: FC = () => {
   useTabLifecycle({ workspaces: allWorkspaces });
 
   // Handle terminal process exit - close the pane or the entire tab
-  const handleTerminalExit = useCallback(
-    (terminalId: string, _exitCode: number) => {
-      // Find the workspace and tab containing this terminal
-      for (const workspace of allWorkspaces) {
-        for (const tab of workspace.tabs) {
-          const terminal = tab.terminals.find((t) => t.id === terminalId);
-          if (terminal) {
-            // If tab has split layout (multiple terminals), remove just this terminal
-            // If tab has only one terminal, remove the entire tab
-            if (tab.terminals.length > 1) {
-              workspacesActions.removeTerminalFromTab(workspace.id, tab.id, terminalId);
-            } else {
-              workspacesActions.removeTab(workspace.id, tab.id);
-            }
-            return;
-          }
-        }
-      }
-    },
-    [allWorkspaces, workspacesActions]
-  );
+  const { handleTerminalExit } = useTerminalExit({
+    workspaces: allWorkspaces,
+    onRemoveTerminalFromTab: workspacesActions.removeTerminalFromTab,
+    onRemoveTab: workspacesActions.removeTab,
+  });
 
   // Setup script hook for running workspace setup after creation
   const { runSetup } = useSetupScript({
@@ -285,32 +225,19 @@ export const App: FC = () => {
     onCloneFromUrl: () => setCloneDialogOpen(true),
   });
 
-  // Repository settings dialog state
-  const [activeSettingsRepoId, setActiveSettingsRepoId] = useState<string | null>(null);
-  const activeSettingsRepo = activeSettingsRepoId
-    ? allRepositories.find((r) => r.id === activeSettingsRepoId)
-    : null;
-
-  // Repository settings callbacks
-  const handleRepositorySettingsChange = useCallback(
-    (
-      id: string,
-      updates: { branchFrom?: string; defaultRemote?: string; saveConfigToRepo?: boolean }
-    ) => {
-      repositoriesActions.update(id, updates);
-    },
-    [repositoriesActions]
-  );
-
-  const handleRepositoryRemove = useCallback(() => {
-    if (!activeSettingsRepoId) {
-      return;
-    }
-    // Close the dialog first
-    setActiveSettingsRepoId(null);
-    // Remove the repository (cascades to remove workspaces in state via wrapReducer)
-    repositoriesActions.remove(activeSettingsRepoId);
-  }, [activeSettingsRepoId, repositoriesActions]);
+  // Repository settings dialog state and handlers
+  const {
+    activeSettingsRepoId,
+    activeSettingsRepo,
+    openSettingsDialog,
+    closeSettingsDialog,
+    handleRepositorySettingsChange,
+    handleRepositoryRemove,
+  } = useRepositorySettingsDialog({
+    repositories: allRepositories,
+    updateRepository: repositoriesActions.update,
+    removeRepository: repositoriesActions.remove,
+  });
 
   // Workspace removal dialog state and handlers
   const {
@@ -351,296 +278,159 @@ export const App: FC = () => {
     },
   });
 
+  // Sidebar workspace click handler - sets active and auto-creates tab if needed
+  const handleSidebarWorkspaceClick = useCallback(
+    (workspace: WorkspaceWithTabs) => {
+      handleWorkspaceClick(workspace, workspacesActions.setActive, workspacesActions.addTab);
+    },
+    [workspacesActions.setActive, workspacesActions.addTab]
+  );
+
+  // Sidebar remove workspace handler - opens dialog with workspace and repo path
+  const handleSidebarRemoveWorkspace = useCallback(
+    (workspace: WorkspaceWithTabs, repositoryPath: string) => {
+      openRemoveDialog(workspace, repositoryPath);
+    },
+    [openRemoveDialog]
+  );
+
   return (
     <>
-      {/* Create Workspace Dialog */}
-      <InputDialog
-        open={isDialogOpen}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            closeDialog();
-          }
-        }}
-        title={`${WORKSPACE_DIALOG.TITLE_PREFIX} ${pendingRepository?.name ?? WORKSPACE_DIALOG.TITLE_FALLBACK}`}
-        description={WORKSPACE_DIALOG.DESCRIPTION}
-        inputLabel={WORKSPACE_DIALOG.INPUT_LABEL}
-        inputPlaceholder={WORKSPACE_DIALOG.INPUT_PLACEHOLDER}
-        inputDefaultValue={defaultWorkspaceName}
-        submitLabel={WORKSPACE_DIALOG.SUBMIT_LABEL}
-        cancelLabel={WORKSPACE_DIALOG.CANCEL_LABEL}
-        isLoading={isCreatingWorkspace}
-        onSubmit={handleWorkspaceSubmit}
-        onCancel={closeDialog}
-      />
-
-      {/* Remove Workspace Confirm Dialog */}
-      <ConfirmDialog
-        open={isRemoveDialogOpen}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            closeRemoveDialog();
-          }
-        }}
-        title={REMOVE_WORKSPACE_DIALOG.TITLE}
-        description={REMOVE_WORKSPACE_DIALOG.DESCRIPTION}
-        confirmLabel={REMOVE_WORKSPACE_DIALOG.CONFIRM_LABEL}
-        cancelLabel={REMOVE_WORKSPACE_DIALOG.CANCEL_LABEL}
-        isLoading={isRemovingWorkspace}
-        onConfirm={handleRemoveConfirm}
-        onCancel={closeRemoveDialog}
-      />
-
-      {/* Repository Settings Dialog */}
-      {activeSettingsRepo && (
-        <RepositorySettingsDialog
-          open={activeSettingsRepoId !== null}
-          onOpenChange={(open: boolean) => {
+      {/* Application Dialogs */}
+      <AppDialogs
+        createWorkspace={{
+          isOpen: isDialogOpen,
+          isLoading: isCreatingWorkspace,
+          pendingRepositoryName: pendingRepository?.name ?? null,
+          defaultWorkspaceName,
+          onOpenChange: (open) => {
             if (!open) {
-              setActiveSettingsRepoId(null);
+              closeDialog();
             }
-          }}
-          repository={{
-            id: activeSettingsRepo.id,
-            name: activeSettingsRepo.name,
-            path: activeSettingsRepo.path,
-            branchFrom: activeSettingsRepo.branchFrom,
-            defaultRemote: activeSettingsRepo.defaultRemote,
-            saveConfigToRepo: activeSettingsRepo.saveConfigToRepo,
-          }}
-          onSettingsChange={handleRepositorySettingsChange}
-          onRemove={handleRepositoryRemove}
-        />
-      )}
-
-      {/* Clone Repository Dialog */}
-      <CloneDialog
-        open={isCloneDialogOpen}
-        onOpenChange={setCloneDialogOpen}
-        onClone={handleClone}
-        onSelectDirectory={handleSelectDirectory}
-        progress={cloneProgress}
-        isCloning={isCloning}
+          },
+          onSubmit: handleWorkspaceSubmit,
+          onCancel: closeDialog,
+        }}
+        removeWorkspace={{
+          isOpen: isRemoveDialogOpen,
+          isLoading: isRemovingWorkspace,
+          onOpenChange: (open) => {
+            if (!open) {
+              closeRemoveDialog();
+            }
+          },
+          onConfirm: handleRemoveConfirm,
+          onCancel: closeRemoveDialog,
+        }}
+        repositorySettings={{
+          activeRepoId: activeSettingsRepoId,
+          activeRepo: activeSettingsRepo,
+          onOpenChange: (open) => {
+            if (!open) {
+              closeSettingsDialog();
+            }
+          },
+          onSettingsChange: handleRepositorySettingsChange,
+          onRemove: handleRepositoryRemove,
+        }}
+        clone={{
+          isOpen: isCloneDialogOpen,
+          isCloning,
+          progress: cloneProgress,
+          onOpenChange: setCloneDialogOpen,
+          onClone: handleClone,
+          onSelectDirectory: handleSelectDirectory,
+        }}
       />
 
       <div className="flex h-screen bg-surface-primary text-text-primary">
         {/* Sidebar */}
-        <Sidebar
+        <AppSidebar
           width={sidebarWidth}
           collapsed={sidebarCollapsed}
           isResizing={isDragging}
-          header={
-            <div className="p-3 pt-10">
-              <SearchInput
-                value={searchQuery}
-                onChange={(e) => ui.setSearchQuery(e.target.value)}
-                onClear={() => ui.setSearchQuery("")}
-                placeholder="Search repositories..."
-              />
-            </div>
-          }
-          footer={<SidebarFooter onAddRepository={handleAddRepository} />}
-        >
-          {filteredRepositories.length === 0 ? (
-            <div className="px-4 py-8 text-sm text-text-muted text-center">
-              {searchQuery ? "No repositories match your search" : "No repositories added"}
-            </div>
-          ) : (
-            filteredRepositories.map((repo) => {
-              const repoWorkspaces = allWorkspaces.filter((w) => w.repositoryId === repo.id);
-              return (
-                <RepositorySection
-                  key={repo.id}
-                  name={repo.name}
-                  onSettingsClick={() => setActiveSettingsRepoId(repo.id)}
-                >
-                  <SidebarItem
-                    label="New workspace"
-                    icon={<PlusIcon className="w-4 h-4" />}
-                    onClick={() => handleNewWorkspace(repo.id, repo.name, repo.path)}
-                  />
-                  {repoWorkspaces.map((workspace) => (
-                    <SidebarItem
-                      key={workspace.id}
-                      label={workspace.name}
-                      active={workspace.id === activeWorkspaceId}
-                      onClick={() =>
-                        handleWorkspaceClick(
-                          workspace,
-                          workspacesActions.setActive,
-                          workspacesActions.addTab
-                        )
-                      }
-                      trailing={
-                        <IconButton
-                          size="sm"
-                          variant="ghost"
-                          label="Remove workspace"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openRemoveDialog(workspace, repo.path);
-                          }}
-                        >
-                          <ArchiveBoxXMarkIcon className="w-4 h-4" />
-                        </IconButton>
-                      }
-                    />
-                  ))}
-                </RepositorySection>
-              );
-            })
-          )}
-        </Sidebar>
-
-        {/* Resize Handle */}
-        <ResizeHandle onMouseDown={handleMouseDown} />
+          activeWorkspaceId={activeWorkspaceId}
+          filteredRepositories={filteredRepositories}
+          allWorkspaces={allWorkspaces}
+          searchQuery={searchQuery}
+          search={{
+            value: searchQuery,
+            onChange: ui.setSearchQuery,
+            onClear: () => ui.setSearchQuery(""),
+          }}
+          footer={{ onAddRepository: handleAddRepository }}
+          workspaceHandlers={{
+            onWorkspaceClick: handleSidebarWorkspaceClick,
+            onRemoveWorkspace: handleSidebarRemoveWorkspace,
+          }}
+          onSettingsClick={openSettingsDialog}
+          onNewWorkspace={handleNewWorkspace}
+          onResizeHandleMouseDown={handleMouseDown}
+        />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          {/* Title Bar */}
+          {/* Workspace Header (Title Bar, Status Bar, Tab Bar) */}
           {activeWorkspace && (
-            <TitleBar
-              title={activeWorkspace.name}
-              subtitle={activeRepository?.name}
-              actions={<ThemeToggle isDark={isDark} onToggle={toggleTheme} />}
-            />
-          )}
-
-          {/* Workspace Status Bar */}
-          {activeWorkspace?.activeTabId && (
-            <WorkspaceStatusBar>
-              {activeWorkspace.status === "setting_up" && (
-                <StatusBarItem icon={<Spinner size="xs" />} label="Setting up..." />
-              )}
-              <div className="ml-auto">
-                <OpenInDropdown
-                  workspaceName={activeWorkspace.name}
-                  apps={apps.map((app) => {
-                    const IconComponent = getAppIcon(app.id);
-                    return {
-                      ...app,
-                      icon: IconComponent ? <IconComponent className="w-5 h-5" /> : undefined,
-                      shortcut: app.id === "ghostty" ? "⌘O" : undefined,
-                    };
-                  })}
-                  selectedApp={selectedAppForDropdown}
-                  onSelect={(appId) => {
-                    if (activeWorkspace.worktreePath) {
-                      // Save the selected app for this workspace
-                      workspacesActions.setSelectedApp(activeWorkspace.id, appId as ExternalAppId);
-                      openIn(appId as ExternalAppId, activeWorkspace.worktreePath);
-                    }
-                  }}
-                  onWorkspaceClick={() => {
-                    if (activeWorkspace.selectedAppId && activeWorkspace.worktreePath) {
-                      openIn(activeWorkspace.selectedAppId, activeWorkspace.worktreePath);
-                    }
-                  }}
-                  onCopyPath={() => {
-                    if (activeWorkspace.worktreePath) {
-                      navigator.clipboard.writeText(activeWorkspace.worktreePath);
-                    }
-                  }}
-                  disabled={isLoadingExternalApps || !activeWorkspace.worktreePath}
-                />
-              </div>
-            </WorkspaceStatusBar>
-          )}
-
-          {/* Tab Bar */}
-          {activeWorkspace?.activeTabId && (
-            <TabBar
+            <WorkspaceHeader
+              activeWorkspace={activeWorkspace}
+              activeRepositoryName={activeRepository?.name}
               tabs={tabs}
-              activeTabId={activeWorkspace.activeTabId}
-              onTabSelect={handleTabSelect}
-              onTabClose={handleTabClose}
-              onTabRename={handleTabRename}
-              onNewTab={handleNewTab}
+              theme={{
+                isDark,
+                onToggle: toggleTheme,
+              }}
+              tabHandlers={{
+                onTabSelect: handleTabSelect,
+                onTabClose: handleTabClose,
+                onTabRename: handleTabRename,
+                onNewTab: handleNewTab,
+              }}
+              externalApps={{
+                apps,
+                selectedApp: selectedAppForDropdown,
+                isLoading: isLoadingExternalApps,
+                onSelect: (appId) => {
+                  if (activeWorkspace.worktreePath) {
+                    workspacesActions.setSelectedApp(activeWorkspace.id, appId);
+                    openIn(appId, activeWorkspace.worktreePath);
+                  }
+                },
+                onWorkspaceClick: () => {
+                  if (activeWorkspace.selectedAppId && activeWorkspace.worktreePath) {
+                    openIn(activeWorkspace.selectedAppId, activeWorkspace.worktreePath);
+                  }
+                },
+                onCopyPath: () => {
+                  if (activeWorkspace.worktreePath) {
+                    navigator.clipboard.writeText(activeWorkspace.worktreePath);
+                  }
+                },
+              }}
             />
           )}
 
-          {/* Terminal Area - Render all workspace terminals to preserve sessions across workspace switches */}
-          <div className="flex-1 bg-surface-primary relative">
-            {/* Resize handles overlay for split layouts - now from active tab */}
-            {activeTab?.splitLayout && (
-              <SplitResizeOverlay
-                paneNode={activeTab.splitLayout}
-                onResizePanes={handleResizePanes}
-              />
-            )}
-
-            {/* Render all terminals from all tabs across all workspaces */}
-            {allWorkspaces.flatMap((workspace) => {
-              const isActiveWorkspace = workspace.id === activeWorkspaceId;
-
-              return workspace.tabs.flatMap((tab) => {
-                const isActiveTab = isActiveWorkspace && tab.id === workspace.activeTabId;
-
-                // Calculate bounds for terminals in split layout (only for active tab)
-                const boundsMap =
-                  isActiveTab && tab.splitLayout ? calculateTerminalBounds(tab.splitLayout) : null;
-
-                return tab.terminals.map((terminal) => {
-                  const bounds = boundsMap?.get(terminal.id) ?? null;
-                  // Terminal is in split only if it has bounds (is part of the split layout)
-                  const isInSplit = bounds !== null;
-
-                  // Terminal is active (visible) if:
-                  // - Workspace is active AND
-                  // - Tab is active AND
-                  // - Either: it's in a split (has bounds), OR it's the only terminal
-                  const isActive = isActiveTab && (isInSplit || tab.terminals.length === 1);
-
-                  return (
-                    <TerminalContainer
-                      key={terminal.id}
-                      terminalId={terminal.id}
-                      worktreePath={workspace.worktreePath}
-                      isActive={isActive}
-                      bounds={bounds}
-                      isFocused={isActiveTab && terminal.id === tab.focusedTerminalId}
-                      onClick={isInSplit ? (): void => handlePaneClick(terminal.id) : undefined}
-                      onExit={handleTerminalExit}
-                      onSplit={
-                        isActiveTab && canSplit ? (): void => handleSplit("horizontal") : undefined
-                      }
-                      onClose={
-                        isActiveTab
-                          ? (): void => {
-                              if (tab.terminals.length > 1) {
-                                // If tab has multiple terminals (split), close just this pane
-                                handleClosePane(terminal.id);
-                              } else {
-                                // If tab has only one terminal, close the entire tab
-                                handleTabClose(tab.id);
-                              }
-                            }
-                          : undefined
-                      }
-                    />
-                  );
-                });
-              });
-            })}
-            {!activeWorkspace?.activeTabId && (
-              <WelcomeScreen
-                logo={<AnimatedLogo src={logoSrc} alt="ChaosFix Logo" size={180} />}
-                features={HOMEPAGE_FEATURES}
-              >
-                <ActionCardGroup>
-                  <ActionCard
-                    icon={<DocumentTextIcon className="w-8 h-8" />}
-                    label="Open project"
-                    onClick={handleAddRepository}
-                  />
-                  <ActionCard
-                    icon={<GlobeAltIcon className="w-8 h-8" />}
-                    label="Clone from URL"
-                    onClick={handleCloneFromUrl}
-                  />
-                </ActionCardGroup>
-              </WelcomeScreen>
-            )}
-          </div>
+          {/* Terminal Area */}
+          <WorkspaceTerminalArea
+            allWorkspaces={allWorkspaces}
+            activeWorkspaceId={activeWorkspaceId}
+            activeTab={activeTab ?? null}
+            canSplit={canSplit}
+            terminalHandlers={{
+              onTerminalExit: handleTerminalExit,
+              onPaneClick: handlePaneClick,
+              onSplit: handleSplit,
+              onClosePane: handleClosePane,
+              onTabClose: handleTabClose,
+            }}
+            resizeHandlers={{
+              onResizePanes: handleResizePanes,
+            }}
+            welcomeScreenHandlers={{
+              onAddRepository: handleAddRepository,
+              onCloneFromUrl: handleCloneFromUrl,
+            }}
+          />
         </div>
       </div>
 
