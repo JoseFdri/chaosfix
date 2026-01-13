@@ -1,9 +1,11 @@
 import { existsSync } from "node:fs";
-import type { ExternalApp, ExternalAppId, AppDefinition } from "../types";
+import type { ExternalApp, ExternalAppId, AppDefinition } from "@chaosfix/core";
 
 class ExternalAppDetectorNotInitializedError extends Error {
   constructor() {
-    super("ExternalAppDetector: detectInstalledApps() must be called before getInstalledApps()");
+    super(
+      "ExternalAppDetectorService: detectInstalledApps() must be called before getInstalledApps()"
+    );
     this.name = "ExternalAppDetectorNotInitializedError";
   }
 }
@@ -72,7 +74,7 @@ const APP_DEFINITIONS: AppDefinition[] = [
   },
 ];
 
-export class ExternalAppDetector {
+export class ExternalAppDetectorService {
   private installedApps: ExternalApp[] = [];
   private openCommands: Map<ExternalAppId, string> = new Map();
   private hasDetected = false;
@@ -123,4 +125,4 @@ export class ExternalAppDetector {
   }
 }
 
-export const externalAppDetector = new ExternalAppDetector();
+export const externalAppDetectorService = new ExternalAppDetectorService();

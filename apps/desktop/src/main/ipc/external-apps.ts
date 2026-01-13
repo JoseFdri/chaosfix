@@ -1,10 +1,7 @@
 import { spawn } from "child_process";
 import { ipcMain, type BrowserWindow } from "electron";
-import {
-  EXTERNAL_APPS_IPC_CHANNELS,
-  externalAppDetector,
-  type ExternalAppId,
-} from "@chaosfix/core";
+import { EXTERNAL_APPS_IPC_CHANNELS, type ExternalAppId } from "@chaosfix/core";
+import { externalAppDetectorService } from "../services/ExternalAppDetector.service";
 
 export interface ExternalAppsIPCDependencies {
   getMainWindow: () => BrowserWindow | null;
@@ -12,14 +9,14 @@ export interface ExternalAppsIPCDependencies {
 
 export function setupExternalAppsIPC(_deps: ExternalAppsIPCDependencies): void {
   ipcMain.handle(EXTERNAL_APPS_IPC_CHANNELS.LIST, async () => {
-    return externalAppDetector.getInstalledApps();
+    return externalAppDetectorService.getInstalledApps();
   });
 
   ipcMain.handle(
     EXTERNAL_APPS_IPC_CHANNELS.OPEN,
     async (_event, params: { appId: ExternalAppId; path: string }) => {
       const { appId, path } = params;
-      const command = externalAppDetector.getOpenCommand(appId, path);
+      const command = externalAppDetectorService.getOpenCommand(appId, path);
 
       if (command === null) {
         return { success: false, error: `App "${appId}" is not installed or not recognized` };

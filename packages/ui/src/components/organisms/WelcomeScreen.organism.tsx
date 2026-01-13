@@ -4,8 +4,10 @@ import { AnimatedBackground } from "../atoms";
 import { FeatureHighlights, type Feature } from "../molecules";
 
 export interface WelcomeScreenProps {
-  /** Logo component to display at the top */
-  logo: ReactNode;
+  /** Optional logo component to display at the top */
+  logo?: ReactNode;
+  /** Optional title to display below the logo */
+  title?: string;
   /** Action cards or other main content */
   children: ReactNode;
   /** Optional stats section displayed below main content */
@@ -28,6 +30,7 @@ export interface WelcomeScreenProps {
  */
 export const WelcomeScreen: FC<WelcomeScreenProps> = ({
   logo,
+  title,
   children,
   stats,
   className,
@@ -48,8 +51,17 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = ({
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center gap-8 md:gap-12 max-w-4xl w-full">
-        {/* Logo section */}
-        <div className="flex-shrink-0">{logo}</div>
+        {/* Logo and title section */}
+        {(logo || title) && (
+          <div className="flex-shrink-0 flex flex-col items-center gap-4">
+            {logo}
+            {title && (
+              <h1 className="text-4xl md:text-5xl font-bold text-content-primary tracking-tight">
+                {title}
+              </h1>
+            )}
+          </div>
+        )}
 
         {/* Feature highlights section (optional) */}
         {features && features.length > 0 && (

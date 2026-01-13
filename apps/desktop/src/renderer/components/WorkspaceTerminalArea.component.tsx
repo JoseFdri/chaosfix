@@ -3,7 +3,6 @@ import {
   WelcomeScreen,
   ActionCard,
   ActionCardGroup,
-  AnimatedLogo,
   DocumentTextIcon,
   GlobeAltIcon,
 } from "@chaosfix/ui";
@@ -13,7 +12,6 @@ import { TerminalContainer } from "./TerminalContainer";
 import { SplitResizeOverlay } from "./SplitResizeOverlay";
 import { calculateTerminalBounds } from "../libs";
 import { HOMEPAGE_FEATURES } from "../../constants";
-import logoSrc from "../assets/logo.svg";
 
 /**
  * Handlers for terminal operations.
@@ -62,10 +60,7 @@ function WelcomeScreenContent({
   onCloneFromUrl,
 }: WelcomeScreenHandlers): ReactNode {
   return (
-    <WelcomeScreen
-      logo={<AnimatedLogo src={logoSrc} alt="ChaosFix Logo" size={180} />}
-      features={HOMEPAGE_FEATURES}
-    >
+    <WelcomeScreen title="Chaosfix" features={HOMEPAGE_FEATURES}>
       <ActionCardGroup>
         <ActionCard
           icon={<DocumentTextIcon className="w-8 h-8" />}

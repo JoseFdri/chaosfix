@@ -1,7 +1,7 @@
 import { app, type BrowserWindow } from "electron";
 import { PTYManager } from "@chaosfix/terminal-bridge";
-import { externalAppDetector } from "@chaosfix/core";
 import { createMainWindow } from "./window";
+import { externalAppDetectorService } from "./services/ExternalAppDetector.service";
 import { setupAllIPC } from "./ipc";
 import { setupAppLifecycle } from "./app-lifecycle";
 
@@ -18,7 +18,7 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   createWindow();
 
-  await externalAppDetector.detectInstalledApps();
+  await externalAppDetectorService.detectInstalledApps();
 
   setupAllIPC({
     getMainWindow: () => mainWindow,
