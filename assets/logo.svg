@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!--
+    ChaosFix Isotype: Split C
+    - Three segments = parallel sessions
+    - Gaps = workspace isolation
+    - Unified shape = orchestrated control
+  -->
+
+  <!-- Top segment of C -->
+  <path d="M72 8 L28 8 Q8 8 8 28 L8 32 L24 32 L24 28 Q24 24 28 24 L72 24 Z"
+        fill="#1a1a2e"/>
+
+  <!-- Middle segment of C -->
+  <rect x="8" y="42" width="16" height="16" fill="#1a1a2e"/>
+
+  <!-- Bottom segment of C -->
+  <path d="M72 92 L28 92 Q8 92 8 72 L8 68 L24 68 L24 72 Q24 76 28 76 L72 76 Z"
+        fill="#1a1a2e"/>
+</svg>
