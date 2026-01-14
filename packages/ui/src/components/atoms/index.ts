@@ -63,3 +63,4 @@ export {
 } from "./AppIcons.atom";
 export { SplitResizeHandle } from "./SplitResizeHandle.atom";
 export { SplitButton, type SplitButtonProps } from "./SplitButton.atom";
+export { BerserkerText, type BerserkerTextProps } from "./BerserkerText.atom";

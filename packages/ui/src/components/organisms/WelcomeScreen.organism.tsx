@@ -1,6 +1,6 @@
 import { type FC, type ReactNode } from "react";
 import { cn } from "../../libs/cn.lib";
-import { AnimatedBackground } from "../atoms";
+import { AnimatedBackground, BerserkerText } from "../atoms";
 import { FeatureHighlights, type Feature } from "../molecules";
 
 export interface WelcomeScreenProps {
@@ -18,6 +18,8 @@ export interface WelcomeScreenProps {
   features?: Feature[];
   /** Enable the animated gradient background effect (default: true) */
   enableBackground?: boolean;
+  /** Enable the berserker effect on the title (default: true) */
+  enableBerserkerEffect?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = ({
   className,
   features,
   enableBackground = true,
+  enableBerserkerEffect = true,
 }) => {
   return (
     <div
@@ -56,15 +59,17 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = ({
           <div className="flex-shrink-0 flex flex-col items-center gap-4">
             {logo}
             {title && (
-              <h1 className="text-5xl md:text-7xl font-bold text-content-primary tracking-tighter font-mono">
-                <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-500 bg-clip-text text-transparent">
-                  {"<"}
-                </span>
-                {title}
-                <span className="bg-gradient-to-r from-violet-500 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                  {"/>"}
-                </span>
-              </h1>
+              <BerserkerText disabled={!enableBerserkerEffect} intensity={0.7}>
+                <h1 className="text-5xl md:text-7xl font-bold text-red-500 tracking-tighter font-mono">
+                  <span className="bg-gradient-to-r from-red-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent">
+                    {"<"}
+                  </span>
+                  {title}
+                  <span className="bg-gradient-to-r from-yellow-500 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                    {"/>"}
+                  </span>
+                </h1>
+              </BerserkerText>
             )}
           </div>
         )}

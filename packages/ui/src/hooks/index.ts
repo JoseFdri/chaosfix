@@ -41,3 +41,9 @@ export {
   type UseCloneDialogReturn,
 } from "./useCloneDialog.hook";
 export { useSplitResize } from "./useSplitResize.hook";
+export {
+  useEmberParticles,
+  type EmberParticle,
+  type UseEmberParticlesOptions,
+  type UseEmberParticlesReturn,
+} from "./useEmberParticles.hook";
