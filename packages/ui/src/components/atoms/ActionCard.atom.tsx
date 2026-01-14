@@ -16,10 +16,10 @@ export const ActionCard = forwardRef<ElementRef<"button">, ActionCardProps>(
       <Comp
         ref={ref}
         className={cn(
-          "flex flex-col items-start justify-between",
+          "flex flex-col items-center justify-center gap-4",
           "w-full min-h-[160px] p-6",
           "bg-surface-secondary border border-border-default rounded-lg",
-          "text-left",
+          "text-center",
           "transition-all duration-150",
           "hover:brightness-110",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring-focus focus-visible:ring-offset-2",

@@ -36,11 +36,8 @@ export const AnimatedBackground = forwardRef<HTMLDivElement, AnimatedBackgroundP
       >
         <div
           ref={ref}
-          className={cn("absolute -inset-4", "bg-black", "motion-reduce:animate-none")}
-          style={{
-            background: "#000000",
-            ...parallaxStyle,
-          }}
+          className={cn("absolute -inset-4", "bg-surface-primary", "motion-reduce:animate-none")}
+          style={parallaxStyle}
         />
       </div>
     );

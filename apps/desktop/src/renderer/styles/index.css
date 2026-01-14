@@ -8,18 +8,18 @@
 
 /* Base styles */
 @layer base {
-  /* Light theme colors (default) */
+  /* Light theme colors (default) - warm cream/beige palette */
   :root {
-    --color-surface-primary: #fafaf9;
-    --color-surface-secondary: #f5f5f4;
-    --color-surface-hover: #e7e5e4;
-    --color-surface-active: #d6d3d1;
+    --color-surface-primary: #f9f7f2;
+    --color-surface-secondary: #f2efe6;
+    --color-surface-hover: #ebe6db;
+    --color-surface-active: #dfd9cc;
     --color-text-primary: #111827;
     --color-text-secondary: #4b5563;
     --color-text-muted: #6b7280;
     --color-text-inverse: #f3f4f6;
-    --color-border-default: #e7e5e4;
-    --color-border-subtle: #d6d3d1;
+    --color-border-default: #e5e0d5;
+    --color-border-subtle: #d8d2c5;
     --color-border-focus: #3b82f6;
   }
 

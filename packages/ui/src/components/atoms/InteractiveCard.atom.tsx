@@ -129,7 +129,7 @@ export const InteractiveCard = forwardRef<ElementRef<"div">, InteractiveCardProp
           />
         )}
         {/* Card content */}
-        <div className="relative z-10">{children}</div>
+        <div className="relative z-10 flex flex-col items-center w-full">{children}</div>
       </div>
     );
   }
