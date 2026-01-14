@@ -100,13 +100,14 @@ export function setupWorkspaceIPC(_deps: WorkspaceIPCDependencies): void {
   ipcMain.handle(
     WORKSPACE_IPC_CHANNELS.REMOVE,
     async (_event, options: RemoveWorkspaceOptions): Promise<RemoveWorkspaceResult> => {
-      const { repositoryPath, worktreePath, force = false } = options;
+      const { repositoryPath, worktreePath, branchName, force = false } = options;
 
       try {
         const worktreeManager = new WorktreeManager(repositoryPath);
         const result = await worktreeManager.remove({
           repositoryPath,
           worktreePath,
+          branchName,
           force,
         });
 

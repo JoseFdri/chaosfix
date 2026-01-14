@@ -33,6 +33,7 @@ export interface CreateWorkspaceResult {
 export interface RemoveWorkspaceOptions {
   repositoryPath: string;
   worktreePath: string;
+  branchName?: string;
   force?: boolean;
 }
 

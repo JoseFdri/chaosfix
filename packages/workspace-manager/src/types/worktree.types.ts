@@ -17,5 +17,6 @@ export interface WorktreeCreateOptions {
 export interface WorktreeRemoveOptions {
   repositoryPath: string;
   worktreePath: string;
+  branchName?: string;
   force?: boolean;
 }

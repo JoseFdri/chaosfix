@@ -94,10 +94,11 @@ export function useRemoveWorkspace({
       );
       await Promise.all(terminalDestroyPromises);
 
-      // Then remove the worktree with force flag to skip uncommitted changes check
+      // Then remove the worktree and branch with force flag to skip uncommitted changes check
       const result = await window.workspace.remove({
         repositoryPath,
         worktreePath: workspace.worktreePath,
+        branchName: workspace.branchName,
         force: true,
       });
 

@@ -11,6 +11,7 @@ import type {
 } from "../types/worktree.types";
 import { GitError } from "../types/git.types";
 import { parseWorktreeOutput } from "../libs/worktree-parser.lib";
+import { GitService } from "./git.service";
 
 // todo: change this default to be ~/chaosfix/workspace/<repo_name>/<ramdon_name>
 const WORKTREES_DIR = ".chaosfix-worktrees";
@@ -87,13 +88,14 @@ export class WorktreeManager {
   }
 
   /**
-   * Remove a worktree
+   * Remove a worktree and optionally delete its associated branch
    *
    * Attempts git worktree remove first. If that fails but the directory exists,
    * manually removes the directory and prunes stale worktree entries.
+   * If branchName is provided, the branch is deleted after the worktree is removed.
    */
   async remove(options: WorktreeRemoveOptions): Promise<GitResult<void>> {
-    const { worktreePath, force = false } = options;
+    const { worktreePath, branchName, force = false } = options;
 
     try {
       const args = ["worktree", "remove"];
@@ -103,31 +105,40 @@ export class WorktreeManager {
       args.push(worktreePath);
 
       await this.git.raw(args);
-      return ok(undefined);
     } catch (gitError) {
       // Git worktree remove failed - try manual cleanup
       const directoryExists = await this.exists(worktreePath);
 
       if (!directoryExists) {
-        // Directory doesn't exist, just prune and return success
+        // Directory doesn't exist, just prune and continue to branch deletion
         await this.prune();
-        return ok(undefined);
-      }
-
-      // Directory exists but git couldn't remove it - manually remove
-      try {
-        await fs.rm(worktreePath, { recursive: true, force: true });
-        // Prune to clean up any stale worktree references
-        await this.prune();
-        return ok(undefined);
-      } catch (fsError) {
-        return err(
-          new GitError(
-            `Failed to remove worktree. Git error: ${gitError}. Filesystem error: ${fsError}`
-          )
-        );
+      } else {
+        // Directory exists but git couldn't remove it - manually remove
+        try {
+          await fs.rm(worktreePath, { recursive: true, force: true });
+          // Prune to clean up any stale worktree references
+          await this.prune();
+        } catch (fsError) {
+          return err(
+            new GitError(
+              `Failed to remove worktree. Git error: ${gitError}. Filesystem error: ${fsError}`
+            )
+          );
+        }
       }
     }
+
+    // Delete the associated branch if provided
+    if (branchName) {
+      const gitService = new GitService(this.repoPath);
+      const branchResult = await gitService.deleteBranch(branchName, force);
+      if (!branchResult.success) {
+        // Log but don't fail - worktree was already removed successfully
+        console.warn(`Failed to delete branch ${branchName}: ${branchResult.error.message}`);
+      }
+    }
+
+    return ok(undefined);
   }
 
   /**
