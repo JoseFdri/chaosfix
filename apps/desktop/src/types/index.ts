@@ -1,3 +1,4 @@
+export type * from "./auto-updater.types";
 export type * from "./terminal.types";
 export type * from "./dialog.types";
 export type * from "./state.types";

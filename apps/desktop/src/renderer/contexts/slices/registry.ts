@@ -4,6 +4,7 @@ import { uiSlice, uiActions } from "./ui.slice";
 import { persistenceSlice, persistenceActions } from "./persistence.slice";
 import { preferencesSlice, preferencesActions } from "./preferences.slice";
 import { notificationsSlice, notificationsActions } from "./notifications.slice";
+import { updatesSlice, updatesActions } from "./updates.slice";
 import type { BaseAction, Slice } from "./types";
 import type { RegisteredSlice } from "../../../types/slice-registry.types";
 
@@ -34,6 +35,7 @@ export const sliceRegistry = {
   persistence: createRegisteredSlice(persistenceSlice, persistenceActions),
   preferences: createRegisteredSlice(preferencesSlice, preferencesActions),
   notifications: createRegisteredSlice(notificationsSlice, notificationsActions),
+  updates: createRegisteredSlice(updatesSlice, updatesActions),
 } as const;
 
 /**

@@ -1,5 +1,6 @@
 import { contextBridge } from "electron";
 
+import { createAutoUpdaterAPI } from "./auto-updater-api";
 import { createDialogAPI } from "./dialog-api";
 import { createExternalAppsAPI } from "./external-apps-api";
 import { createGitAPI } from "./git-api";
@@ -14,6 +15,7 @@ import { createWorkspaceAPI } from "./workspace-api";
 export type * from "../types";
 
 // Create API instances
+const autoUpdaterAPI = createAutoUpdaterAPI();
 const terminalAPI = createTerminalAPI();
 const dialogAPI = createDialogAPI();
 const stateAPI = createStateAPI();
@@ -25,6 +27,7 @@ const externalAppsAPI = createExternalAppsAPI();
 const gitAPI = createGitAPI();
 
 // Expose APIs to renderer process via context bridge
+contextBridge.exposeInMainWorld("autoUpdater", autoUpdaterAPI);
 contextBridge.exposeInMainWorld("terminal", terminalAPI);
 contextBridge.exposeInMainWorld("dialog", dialogAPI);
 contextBridge.exposeInMainWorld("state", stateAPI);

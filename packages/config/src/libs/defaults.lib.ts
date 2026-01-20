@@ -34,4 +34,9 @@ export const DEFAULT_APP_PREFERENCES: AppPreferences = {
     terminalActivity: true,
     workspaceReady: true,
   },
+  updates: {
+    autoCheck: true,
+    lastCheckTimestamp: null,
+    dismissedVersion: null,
+  },
 };

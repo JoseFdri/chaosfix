@@ -70,3 +70,17 @@ export const GIT_IPC_CHANNELS = {
 } as const;
 
 export type GitIPCChannel = (typeof GIT_IPC_CHANNELS)[keyof typeof GIT_IPC_CHANNELS];
+
+export const AUTO_UPDATER_IPC_CHANNELS = {
+  CHECK_FOR_UPDATES: "auto-updater:check-for-updates",
+  DOWNLOAD_UPDATE: "auto-updater:download-update",
+  INSTALL_UPDATE: "auto-updater:install-update",
+  UPDATE_AVAILABLE: "auto-updater:update-available",
+  UPDATE_NOT_AVAILABLE: "auto-updater:update-not-available",
+  DOWNLOAD_PROGRESS: "auto-updater:download-progress",
+  UPDATE_DOWNLOADED: "auto-updater:update-downloaded",
+  UPDATE_ERROR: "auto-updater:update-error",
+} as const;
+
+export type AutoUpdaterIPCChannel =
+  (typeof AUTO_UPDATER_IPC_CHANNELS)[keyof typeof AUTO_UPDATER_IPC_CHANNELS];

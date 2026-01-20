@@ -25,3 +25,4 @@ export {
 } from "./FeatureHighlights.molecule";
 export { SplitPane } from "./SplitPane.molecule";
 export type { SplitPaneProps } from "../../types";
+export { UpdateTooltip, type UpdateTooltipProps } from "./UpdateTooltip.molecule";

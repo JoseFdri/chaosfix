@@ -23,11 +23,14 @@ import {
   type PersistenceState,
   type PreferencesState,
   type NotificationsState,
+  type UpdatesState,
   type Theme,
   type Notification,
   type WorkspaceWithTabs,
   type SerializableState,
   type BaseAction,
+  type UpdateInfo,
+  type DownloadProgress,
 } from "./slices";
 
 /**
@@ -40,6 +43,7 @@ interface AppCombinedState {
   persistence: PersistenceState;
   preferences: PreferencesState;
   notifications: NotificationsState;
+  updates: UpdatesState;
 }
 
 /**
@@ -169,6 +173,20 @@ interface NotificationsActions {
 }
 
 /**
+ * Bound actions for updates operations.
+ */
+interface UpdatesActions {
+  setChecking: () => void;
+  setAvailable: (info: UpdateInfo) => void;
+  setNotAvailable: () => void;
+  setDownloading: () => void;
+  setProgress: (progress: DownloadProgress) => void;
+  setReady: () => void;
+  setError: (error: string) => void;
+  reset: () => void;
+}
+
+/**
  * Return type for the useApp hook.
  */
 interface UseAppReturn {
@@ -179,6 +197,7 @@ interface UseAppReturn {
   persistence: PersistenceActions;
   preferences: PreferencesActions;
   notifications: NotificationsActions;
+  updates: UpdatesActions;
   hydrateState: (appState: AppState) => void;
   getSerializableState: () => SerializableState;
 }
@@ -211,6 +230,7 @@ export function useApp(): UseAppReturn {
     persistence: PersistenceActions;
     preferences: PreferencesActions;
     notifications: NotificationsActions;
+    updates: UpdatesActions;
     dispatch: (action: BaseAction) => void;
   };
 
@@ -239,6 +259,7 @@ export function useApp(): UseAppReturn {
     persistence: typedContext.persistence,
     preferences: typedContext.preferences,
     notifications: typedContext.notifications,
+    updates: typedContext.updates,
     hydrateState,
     getSerializableState,
   };

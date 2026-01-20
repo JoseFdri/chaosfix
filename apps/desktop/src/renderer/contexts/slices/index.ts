@@ -53,6 +53,16 @@ export {
   type NotificationType,
 } from "./notifications.slice";
 
+export {
+  updatesSlice,
+  updatesActions,
+  type UpdatesState,
+  type UpdatesAction,
+  type UpdateInfo,
+  type DownloadProgress,
+  type UpdateStatus,
+} from "./updates.slice";
+
 // Hydration utilities
 export {
   hydrationActions,

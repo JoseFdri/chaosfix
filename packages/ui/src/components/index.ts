@@ -87,6 +87,8 @@ export {
   type FeatureHighlightsProps,
   type Feature,
   SplitPane,
+  UpdateTooltip,
+  type UpdateTooltipProps,
 } from "./molecules";
 
 // Organisms - Complex UI sections

@@ -28,4 +28,15 @@ export const appPreferencesSchema = z.object({
     terminalActivity: z.boolean().default(true),
     workspaceReady: z.boolean().default(true),
   }),
+  updates: z
+    .object({
+      autoCheck: z.boolean().default(true),
+      lastCheckTimestamp: z.number().nullable().default(null),
+      dismissedVersion: z.string().nullable().default(null),
+    })
+    .default({
+      autoCheck: true,
+      lastCheckTimestamp: null,
+      dismissedVersion: null,
+    }),
 });

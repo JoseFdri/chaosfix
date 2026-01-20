@@ -1,5 +1,5 @@
 import { type FC, useCallback } from "react";
-import { useDragResize } from "@chaosfix/ui";
+import { useDragResize, UpdateTooltip } from "@chaosfix/ui";
 import type { TerminalSession, Tab } from "@chaosfix/core";
 import { useApp, type WorkspaceWithTabs } from "./contexts/app-context";
 import {
@@ -20,6 +20,7 @@ import {
   useTerminalExit,
   useSelectedAppDropdown,
   useRepositorySettingsDialog,
+  useAutoUpdater,
 } from "./hooks";
 import { NotificationContainer } from "./components/NotificationContainer.component";
 import { AppDialogs } from "./components/AppDialogs.component";
@@ -107,6 +108,18 @@ export const App: FC = () => {
 
   // Theme management
   const { isDark, toggleTheme } = useTheme();
+
+  // Auto-updater integration
+  const {
+    status: updateStatus,
+    updateInfo,
+    downloadProgress,
+    error: updateError,
+    downloadUpdate,
+    installUpdate,
+    dismiss: dismissUpdate,
+    checkForUpdates,
+  } = useAutoUpdater();
 
   // External apps integration (Open in VSCode, Finder, etc.)
   const { apps, openIn, isLoading: isLoadingExternalApps } = useExternalApps();
@@ -436,6 +449,21 @@ export const App: FC = () => {
 
       {/* Notification Container - renders toast notifications */}
       <NotificationContainer />
+
+      {/* Update Tooltip - shows when updates are available */}
+      {updateStatus !== "idle" && updateStatus !== "checking" && (
+        <UpdateTooltip
+          status={updateStatus}
+          version={updateInfo?.version}
+          releaseNotes={updateInfo?.releaseNotes}
+          progress={downloadProgress ? { percent: downloadProgress.percent } : undefined}
+          error={updateError ?? undefined}
+          onUpdate={downloadUpdate}
+          onInstall={installUpdate}
+          onDismiss={dismissUpdate}
+          onRetry={checkForUpdates}
+        />
+      )}
     </>
   );
 };

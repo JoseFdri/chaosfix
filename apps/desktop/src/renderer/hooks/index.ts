@@ -70,3 +70,6 @@ export type {
   UseRepositorySettingsDialogOptions,
   UseRepositorySettingsDialogReturn,
 } from "./useRepositorySettingsDialog.hook";
+
+export { useAutoUpdater } from "./useAutoUpdater.hook";
+export type { UseAutoUpdaterReturn } from "./useAutoUpdater.hook";

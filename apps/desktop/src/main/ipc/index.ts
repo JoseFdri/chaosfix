@@ -9,6 +9,7 @@ import { setupRepositoryConfigIPC } from "./repository-config";
 import { setupSetupScriptIPC } from "./setup-script";
 import { setupExternalAppsIPC } from "./external-apps";
 import { setupGitIPC } from "./git";
+import { setupAutoUpdaterIPC } from "./auto-updater";
 
 export interface IPCDependencies {
   getMainWindow: () => BrowserWindow | null;
@@ -50,6 +51,10 @@ export function setupAllIPC(deps: IPCDependencies): void {
   setupGitIPC({
     getMainWindow: deps.getMainWindow,
   });
+
+  setupAutoUpdaterIPC({
+    getMainWindow: deps.getMainWindow,
+  });
 }
 
 export { setupTerminalIPC } from "./terminal";
@@ -61,3 +66,4 @@ export { setupRepositoryConfigIPC } from "./repository-config";
 export { setupSetupScriptIPC } from "./setup-script";
 export { setupExternalAppsIPC } from "./external-apps";
 export { setupGitIPC } from "./git";
+export { setupAutoUpdaterIPC } from "./auto-updater";

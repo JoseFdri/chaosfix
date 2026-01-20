@@ -1,3 +1,4 @@
+import type { AutoUpdaterAPI } from "./auto-updater.types";
 import type { DialogAPI } from "./dialog.types";
 import type { ExternalAppsAPI } from "./external-apps.types";
 import type { GitAPI } from "./git.types";
@@ -13,6 +14,7 @@ import type { WorkspaceAPI } from "./workspace.types";
  */
 declare global {
   interface Window {
+    autoUpdater: AutoUpdaterAPI;
     terminal: TerminalAPI;
     dialog: DialogAPI;
     state: StateAPI;
