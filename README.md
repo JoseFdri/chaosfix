@@ -2,6 +2,10 @@
 
 A macOS Electron application for running multiple Claude Code sessions in parallel. Each workspace is isolated in its own git worktree, allowing you to work on multiple features or experiments simultaneously.
 
+## Demo
+
+<video src="assets/demo.mp4" controls></video>
+
 ## Core Philosophy
 
 **"The terminal IS the interface"** - Users interact directly with the Claude Code CLI in terminal panels. No abstraction layers, no magic. You see exactly what Claude sees.
