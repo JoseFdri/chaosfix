@@ -4,7 +4,7 @@ A macOS Electron application for running multiple Claude Code sessions in parall
 
 ## Demo
 
-<video src="assets/demo.mp4" controls></video>
+https://github.com/user-attachments/assets/e265782d-d472-43e2-a771-71b00474c0c9
 
 ## Core Philosophy
 
