@@ -71,10 +71,6 @@ pnpm build
 | `pnpm test:watch`   | Run tests in watch mode                |
 | `pnpm clean`        | Clean build artifacts and node_modules |
 
-## Documentation
-
-For detailed design documentation, see [`docs/chaosfix-design-spec.md`](./docs/chaosfix-design-spec.md).
-
 ## License
 
 MIT
